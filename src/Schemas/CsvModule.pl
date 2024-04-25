@@ -7,7 +7,7 @@ select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
     select_row(Rest, Column, Value, NewRest).
 
 % Create or Append
-write_csv(File, Data) :-
+write_csv_row(File, Data) :-
     (exists_file(File) -> 
         open(File, append, Stream),
         csv_write_stream(Stream, Data, []),
@@ -23,14 +23,14 @@ read_csv_row(File, Column, Value, Row) :-
     select_row(Data, Column, Value, Row).
 
 % Update a specific row
-update_csv(File, Column, Value, UpdatedRow) :-
+update_csv_row(File, Column, Value, UpdatedRow) :-
     read_csv_row(File, Column, Value, Data),
     select_row(Data, Column, Value, DataWithoutOldRow),
     append(DataWithoutOldRow, [UpdatedRow], UpdatedData),
     csv_write_file(File, UpdatedData).
 
 % Delete a specific row
-delete_csv(File, Column, Value) :-
+delete_csv_row(File, Column, Value) :-
     csv_read_file(File, Data),
     select_row(Data, Column, Value, DataWithoutRow),
     csv_write_file(File, DataWithoutRow).
