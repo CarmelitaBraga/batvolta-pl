@@ -215,6 +215,37 @@ menu_finalizar_carona(MotoristaRef) :-
     ),
     menu_principal_motorista_carona(MotoristaRef).
 
+ menu_aceitar_recusar_passageiro(MotoristaRef) :-
+    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    (possui_passageiros_viagem_false_controller(MotoristaCpf) -> 
+        write("Qual carona você deseja olhar os passageiros:"), nl, 
+        info_carona_passageiros_viagem_false(MotoristaCpf, Caronas),
+        write(Caronas), nl,
+        write("Digite o Id: "),
+        read(Cid), nl,
+        (possui_passageiro_viagem_false(MotoristaCpf, Cid) -> 
+            write("Qual passageiro você deseja aceitar/recusar?"), nl, 
+            info_passageiro_viagem_false(Cid, PassageirosViagem),
+            write(PassageirosViagens), nl,
+            write("Digite o Id: "),
+            read(PVid), nl,
+            (possui_passageiro_viagem(Cid, PVid) -> 
+                write("Você deseja aceitar ou recusar: "),
+                read(AceitarOuRecusar), nl,
+                aceitar_ou_recusar_passageiro(PVid, AceitarOuRecusar), nl,
+                insere_notificacao_passageiro_viagem(MotoristaCpf, PVid, Cid, AceitarOuRecusar),
+                write("Passageiro aceito/recusado com sucesso!"), nl # Mudar depois
+            ;
+                write("Esse passageiro não está disponível!"), nl
+            )
+        ;
+            write("Essa carona não está disponível!"), nl
+        )
+    ;
+        write("Não existem caronas disponíveis para aceitar ou recusar passageiros!"), nl
+    ),
+    menu_principal_motorista_carona(MotoristaRef).
+
 menu_cancelar_carona(MotoristaRef) :-
     get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
