@@ -1,4 +1,12 @@
-:- module(_,[]).
+:- module(CaronaCLI,
+        [menu_principal_passageiro_carona/1, 
+        menu_procurar_carona/1, 
+        menu_cancelar_carona/1, 
+        menu_mostrar_caronas/1, 
+        menu_desembarcar_caronas/1, 
+        menu_embarcar_caronas/1, 
+        menu_avaliar_motorista/1]).
+
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
