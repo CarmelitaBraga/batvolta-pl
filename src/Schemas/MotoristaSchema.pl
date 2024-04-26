@@ -1,12 +1,26 @@
 :- dynamic motorista/9.
 
+:-use_module('CsvModule.pl').
+
+:- use_module("../Model/Motorista.pl").
+
 % motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)
 
 
 % Predicados para cadastro de motorista
-cadastra_motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao) :-
-    \+ motorista(CPF, _, _, _, _, _, _, _, _), % Verifica se não há outro motorista com o mesmo CPF
-    assertz(motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)).
+cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno) :-
+    % Verificar se o CPF já está cadastrado
+    load_motorista_facts('../Schemas/motoristas.csv'),
+    ( motorista(CPF, _, _, _, _, _, _, _, _) ->
+        write('CPF já cadastrado')
+    ; % Se não estiver cadastrado, realizar o cadastro
+        motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str),
+        write_csv_row('motoristas.csv', [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
+        assert_unique_motorista_fact(row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)),
+        %assertz(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao))),
+        Retorno = 'Cadastro realizado com sucesso'
+    ).
+
 
 % Predicado para remoção de motorista
 remove_motorista(CPF) :-
@@ -34,7 +48,9 @@ recupera_motoristas_por_regiao(Regiao, Motoristas) :-
             Motoristas).
 
 % Predicado para verificar se o banco de dados está vazio
-banco_vazio :- \+ motorista(_, _, _, _, _, _, _, _, _).
+banco_vazio :- 
+    load_motorista_facts('../Schemas/motoristas.csv'),
+    \+ motorista(_, _, _, _, _, _, _, _, _).
 
 
 % Predicado para escrever os motoristas em um arquivo CSV
