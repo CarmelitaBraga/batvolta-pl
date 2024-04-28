@@ -7,9 +7,11 @@ module(_, [
     carregar_notificacoes_logic/0
 ]).
 
-% Nao sabia se retornava ou printava direto, ai o remove fiz de outra forma
+:- use_module('../Util/Util.pl').
+:- use_module('../Schemas/SchemaPassageiro.pl').
+
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
-    (   validar_cpf(CPF) 
+    (   \+ validar_cpf(CPF) 
         ->  write('CPF não atende aos requisitos'), 
             Retorno = " "
     ; 
@@ -17,12 +19,12 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
         ->  write('Nome não pode ser vazio'), 
             Retorno = " "
     ;
-        validar_genero(Genero) 
-        ->  write('Genero não pode ser vazio'),
+        \+ validar_genero(Genero) 
+        ->  write('Genero deve ser M ou F'),
             Retorno = " "
     ;
-        validar_email(Email) 
-        ->  write('Email não pode ser vazio'),
+        \+ validar_email(Email) 
+        ->  write('Email não atende aos requisitos'),
             Retorno = " "
     ;
         null_or_empty(Telefone) 
@@ -37,7 +39,7 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
         ->  write('Senha não pode ser vazia'),
             Retorno = " "
     ;
-        cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha),
+        cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno),
         Retorno = " "
     ).
 
@@ -45,7 +47,7 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
 remove_passageiro_logic(CPF, Senha, Retorno):-
     ( validar_cpf(CPF) ->  Retorno = 'CPF não atende aos requisitos'
     ;   get_passageiro_by_cpf(CPF, Retorno),
-        (   confere_senha(SenhaPassada)
+        (   confere_senha(Senha)
         ->  (   remove_passageiro(CPF),
                 Retorno = 'Passageiro removido com sucesso'
             )
@@ -69,7 +71,7 @@ login_passageiro_logic(Email, Senha, Retorno):-
         ->  write("Senha incorreta"),
             Retorno = " "
     ; 
-        validar_email(Email),
+        validar_email(Email)
         ->  write("Email incorreto"),
             Retorno = " "
     ).
