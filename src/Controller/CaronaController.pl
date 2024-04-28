@@ -1,11 +1,10 @@
 :- module(_,
     [possui_caronas_origem_destino_controller/2,
-    mostrar_caronas_disponiveis_origem_destino/3
+    mostrar_caronas_disponiveis_origem_destino/3,
     % solicitar_carona_passageiro/5,
     % mostrar_viagem_passageiro/2,
     % cancelar_carona_passageiro/2,
-    % mostrar_viagem_passageiro/2,
-    % mostrar_caronas_passageiro/2,
+    mostrar_caronas_passageiro/2
     % desembarcar_passageiro/2,
     % embarcar_passageiro/2,
     % get_viagem_sem_avaliacao/2,
@@ -29,9 +28,8 @@ mostrar_caronas_disponiveis_origem_destino(Origem, Destino, Caronas):-
 
 % cancelar_carona_passageiro(CId, PassageiroCpf).
 
-% mostrar_viagem_passageiro(PassageiroCpf, Resultado).
-
-% mostrar_caronas_passageiro(PassageiroCpf, Resultado).
+mostrar_caronas_passageiro(PassageiroCpf, Resultado):-
+    mostrar_caronas_passageiro_participa(PassageiroCpf, Resultado).
 
 % desembarcar_passageiro(IdCarona, PassageiroCpf).
 

@@ -40,19 +40,58 @@ delete_csv_row(File, Column, Value) :-
 
 
 % Helper predicate to check if an element exists in a list
-element_in_list(Element, List) :-
-    split_string(List, ";", "", ListItems),
-    member(Element, ListItems).
+% element_in_list(Element, List) :-
+%     split_string(List, ";", "", ListItems),
+%     member(Element, ListItems).
 
 % Main predicate to select rows
-select_row_by_list_element([], _, _, []).
-select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
-    arg(Column, Row, Value),
-    element_in_list(Element, Value), !,
-    select_row_by_list_element(Rest, Column, Element, NewRest).
-select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
-    select_row_by_list_element(Rest, Column, Element, NewRest).
+% select_row_by_list_element([], _, _, []).
+% select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
+%     arg(Column, Row, Value),
+%     element_in_list(Element, Value), !,
+%     select_row_by_list_element(Rest, Column, Element, NewRest).
+% select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
+%     select_row_by_list_element(Rest, Column, Element, NewRest).
 
 read_csv_row_by_list_element(File, Column, Element, Row) :-
     csv_read_file(File, Data),
     select_row_by_list_element(Data, Column, Element, Row).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % Helper predicate to check if an element exists in a list
+% element_in_list(Element, List) :-
+%     split_string(List, ";", "", ListItems),
+%     maplist(atom_number, ListItems, Numbers),  % Convert strings to numbers
+%     member(Element, Numbers).
+
+% Helper predicate to check if an element exists in a list
+% element_in_list(Element, Value) :-
+%     (   is_list(Value)
+%     ->  List = Value
+%     ;   atom_string(Value, ValueStr),
+%         split_string(ValueStr, ";", "", List)
+%     ),
+%     (   number_string(_, Element)
+%     ->  maplist(atom_number, List, Numbers),  % Convert strings to numbers
+%         member(Element, Numbers)
+%     ;   member(Element, List)
+%     ).
+
+split_string_into_list(String, List) :-
+    split_string(String, ";", "", List).
+
+element_in_list(Element, ListString) :-
+    atom_string(ListString, ListStringText),
+    split_string_into_list(ListStringText, List),
+    member(Element, List).
+
+
+select_row_by_list_element([], _, _, []).
+select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
+    arg(Column, Row, Value),
+    atom_string(Value, ValueText),
+    element_in_list(Element, ValueText), !,
+    select_row_by_list_element(Rest, Column, Element, NewRest).
+select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
+    select_row_by_list_element(Rest, Column, Element, NewRest).
