@@ -1,7 +1,6 @@
-:- module(_, [read_csv_row/4]).
+:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4]).
 
 :- use_module(library(csv)).
-
 
 select_row([], _, _, []).
 select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
@@ -38,6 +37,7 @@ delete_csv_row(File, Column, Value) :-
     csv_read_file(File, Data),
     select_row(Data, Column, Value, DataWithoutRow),
     csv_write_file(File, DataWithoutRow).
+
 
 % Helper predicate to check if an element exists in a list
 element_in_list(Element, List) :-
