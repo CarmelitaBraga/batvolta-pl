@@ -1,6 +1,7 @@
-:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4]).
+:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4, write_csv_row/2, write_csv_row_all_steps/2]).
 
 :- use_module(library(csv)).
+:- use_module('../Util/Utils.pl').
 
 select_row([], _, _, []).
 select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
@@ -19,6 +20,18 @@ write_csv_row(File, Data) :-
         csv_write_file(File, Data)
     ).
 % ?- write_csv('database/caronas.csv', [row(1,233,4,'5g','gtgt','gdg','bt')]).
+
+% Create or Append
+write_csv_row_all_steps(File, Data) :-
+    maplist(parseElement, Data, ParsedList), 
+    listToRow(ParsedList, Row),
+    (exists_file(File) -> 
+        open(File, append, Stream),
+        csv_write_stream(Stream, [Row], []),
+        close(Stream)
+    ;
+        csv_write_file(File, [Row])
+    ).
 
 % Read a specific row
 read_csv_row(File, Column, Value, Row) :-
@@ -40,58 +53,19 @@ delete_csv_row(File, Column, Value) :-
 
 
 % Helper predicate to check if an element exists in a list
-% element_in_list(Element, List) :-
-%     split_string(List, ";", "", ListItems),
-%     member(Element, ListItems).
+element_in_list(Element, List) :-
+    split_string(List, ";", "", ListItems),
+    member(Element, ListItems).
 
 % Main predicate to select rows
-% select_row_by_list_element([], _, _, []).
-% select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
-%     arg(Column, Row, Value),
-%     element_in_list(Element, Value), !,
-%     select_row_by_list_element(Rest, Column, Element, NewRest).
-% select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
-%     select_row_by_list_element(Rest, Column, Element, NewRest).
+select_row_by_list_element([], _, _, []).
+select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
+    arg(Column, Row, Value),
+    element_in_list(Element, Value), !,
+    select_row_by_list_element(Rest, Column, Element, NewRest).
+select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
+    select_row_by_list_element(Rest, Column, Element, NewRest).
 
 read_csv_row_by_list_element(File, Column, Element, Row) :-
     csv_read_file(File, Data),
     select_row_by_list_element(Data, Column, Element, Row).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% % Helper predicate to check if an element exists in a list
-% element_in_list(Element, List) :-
-%     split_string(List, ";", "", ListItems),
-%     maplist(atom_number, ListItems, Numbers),  % Convert strings to numbers
-%     member(Element, Numbers).
-
-% Helper predicate to check if an element exists in a list
-% element_in_list(Element, Value) :-
-%     (   is_list(Value)
-%     ->  List = Value
-%     ;   atom_string(Value, ValueStr),
-%         split_string(ValueStr, ";", "", List)
-%     ),
-%     (   number_string(_, Element)
-%     ->  maplist(atom_number, List, Numbers),  % Convert strings to numbers
-%         member(Element, Numbers)
-%     ;   member(Element, List)
-%     ).
-
-split_string_into_list(String, List) :-
-    split_string(String, ";", "", List).
-
-element_in_list(Element, ListString) :-
-    atom_string(ListString, ListStringText),
-    split_string_into_list(ListStringText, List),
-    member(Element, List).
-
-
-select_row_by_list_element([], _, _, []).
-select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
-    arg(Column, Row, Value),
-    atom_string(Value, ValueText),
-    element_in_list(Element, ValueText), !,
-    select_row_by_list_element(Rest, Column, Element, NewRest).
-select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
-    select_row_by_list_element(Rest, Column, Element, NewRest).
