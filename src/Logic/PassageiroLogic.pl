@@ -7,7 +7,7 @@ module(_, [
     carregar_notificacoes_logic/0
 ]).
 
-:- use_module('../Util/Util.pl').
+:- use_module('../Util/Utils.pl').
 :- use_module('../Schemas/SchemaPassageiro.pl').
 
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
