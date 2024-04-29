@@ -38,7 +38,7 @@ atualiza_motorista(Chave, Campo, NovoValor, Retorno) :-
     % Recupera os detalhes do motorista por CPF
     read_csv_row(Caminho, 1, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
     write('sim'),
-    delete_csv_row(Caminho,1,chave),
+    delete_csv_row(Caminho,1,Chave),
     % Atualiza apenas o campo desejado
     (   Campo == 'telefone' -> write_csv_row(Caminho,[CPF, Nome, Email, NovoValor, Senha, CNH, CEP, Genero, Regiao])
     ;   Campo == 'senha' -> write_csv_row(Caminho, [CPF, Nome, Email, Telefone, NovoValor, CNH, CEP, Genero, Regiao])

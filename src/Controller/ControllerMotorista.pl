@@ -8,20 +8,20 @@
     
 ]).
 
-realizar_login_motorista(Email, Senha, Retorno) :-
-    write("Entrou realizar login motorista").
 
-realizar_cadastro_motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao,Retorno):-
-    write("Entrou Realizar cadastro motorista").
+realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
+    cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno).
 
-cancelar_cadastro_motorista(Cpf, Senha, Retorno):-
-    write("Entrou cancelar_cadastro_motorista").
+cancelarCadastroMotorista(CPF, Retorno):-
+    remove_motorista(CPF, Retorno).
 
-atualizar_cadastro_motorista(CPF,Coluna, NovoValor, Senha, Retorno):-
-    write("Entrou atualizar cadastro motorista").
+atualizarCadastroMotorista(CPF, Campo, NovoValor):-
+    atualiza_motorista(CPF, Campo, NovoValor).
 
-visualizar_info_motorista(cpf,retorno):-
-    write("Entrou visualizar info motorista").
+recuperarMotoristasPorRegiao(Regiao, Motoristas):-
+    recupera_motoristas_por_regiao(Regiao, Motoristas).
 
-carregar_notificacoes_motorista(CPF, Notificacoes):-
-    write("Entrou em carregar notificacoes morotista").
+recuperarMotoristaPorCPF(CPF, Motorista):-
+    recupera_motoristas_por_cpf(CPF, Motorista).
+    
+
