@@ -1,10 +1,18 @@
-:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4]).
+:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4, update_csv_row/4]).
 
 :- use_module(library(csv)).
 
+% select_row([], _, _, []).
+% select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
+%     arg(Column, Row, Value), !,
+%     select_row(Rest, Column, Value, NewRest).
+% select_row([_|Rest], Column, Value, NewRest) :-
+%     select_row(Rest, Column, Value, NewRest).
+
 select_row([], _, _, []).
 select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
-    arg(Column, Row, Value), !,
+    arg(Column, Row, ArgValue),
+    ArgValue \= Value, !,
     select_row(Rest, Column, Value, NewRest).
 select_row([_|Rest], Column, Value, NewRest) :-
     select_row(Rest, Column, Value, NewRest).
@@ -27,17 +35,18 @@ read_csv_row(File, Column, Value, Row) :-
 
 % Update a specific row
 update_csv_row(File, Column, Value, UpdatedRow) :-
-    read_csv_row(File, Column, Value, Data),
+    csv_read_file(File, Data),
     select_row(Data, Column, Value, DataWithoutOldRow),
     append(DataWithoutOldRow, [UpdatedRow], UpdatedData),
-    csv_write_file(File, UpdatedData).
+    open(File, write, Stream),
+    csv_write_stream(Stream, UpdatedData, []),
+    close(Stream).
 
 % Delete a specific row
 delete_csv_row(File, Column, Value) :-
     csv_read_file(File, Data),
     select_row(Data, Column, Value, DataWithoutRow),
     csv_write_file(File, DataWithoutRow).
-
 
 % Helper predicate to check if an element exists in a list
 % element_in_list(Element, List) :-
@@ -57,27 +66,6 @@ read_csv_row_by_list_element(File, Column, Element, Row) :-
     csv_read_file(File, Data),
     select_row_by_list_element(Data, Column, Element, Row).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% % Helper predicate to check if an element exists in a list
-% element_in_list(Element, List) :-
-%     split_string(List, ";", "", ListItems),
-%     maplist(atom_number, ListItems, Numbers),  % Convert strings to numbers
-%     member(Element, Numbers).
-
-% Helper predicate to check if an element exists in a list
-% element_in_list(Element, Value) :-
-%     (   is_list(Value)
-%     ->  List = Value
-%     ;   atom_string(Value, ValueStr),
-%         split_string(ValueStr, ";", "", List)
-%     ),
-%     (   number_string(_, Element)
-%     ->  maplist(atom_number, List, Numbers),  % Convert strings to numbers
-%         member(Element, Numbers)
-%     ;   member(Element, List)
-%     ).
-
 split_string_into_list(String, List) :-
     split_string(String, ";", "", List).
 
@@ -85,7 +73,6 @@ element_in_list(Element, ListString) :-
     atom_string(ListString, ListStringText),
     split_string_into_list(ListStringText, List),
     member(Element, List).
-
 
 select_row_by_list_element([], _, _, []).
 select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
