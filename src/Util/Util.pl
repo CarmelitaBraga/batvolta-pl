@@ -1,4 +1,4 @@
-module(Util,[
+:- module(_,[
     nullOrEmpty/1,
     validarCPF/1,
     validarEmail/1,

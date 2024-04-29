@@ -1,4 +1,4 @@
-:- module(MotoristaSchema, [
+:- module(_, [
     cadastra_motorista/10,
     remove_motorista/2,
     atualiza_motorista/4,
@@ -14,11 +14,15 @@
 %Helpers
 possui_motorista(Chave):-
     file(Caminho),
-    read_csv_row(Caminho, 1, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]).
+    read_csv_row(Caminho, 1, Chave, [row(_, _, _, _, _, _, _, _, _)]).
+
+possui_motorista_email(Chave):-
+    file(Caminho),
+    read_csv_row(Caminho, 3, Chave, [row(_, _, _, _, _, _, _, _, _)]).
 
 possui_cnh(Chave):-
     file(Caminho),
-    read_csv_row(Caminho, 6, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]).
+    read_csv_row(Caminho, 6, Chave, [row(_, _, _, _, _, _, _, _, _)]).
 
 converte_para_motorista_str(row(CPF, Nome, Email, Senha, Telefone, CNH, CEP, Genero, Regiao), Str) :-
     motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str).
@@ -31,12 +35,18 @@ cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, 
     % Verificar se o CPF já está cadastrado
     ( possui_motorista(CPF) ->
         Retorno ='CPF ja cadastrado.'
-    ; possui_cnh(CNH) ->
-        Retorno = 'CNH ja cadastrada.'
+    ;   
+        (possui_motorista_email(email) ->
+            Retorno = 'Email ja cadastrado.'
         ;
-            motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str),
-            write_csv_row('../../database/motoristas.csv', [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
-            Retorno = 'Cadastro realizado com sucesso.'
+            (possui_cnh(CNH) ->
+                Retorno = 'CNH ja cadastrada.'
+                ;   
+                    file(Caminho),
+                    write_csv_row(Caminho, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
+                    Retorno = 'Cadastro realizado com sucesso.'
+            )   
+        )
     ).
 
 
@@ -56,10 +66,10 @@ atualiza_motorista(Chave, Campo, NovoValor, Retorno) :-
         file(Caminho),
         read_csv_row(Caminho, 1, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
         delete_csv_row(Caminho,1,Chave),
-        (   Campo == 'telefone' -> cadastra_motorista(CPF, Nome, Email, NovoValor, Senha, CNH, CEP, Genero, Regiao,Resposta)
-        ;   Campo == 'senha' -> cadastra_motorista(CPF, Nome, Email, Telefone, NovoValor, CNH, CEP, Genero, Regiao,Resposta)
-        ;   Campo == 'cep' -> cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, NovoValor, Genero, Regiao,Resposta)
-        ;   Campo == 'regiao' -> cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, NovoValor,Resposta)
+        (   Campo == 'telefone' -> cadastra_motorista(CPF, Nome, Email, NovoValor, Senha, CNH, CEP, Genero, Regiao,_)
+        ;   Campo == 'senha' -> cadastra_motorista(CPF, Nome, Email, Telefone, NovoValor, CNH, CEP, Genero, Regiao,_)
+        ;   Campo == 'cep' -> cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, NovoValor, Genero, Regiao,_)
+        ;   Campo == 'regiao' -> cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, NovoValor,_)
         ;   true
         ),
         Retorno = 'Motorista atualizado com sucesso.'
@@ -80,6 +90,16 @@ recupera_motoristas_por_cpf(Chave, Motorista) :-
         read_csv_row(Caminho, 1, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
         motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str),
         Motorista = Str
+    ;
+        Motorista = 'Motorista nao cadastrado.'
+    ).
+
+% Consulta para recuperar os motoristas por cpf
+recupera_motoristas_por_email(Chave, Motorista) :-
+    (possui_motorista(Chave) -> 
+        file(Caminho),
+        read_csv_row(Caminho, 3, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
+        Motorista = [CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao]
     ;
         Motorista = 'Motorista nao cadastrado.'
     ).

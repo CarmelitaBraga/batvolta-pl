@@ -42,7 +42,7 @@ cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Reto
 ).
 
 
-atualiza_Logic(CPF, Campo, NovoValor, Retorno):-
+atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno):-
         (confere_senha(CPF, Senha) ->
             atualiza_motorista(CPF,Campo,NovoValor,Resposta),
             Retorno = Resposta
@@ -50,7 +50,7 @@ atualiza_Logic(CPF, Campo, NovoValor, Retorno):-
             Retorno = "Senha incorreta, tente novamente."
         ).
 
-remove_Logic(CPF, Campo, NovoValor, Retorno):-
+remove_Logic(CPF,Senha,Retorno):-
     (confere_senha(CPF, Senha) ->
         remove_motorista(CPF,Resposta),
         Retorno = Resposta
