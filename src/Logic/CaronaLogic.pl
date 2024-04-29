@@ -123,10 +123,10 @@ iniciar_carona_status(Cid) :-
     csv_file(File),
     carona_column(CaronaColumn),
     read_csv_row(File, CaronaColumn , Cid, Caronas),
-    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
     (Caronas == [] ->
         write('Nenhuma carona correspondente a esse ID foi encontrada!')
     ;
+        member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
         (Status == naoIniciada ->
             UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, emAndamento, Vagas, Avaliacao),
             update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
@@ -139,10 +139,10 @@ iniciar_carona_status(Cid) :-
     csv_file(File),
     carona_column(CaronaColumn),
     read_csv_row(File, CaronaColumn , Cid, Caronas),
-    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
     (Caronas == [] ->
         write('Nenhuma carona correspondente a esse ID foi encontrada!')
     ;
+        member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
         (Status == naoIniciada ->
             UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, emAndamento, Vagas, Avaliacao),
             update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
@@ -151,14 +151,16 @@ iniciar_carona_status(Cid) :-
         )
     ).
     
+    
+    
 finalizar_carona_status(Cid) :-
     csv_file(File),
     carona_column(CaronaColumn),
     read_csv_row(File, CaronaColumn , Cid, Caronas),
-    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
     (Caronas == [] ->
         write('Nenhuma carona correspondente a esse ID foi encontrada!')
     ;
+        member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
         (Status == emAndamento ->
             UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, finalizada, Vagas, Avaliacao),
             update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
@@ -171,10 +173,10 @@ cancelar_carona(Cid) :-
     csv_file(File),
     carona_column(CaronaColumn),
     read_csv_row(File, CaronaColumn , Cid, Caronas),
-    member(row(Cid, _, _, _, _, _, _, Status, _, _), Caronas),
     (Caronas == [] ->
         write('Nenhuma carona correspondente a esse ID foi encontrada!')
     ;
+        member(row(Cid, _, _, _, _, _, _, Status, _, _), Caronas),
         (\+ Status == naoIniciada ->
             write('Essa carona nao pode ser cancelada!')
             ;
