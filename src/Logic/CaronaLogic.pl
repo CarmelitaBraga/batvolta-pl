@@ -74,11 +74,11 @@ remover_passageiro(IdCarona, PassageiroCpf):-
     carona_column(Carona_Column),
     passageiros_column(Pass_Column),
     read_csv_row_by_list_element(File, Pass_Column, PassageiroCpf, Caronas),
-    member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
     (Caronas == [] ->
         write('Nenhuma carona correspondente a passageiro encontrada!'),
         UpdatedRow = row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao)
     ;  
+        member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
         atom_string(Passageiros, PassageirosString),
         split_string(PassageirosString, ";", "", PassageirosList),
         delete(PassageirosList, PassageiroCpf, UpdatedPassageirosList),
@@ -134,25 +134,7 @@ iniciar_carona_status(Cid) :-
             write('Essa carona não pode ser iniciada!')
         )
     ).
-    
-iniciar_carona_status(Cid) :-
-    csv_file(File),
-    carona_column(CaronaColumn),
-    read_csv_row(File, CaronaColumn , Cid, Caronas),
-    (Caronas == [] ->
-        write('Nenhuma carona correspondente a esse ID foi encontrada!')
-    ;
-        member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
-        (Status == naoIniciada ->
-            UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, emAndamento, Vagas, Avaliacao),
-            update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
-            ;
-            write('Essa carona não pode ser iniciada!')
-        )
-    ).
-    
-    
-    
+        
 finalizar_carona_status(Cid) :-
     csv_file(File),
     carona_column(CaronaColumn),
