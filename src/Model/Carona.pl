@@ -1,4 +1,4 @@
-:- module(_, [caronaToStr/2]).
+:- module(_, [caronaToStr/2, carona/10, statusCarona/1, carona_to_list/2]).
 
 :- use_module(library(csv)).
 
@@ -53,3 +53,6 @@ caronaToStr(row(Cid, Hora, Date, Destinos, Motorista, Passageiros, Valor, Status
     % Concatenate all formatted fields into a string
     atomic_list_concat([CidStr, HoraStr, DateStr, DestinosStr, MotoristaStr, PassageirosStr, ValorStr, StatusStr, NumPassageirosMaximosStr, AvaliacaoPassageirosStr], ', ', Str).
 
+% Predicado para converter uma instância de carona em uma lista de seus argumentos
+carona_to_list(carona(ID, Hora, Data, Destinos, Motorista, Passageiros, Valor, Status, NumPassageirosMaximos, AvaliacaoPassageiros),
+            [ID, Hora, Data, Destinos, Motorista, Passageiros, Valor, Status, NumPassageirosMaximos, AvaliacaoPassageiros]).

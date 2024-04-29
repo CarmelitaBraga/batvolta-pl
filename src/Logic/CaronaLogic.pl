@@ -1,19 +1,29 @@
 :- module(_,[
     possui_carona_origem_destino/2, 
+<<<<<<< HEAD
     mostrar_caronas_origem_destino/3, 
     mostrar_caronas_passageiro_participa/2,
     remover_passageiro/2
     % embarcar_passageiro_carona/2
+=======
+    mostra_caronas_origem_destino/3, 
+    mostrar_caronas_passageiro_participa/2,
+    criar_carona_motorista/6
+>>>>>>> b2c5721c579462d04b70d08f44445a9366fe9eb0
     ]).
 
-:- use_module('src/Schemas/CsvModule.pl').
-:- use_module('src/Model/Carona.pl').
+:- use_module('../Schemas/CsvModule.pl').
+:- use_module('../Model/Carona.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
+<<<<<<< HEAD
 csv_file('database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
+=======
+csv_file('../../database/caronas.csv').
+>>>>>>> b2c5721c579462d04b70d08f44445a9366fe9eb0
 destinos_column(4).
 motorista_column(5).
 passageiros_column(6).
@@ -21,6 +31,11 @@ valor_column(7).
 status_column(8).
 lim_pass_column(9).
 avaliacao_column(10).
+
+% Fato dinâmico para gerar o id das caronas
+id(0).
+incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
+:- dynamic id/1.
 
 % Predicate to check if a route exists from Origem to Destino
 possui_carona_origem_destino(Origem, Destino):-
@@ -99,3 +114,13 @@ remover_passageiro(IdCarona, PassageiroCpf):-
 %                     criarViagemPassageiro idCarona False (getCaminho carona origem destino) 0 idPassageiro
 %                     return "Registro de Passageiro em Carona criado com sucesso!"
 
+criar_carona_motorista(Hora, Data, Destinos, MotoristaCpf, Valor, NumPassageirosMaximos) :-
+    csv_file(CsvFile),
+    id(ID),
+    Carona = carona(ID, Hora, Data, Destinos, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, -1),
+    incrementa_id,
+    % Converte a instância de Carona em uma lista
+    carona_to_list(Carona, ListaCarona),
+    % Escreve a linha no arquivo CSV
+    write_csv_row_all_steps(CsvFile, ListaCarona).
+    
