@@ -38,7 +38,7 @@ update_csv_row(File, Column, Value, UpdatedRow) :-
 select_row_delete([Row|Rest], Column, Value, Rest) :-
     arg(Column, Row, Value), !.
 select_row_delete([Row|Rest], Column, Value, [Row|NewRest]) :-
-    select_row(Rest, Column, Value, NewRest).
+    select_row_delete(Rest, Column, Value, NewRest).
 
 % Delete a specific row
 delete_csv_row(File, Column, Value) :-
