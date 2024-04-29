@@ -1,4 +1,10 @@
-:- dynamic motorista/9.
+:- module(MotoristaSchema, [
+    cadastra_motorista/10,
+    remove_motorista/2,
+    atualiza_motorista/4,
+    recupera_motoristas_por_regiao/2,
+    recupera_motoristas_por_cpf/2
+]).
 
 :- use_module("CsvModule.pl").
 :- use_module("../Model/MotoristaModel.pl").
@@ -77,3 +83,9 @@ recupera_motoristas_por_cpf(Chave, Motorista) :-
     ;
         Motorista = 'Motorista nao cadastrado.'
     ).
+
+
+confere_senha(CPF, Senha) :-
+    file(Caminho),
+    read_csv_row(Caminho, 5, Senha, [row(CPF, _, _, _, SenhaCadastrada, _, _, _, _)]),
+    Senha == SenhaCadastrada.

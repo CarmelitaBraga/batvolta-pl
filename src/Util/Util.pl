@@ -29,12 +29,12 @@ generos(['f', 'm', 'nb']).
 
 validarGenero(Genero) :-
     generos(Generos),
-    maplist(downcase_atom, Generos, GenerosMinuscula),
-    \+ member(Genero, GenerosMinuscula).
+    downcase_atom(Genero, Minusculo),
+    \+ member(Minusculo, Generos).
 
 regioes_brasil(['norte', 'nordeste', 'centro-oeste', 'sudeste', 'sul']).
 
 validaRegiao(Regiao) :-
     regioes_brasil(Regioes),
-    maplist(downcase_atom, Regioes, RegioesMinuscula),
-    \+ member(Regiao, RegioesMinuscula).
+    downcase_atom(Regiao, Minusculo),
+    \+ member(Minusculo, Regioes).

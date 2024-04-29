@@ -23,7 +23,15 @@ write_csv_row(File, Data) :-
 % Read a specific row
 read_csv_row(File, Column, Value, Row) :-
     csv_read_file(File, Data),
-    select_row(Data, Column, Value, Row).
+    select_row_read(Data, Column, Value, Row).
+
+select_row_read([], _, _, []).
+select_row_read([Row|Rest], Column, Value, [Row|NewRest]) :-
+    arg(Column, Row, ArgValue),
+    ArgValue == Value, !,
+    select_row_read(Rest, Column, Value, NewRest).
+select_row_read([_|Rest], Column, Value, NewRest) :-
+    select_row_read(Rest, Column, Value, NewRest).
 
 row_to_list(row(Row), Row).
 
