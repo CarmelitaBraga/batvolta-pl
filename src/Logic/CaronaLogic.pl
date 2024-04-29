@@ -3,19 +3,22 @@
     mostrar_caronas_origem_destino/3, 
     mostrar_caronas_passageiro_participa/2,
     remover_passageiro/2,
-    criar_carona_motorista/6
+    criar_carona_motorista/6,
     % embarcar_passageiro_carona/2
+    iniciar_carona_status/1,
+    finalizar_carona_status/1,
+    cancelar_carona/1
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/Carona.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-csv_file('database/caronas.csv').
+% csv_file('/database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
-% csv_file('../../database/caronas.csv').
+csv_file('../../database/caronas.csv').
 destinos_column(4).
 motorista_column(5).
 passageiros_column(6).
@@ -116,3 +119,66 @@ criar_carona_motorista(Hora, Data, Destinos, MotoristaCpf, Valor, NumPassageiros
     % Escreve a linha no arquivo CSV
     write_csv_row_all_steps(CsvFile, ListaCarona).
     
+iniciar_carona_status(Cid) :-
+    csv_file(File),
+    carona_column(CaronaColumn),
+    read_csv_row(File, CaronaColumn , Cid, Caronas),
+    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
+    (Caronas == [] ->
+        write('Nenhuma carona correspondente a esse ID foi encontrada!')
+    ;
+        (Status == naoIniciada ->
+            UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, emAndamento, Vagas, Avaliacao),
+            update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
+            ;
+            write('Essa carona não pode ser iniciada!')
+        )
+    ).
+    
+iniciar_carona_status(Cid) :-
+    csv_file(File),
+    carona_column(CaronaColumn),
+    read_csv_row(File, CaronaColumn , Cid, Caronas),
+    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
+    (Caronas == [] ->
+        write('Nenhuma carona correspondente a esse ID foi encontrada!')
+    ;
+        (Status == naoIniciada ->
+            UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, emAndamento, Vagas, Avaliacao),
+            update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
+            ;
+            write('Essa carona não pode ser iniciada!')
+        )
+    ).
+    
+finalizar_carona_status(Cid) :-
+    csv_file(File),
+    carona_column(CaronaColumn),
+    read_csv_row(File, CaronaColumn , Cid, Caronas),
+    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
+    (Caronas == [] ->
+        write('Nenhuma carona correspondente a esse ID foi encontrada!')
+    ;
+        (Status == emAndamento ->
+            UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, finalizada, Vagas, Avaliacao),
+            update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
+            ;
+            write('Essa carona não pode ser finalizada!')
+        )
+    ).
+
+cancelar_carona(Cid) :-
+    csv_file(File),
+    carona_column(CaronaColumn),
+    read_csv_row(File, CaronaColumn , Cid, Caronas),
+    member(row(Cid, _, _, _, _, _, _, Status, _, _), Caronas),
+    (Caronas == [] ->
+        write('Nenhuma carona correspondente a esse ID foi encontrada!')
+    ;
+        (\+ Status == naoIniciada ->
+            write('Essa carona nao pode ser cancelada!')
+            ;
+            delete_csv_row(File,CaronaColumn, Cid),
+            write('Carona deletada com sucesso!')
+        )
+    ).
