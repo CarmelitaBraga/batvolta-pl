@@ -1,29 +1,21 @@
 :- module(_,[
-    possui_carona_origem_destino/2, 
-<<<<<<< HEAD
+    possui_carona_origem_destino/2,
     mostrar_caronas_origem_destino/3, 
     mostrar_caronas_passageiro_participa/2,
-    remover_passageiro/2
-    % embarcar_passageiro_carona/2
-=======
-    mostra_caronas_origem_destino/3, 
-    mostrar_caronas_passageiro_participa/2,
+    remover_passageiro/2,
     criar_carona_motorista/6
->>>>>>> b2c5721c579462d04b70d08f44445a9366fe9eb0
+    % embarcar_passageiro_carona/2
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/Carona.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-<<<<<<< HEAD
 csv_file('database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
-=======
-csv_file('../../database/caronas.csv').
->>>>>>> b2c5721c579462d04b70d08f44445a9366fe9eb0
+% csv_file('../../database/caronas.csv').
 destinos_column(4).
 motorista_column(5).
 passageiros_column(6).
