@@ -1,4 +1,11 @@
-:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4, update_csv_row/4, write_csv_row/2, write_csv_row_all_steps/2]).
+:- module(_, 
+    [read_csv_row/4, 
+    read_csv_row_by_list_element/4, 
+    update_csv_row/4, 
+    write_csv_row/2, 
+    write_csv_row_all_steps/2, 
+    delete_csv_row/3
+    ]).
 
 :- use_module(library(csv)).
 :- use_module('../Util/Utils.pl').
