@@ -74,19 +74,19 @@ remover_passageiro(IdCarona, PassageiroCpf):-
     carona_column(Carona_Column),
     passageiros_column(Pass_Column),
     read_csv_row_by_list_element(File, Pass_Column, PassageiroCpf, Caronas),
-    member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
     (Caronas == [] ->
         write('Nenhuma carona correspondente a passageiro encontrada!'),
-        UpdatedRow = row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao)
-    ;  
+        _ = row(_, _, _, _, _, _, _, _, _, _)
+    ;
+        member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
         atom_string(Passageiros, PassageirosString),
         split_string(PassageirosString, ";", "", PassageirosList),
         delete(PassageirosList, PassageiroCpf, UpdatedPassageirosList),
         atomics_to_string(UpdatedPassageirosList, ";", UpdatedPassageiros),
-        UpdatedRow = row(IdCarona, Hora, Data, Rota, MotoristaCpf, UpdatedPassageiros, Valor, Status, Vagas, Avaliacao)    ),
+        UpdatedRow = row(IdCarona, Hora, Data, Rota, MotoristaCpf, UpdatedPassageiros, Valor, Status, Vagas, Avaliacao),
         update_csv_row(File, Carona_Column, IdCarona, UpdatedRow),
-        write('Passageiro removido com sucesso!').
-
+        write('Passageiro removido com sucesso!')
+    ).
 % remover_passageiro(2,"11221122112", R).
 
 % solicitar_carona_passageiro/5,
