@@ -5,6 +5,7 @@
     remove_passageiro/2,
     atualiza_passageiro/4,
     get_passageiro_by_cpf/2,
+    get_passageiro_by_email/2,
     confere_senha/2
 ]).
 
@@ -70,6 +71,15 @@ get_passageiro_by_cpf(CPF, Retorno) :-
     filePath(File),
     (   existe_passageiro_by_cpf(CPF) ->
         read_csv_row(File, 2, CPF, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
+        Retorno = [Nome,CPF,Genero,Email,Telefone,CEP,Senha]
+    ;   
+        Retorno = 'Passageiro não encontrado'
+    ).
+
+get_passageiro_by_email(Email, Retorno) :-
+    filePath(File),
+    (   existe_passageiro_by_email(Email) ->
+        read_csv_row(File, 4, Email, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
         Retorno = [Nome,CPF,Genero,Email,Telefone,CEP,Senha]
     ;   
         Retorno = 'Passageiro não encontrado'

@@ -47,8 +47,8 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
 remove_passageiro_logic(CPF, Senha, Retorno):-
     ( validar_cpf(CPF) ->  Retorno = 'CPF não atende aos requisitos'
     ;   get_passageiro_by_cpf(CPF, Retorno),
-        (   confere_senha(Senha)
-        ->  (   remove_passageiro(CPF),
+        (   confere_senha(CPF,Senha)
+        ->  (   remove_passageiro(CPF, Retorno),
                 Retorno = 'Passageiro removido com sucesso'
             )
         ;   Retorno = 'Senha incorreta'
@@ -63,8 +63,8 @@ visualiza_info_logic():-
     write("Logic do visualiza").
 
 login_passageiro_logic(Email, Senha, Retorno):-
-    ( 
-        passageiro(_, _, _, Email, _, _, Senha)
+    (   existe_passageiro_by_email(Email),
+        confere_senha(Senha)
         ->  Retorno = get_passageiro_by_email(Email)
     ;
         confere_senha(Senha)
