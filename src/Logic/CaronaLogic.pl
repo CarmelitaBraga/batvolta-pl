@@ -14,11 +14,11 @@
 :- use_module('../Model/Carona.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-% csv_file('/database/caronas.csv').
+csv_file('database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
-csv_file('../../database/caronas.csv').
+% csv_file('../../database/caronas.csv').
 destinos_column(4).
 motorista_column(5).
 passageiros_column(6).
@@ -74,10 +74,7 @@ remover_passageiro(IdCarona, PassageiroCpf):-
     carona_column(Carona_Column),
     passageiros_column(Pass_Column),
     read_csv_row_by_list_element(File, Pass_Column, PassageiroCpf, Caronas),
-    (Caronas == [] ->
-        write('Nenhuma carona correspondente a passageiro encontrada!'),
-        _ = row(_, _, _, _, _, _, _, _, _, _)
-    ;
+    (member(row(IdCarona, _, _, _, _, _, _, _, _, _), Caronas) ->
         member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
         atom_string(Passageiros, PassageirosString),
         split_string(PassageirosString, ";", "", PassageirosList),
@@ -86,6 +83,9 @@ remover_passageiro(IdCarona, PassageiroCpf):-
         UpdatedRow = row(IdCarona, Hora, Data, Rota, MotoristaCpf, UpdatedPassageiros, Valor, Status, Vagas, Avaliacao),
         update_csv_row(File, Carona_Column, IdCarona, UpdatedRow),
         write('Passageiro removido com sucesso!')
+    ;
+        write('Nenhuma carona correspondente a passageiro encontrada!'),
+        _ = row(_, _, _, _, _, _, _, _, _, _)
     ).
 % remover_passageiro(2,"11221122112", R).
 

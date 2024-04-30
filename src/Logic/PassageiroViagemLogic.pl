@@ -1,7 +1,9 @@
 :- module(_, 
     [info_trecho_by_carona_passageiro/3,
     cancelar_viagem_passageiro/3,
-    get_viagens_passageiro_sem_avaliacao/2
+    get_viagens_passageiro_sem_avaliacao/2,
+    mostrar_all_viagens_passageiro/2,
+    cancelar_viagem_passageiro/3
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -65,7 +67,6 @@ info_trecho_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):-
 % info_trecho_by_carona_passageiro(7,09876543210, T).
 % info_trecho_by_carona_passageiro(8,09876543210, T).
 
-% cancelar_carona_passageiro/2,
 cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
     get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
     (Viagem = [] ->
@@ -84,6 +85,12 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
 % cancelar_viagem_passageiro(2,000000, R).
 
 % mostrar_viagem_passageiro/2,
-% get_viagem_sem_avaliacao/2,
+mostrar_all_viagens_passageiro(PassageiroCpf, Viagens):- 
+    csv_file(File),
+    number_string(PassageiroCpf, PassageiroStr),
+    passageiro_column(Pass_Column),
+    read_csv_row(File, Pass_Column, PassageiroCpf, Viagens),
+    findall(Viagem, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroStr)), Viagens).
+
 % avaliar_motorista/4
 % criarViagemPassageiro
