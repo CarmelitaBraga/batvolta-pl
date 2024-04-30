@@ -3,7 +3,8 @@
     cancelar_viagem_passageiro/3,
     get_viagens_passageiro_sem_avaliacao/2,
     mostrar_all_viagens_passageiro/2,
-    cancelar_viagem_passageiro/3
+    cancelar_viagem_passageiro/3,
+    carona_avalia_motorista/4
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -95,5 +96,21 @@ mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):-
     read_csv_row(File, Pass_Column, PassageiroCpf, Viagens),
     findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 
-% avaliar_motorista/4
-% criarViagemPassageiro
+carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):- 
+    csv_file(File),
+    nota_sem_avaliacao(Sem_Nota),
+    viagem_pass_column(Viagem_Column),
+    (Avaliacao =< 0 ; Avaliacao > 5 ->
+        Resp = 'Valor inválido!'
+    ;
+        get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
+        (member(row(IdViagem,IdCarona,Aceito,Rota,Sem_Nota,PassageiroCpf), Viagem) ->
+            Updated_Row = row(IdViagem,IdCarona,Aceito,Rota,Avaliacao,PassageiroCpf),
+            update_csv_row(File, Viagem_Column, IdViagem, Updated_Row)
+        ;
+            Resp = 'Nenhuma carona não avaliada encontrada com este id.'
+    )).
+
+
+% criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
+% .

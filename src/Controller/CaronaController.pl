@@ -5,10 +5,10 @@
     cancelar_carona_passageiro/3,
     mostrar_viagem_passageiro/2,
     desembarcar_passageiro/2,
-    get_viagem_sem_avaliacao/2
+    get_viagem_sem_avaliacao/2,
+    avaliar_motorista/4
     % solicitar_carona_passageiro/5,
-    % embarcar_passageiro/2,
-    % avaliar_motorista/4
+    % embarcar_passageiro/2
     ]).
 
 :- use_module('src/Logic/CaronaLogic.pl').
@@ -55,6 +55,8 @@ get_viagem_sem_avaliacao(PassageiroCpf, Caronas):-
 
 % embarcar_passageiro(IdCarona, PassageiroCpf).
 
-% avaliar_motorista(IdCarona, PassageiroCpf, Avaliacao, Resultado).
+avaliar_motorista(IdCarona, PassageiroCpf, Avaliacao, Resultado):-
+    carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resultado).
+% avaliar_motorista(7,09876543210,5,R).
 
 % Carona & motorista
