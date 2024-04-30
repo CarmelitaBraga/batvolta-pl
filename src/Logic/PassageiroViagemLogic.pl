@@ -4,11 +4,17 @@
     get_viagens_passageiro_sem_avaliacao/2,
     mostrar_all_viagens_passageiro/2,
     cancelar_viagem_passageiro/3,
-    carona_avalia_motorista/4
+    carona_avalia_motorista/4,
+    criar_viagem_passageiro/5
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
 :- use_module('src/Model/PassageiroViagem.pl').
+
+% Fato dinâmico para gerar o id das caronas
+id(0).
+incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
+:- dynamic id/1.
 
 csv_file('database/viagemPassageiros.csv').
 viagem_pass_column(1).
@@ -58,7 +64,6 @@ viagem_aceita(IdViagem):-
         false
     ).
 
-% Recebe um átomo
 info_trecho_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):- 
     get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
     (Viagem = [] ->
@@ -88,7 +93,6 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
 % cancelar_viagem_passageiro(7,09876543210, R).
 % cancelar_viagem_passageiro(2,000000, R).
 
-% mostrar_viagem_passageiro/2,
 mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):- 
     csv_file(File),
     number_string(PassageiroCpf, PassageiroStr),
@@ -111,6 +115,12 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
             Resp = 'Nenhuma carona não avaliada encontrada com este id.'
     )).
 
-
-% criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
-% .
+criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
+    id(ID),
+    csv_file(File),
+    (Aceito == "False" ; Aceito == "True"),
+    Viagem = passageiroViagem(ID, IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf),
+    incrementa_id,
+    viagem_to_list(Viagem, ListaViagem),
+    write_csv_row_all_steps(File, ListaViagem).
+% criar_viagem_passageiro(7,"True","Osasco;Disney", 0, 111555888).
