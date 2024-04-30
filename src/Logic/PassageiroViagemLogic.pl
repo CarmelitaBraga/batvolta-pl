@@ -7,6 +7,7 @@
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
+:- use_module('src/Model/PassageiroViagem.pl').
 
 csv_file('database/viagemPassageiros.csv').
 viagem_pass_column(1).
@@ -27,13 +28,13 @@ get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):-
         Resp = []
     ).
 
-get_viagens_passageiro_sem_avaliacao(PassageiroCpf, Resp):-
+get_viagens_passageiro_sem_avaliacao(PassageiroCpf, ViagensStr):-
     csv_file(File),
     number_string(PassageiroCpf, PassageiroStr),
     nota_sem_avaliacao(Sem_Nota),
     avaliacao_column(Aval_Column),
     read_csv_row(File, Aval_Column, Sem_Nota, Viagens),
-    findall(Viagem, (member(Viagem, Viagens), Viagem = row(_, _, _, _, Sem_Nota, Passageiro), atom_string(Passageiro, PassageiroStr)), Resp).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, Sem_Nota, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 % get_viagens_passageiro_sem_avaliacao(09876543210,R).
 % get_viagens_passageiro_sem_avaliacao(121212,R).
 % get_viagens_passageiro_sem_avaliacao(000000,R).
@@ -63,6 +64,8 @@ info_trecho_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):-
         Resp = 'Nenhum trecho correspondente a passageiro encontrado!'
     ;
         Resp = Viagem
+        % Viagem = [V|_],
+        % viagemToStr(V, Resp)
     ).
 % info_trecho_by_carona_passageiro(7,09876543210, T).
 % info_trecho_by_carona_passageiro(8,09876543210, T).
@@ -85,12 +88,12 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
 % cancelar_viagem_passageiro(2,000000, R).
 
 % mostrar_viagem_passageiro/2,
-mostrar_all_viagens_passageiro(PassageiroCpf, Viagens):- 
+mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):- 
     csv_file(File),
     number_string(PassageiroCpf, PassageiroStr),
     passageiro_column(Pass_Column),
     read_csv_row(File, Pass_Column, PassageiroCpf, Viagens),
-    findall(Viagem, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroStr)), Viagens).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 
 % avaliar_motorista/4
 % criarViagemPassageiro
