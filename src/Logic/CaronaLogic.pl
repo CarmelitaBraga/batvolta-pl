@@ -69,6 +69,33 @@ mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     % verificar se passageiro existe
 % .
 
+% adicionarPassageiro :: Int -> String -> IO String
+% adicionarPassageiro caronaId passageiro = do
+%     maybeCarona <- getCaronaById [caronaId]
+%     case maybeCarona of
+%         [] -> return "Essa carona não existe!"
+%         [carona] -> do
+%             teste <- infoTrechoByCaronaPassageiro caronaId passageiro
+%             if teste /= "Trecho de carona inexistente para o passageiro informado!" then do
+%                 if status carona == read "EmAndamento" then do
+%                     viagem <- getViagemByCaronaPassageiro caronaId passageiro
+%                     if aceita (head viagem) then do
+%                         bool <- lugaresDisponiveis carona
+%                         if bool then do
+%                             caronaAtualizada <- addPassageiro carona passageiro
+%                             return "Passageiro adicionado com sucesso!"
+
+%                         else if numPassageirosMaximos carona == 1
+%                             then return "Carona sem vagas!"
+%                             else return "Carona já está cheia!"
+%                     else do
+%                         return "Você não foi aceito nesta carona!"
+%                 else do
+%                     return "Carona nao iniciada ou ja finalizada!"
+%             else do 
+%                 return "Passageiro não está nessa carona."
+
+
 remover_passageiro(IdCarona, PassageiroCpf):-
     csv_file(File),
     carona_column(Carona_Column),
@@ -89,26 +116,56 @@ remover_passageiro(IdCarona, PassageiroCpf):-
     ).
 % remover_passageiro(2,"11221122112", R).
 
-% solicitar_carona_passageiro/5,
-% solicitaParticiparCarona :: Int -> String -> String -> String -> IO String
-% solicitaParticiparCarona idCarona idPassageiro origem destino = do
-%     -- checar se tem rota
-%     -- checar se tem lugar
-%     -- checar se tem carona
-%     -- checar se o passageiro ja esta
-%     maybeCarona <- getCaronaById [idCarona]
-%     if null maybeCarona
-%         then return "Carona inexistente!"
-%         else do
-%             let carona = head maybeCarona
-%                 rota = getCaminho carona origem destino
-%             if null rota
-%                 then return "Essa carona não possui essa rota!"
-%                 else do
-%                     let mensagem = "O Passageiro: " ++ idPassageiro ++ " solicitou entrar na corrida de id: " ++ show idCarona
-%                     insereNotificacao (motorista carona) idPassageiro idCarona mensagem
-%                     criarViagemPassageiro idCarona False (getCaminho carona origem destino) 0 idPassageiro
-%                     return "Registro de Passageiro em Carona criado com sucesso!"
+% TODO: debbugar
+solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
+    csv_file(File),
+    carona_column(Carona_Column),
+    (possui_carona_origem_destino(Origem, Destino) ->
+        read_csv_row_by_list_element(File, Carona_Column, IdCarona, Caronas),
+        (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas) ->
+            split_string(Passageiros, ";", "", ListaPassageiros),
+            length(ListaPassageiros, QtdPass),
+            number_string(PassageiroCpf, PassageiroStr),  % Convert PassageiroCpf to a string
+            (QtdPass == Limite_Vagas, \+ member(PassageiroStr, ListaPassageiros) ->
+                Resp = 'Carona com capacidade máxima de passageiros!'
+            ;
+                format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
+                format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
+                % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
+                criar_viagem_passageiro(IdCarona, "False", Rota, 0, PassageiroCpf),
+                Resp = 'Registro de passageiro em carona criado com sucesso!'
+            )
+        ;
+            Resp = 'Carona inexistente!'
+        )
+    ;
+        Resp = 'Rota não encontrada!'
+    ).
+
+% solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
+%     csv_file(File),
+%     carona_column(Carona_Column),
+%     (possui_carona_origem_destino(Origem, Destino) ->
+%         read_csv_row_by_list_element(File, Carona_Column, IdCarona, Caronas),
+%         (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas) ->
+%             split_string(Passageiros, ";", "", ListaPassageiros),
+%             length(ListaPassageiros, QtdPass),
+%             (QtdPass == Limite_Vagas, \+ member(ListaPassageiros, PassageiroCpf) ->
+%                 Resp = 'Carona com capacidade máxima de passageiros!'
+%             ;
+%                 format((Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id:" [PassageiroCpf, IdCarona]),
+%                 % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
+%                 criar_viagem_passageiro(IdCarona, "False", "~w;~w"[Origem,Destino], 0, PassageiroCpf),
+%               Resp = 'Registro de passageiro em carona criado com sucesso!'
+%             )
+%         ;
+%             Resp = 'Carona inexistente!'
+%         )
+%     ;
+%         Resp = 'Rota não encontrada!'
+%     )
+% .
+
 
 criar_carona_motorista(Hora, Data, Destinos, MotoristaCpf, Valor, NumPassageirosMaximos) :-
     csv_file(CsvFile),
