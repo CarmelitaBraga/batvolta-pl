@@ -3,7 +3,8 @@
         atualiza_Logic/5,
         remove_Logic/3,
         recupera_cpf_logic/2,
-        recupera_notificacao_logic/2
+        recupera_notificacao_logic/2,
+        realiza_login_logic/3
 ]).
 
 :- use_module("../Schemas/MotoristaSchema.pl").
@@ -84,3 +85,10 @@ recupera_regiao_logic(Regiao,Retorno):-
 recupera_notificacao_logic(CPF,Retorno):-
     recupera_notificacao_motoristas(CPF, Lista),
     list_to_string(Lista,'',Retorno).
+
+realiza_login_logic(Email,Senha,Retorno):-
+    (confere_senha_login(Email, Senha) ->
+        recupera_motoristas_por_email(Email,Retorno)
+    ;
+        Retorno = 'Login incorreto.'
+    ).

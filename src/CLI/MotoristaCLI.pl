@@ -5,12 +5,10 @@
 % Importe Controller
 :- use_module("../Controller/ControllerMotorista.pl").
 
-:- dynamic motorista/9.
-:- dynamic carona/7.
 
 % Motorista Logado
-:- dynamic motorista_ref/1.
-%12345678910,Ian,ian@email.com,123456789,a123,123456,77777-777,m,sudeste
+:- dynamic motorista_logado/9.
+
 % Implementação dos menus
 menu_principal :-
     write('\nSelecione uma opcao:\n'),
@@ -25,7 +23,6 @@ menu_principal_opcao(1) :-
     menu_cadastrar_motorista,
     menu_principal.
 
-
 menu_principal_opcao(2) :-
     retractall(motorista_ref(_)),
     assert(motorista_ref(none)),
@@ -36,54 +33,9 @@ menu_principal_opcao(2) :-
 menu_principal_opcao(0) :-
     write('Saindo...\n').
 
-
 menu_principal_opcao(_) :-
     write('Opção inválida!\n'),
     menu_principal.
-
-
-menu_opcoes_motorista(none) :-
-    write('\nNenhum motorista logado!\n'),
-    menu_principal.
-
-
-
-menu_opcoes_motorista(Motorista) :-
-    write('\nOpcoes do Motorista:\n'),
-    write('1 - Atualizar Cadastro\n'),
-    write('2 - Cancelar Cadastro\n'),
-    write('3 - Visualizar Informacoes\n'),
-    write('4 - Carregar historico de Notificacoes\n'),
-    write('5 - Menu de Caronas\n'),
-    write('0 - Sair\n'),
-    read(Opcao),
-    menu_opcoes_motorista_opcao(Opcao, Motorista).
-
-menu_opcoes_motorista_opcao(1, Motorista) :-
-    menu_atualizar_cadastro(Motorista),
-    menu_opcoes_motorista(Motorista).
-
-menu_opcoes_motorista_opcao(2, Motorista) :-
-    menu_cancelar_cadastro,
-    menu_principal.
-
-menu_opcoes_motorista_opcao(3, Motorista) :-
-    menu_visualizar_info(Motorista),
-    menu_opcoes_motorista(Motorista).
-    
-menu_opcoes_motorista_opcao(4, Motorista) :-
-    menu_carregar_notificacoes(Motorista),
-    menu_opcoes_motorista(Motorista).
-
-menu_opcoes_motorista_opcao(5, Motorista) :-
-    menu_principal_carona_motorista(Motorista).
-
-menu_opcoes_motorista_opcao(0, _) :-
-    menu_principal.
-
-menu_opcoes_motorista_opcao(_, Motorista) :-
-    write('Opcao invalida!\n'),
-    menu_opcoes_motorista(Motorista).
 
 menu_cadastrar_motorista :-
     write('\nCadastrar Motorista\n'),
@@ -108,11 +60,72 @@ menu_cadastrar_motorista :-
     realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao,Resposta),
     write(Resposta).
 
-menu_cancelar_cadastro :-
-    motorista_ref(MotoristaRef),
-    cancelar_cadastro_motorista(cpf,senha, Retorno).
+menu_realizar_login :-
+    write('\nRealizar Login de Motorista\n'),
+    write('Digite o e-mail: '),
+    read(Email),
+    write('Digite a senha: '),
+    read(Senha),
+    realizarLoginMotorista(Email, Senha, Resultado),
+    processar_resultado_login(Resultado).
 
-menu_atualizar_cadastro(MotoristaRef) :-
+processar_resultado_login([CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao]) :-
+    write('Login bem-sucedido!\n'),
+    retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
+    assertz(motorista_logado(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)),
+    menu_opcoes_motorista.
+
+processar_resultado_login('Login incorreto.') :-
+    writeln('Login falhou!'),
+    menu_principal.
+
+menu_opcoes_motorista :-
+    write('\nOpcoes do Motorista:\n'),
+    write('1 - Atualizar Cadastro\n'),
+    write('2 - Cancelar Cadastro\n'),
+    write('3 - Visualizar Informacoes\n'),
+    write('4 - Carregar historico de Notificacoes\n'),
+    write('5 - Menu de Caronas\n'),
+    write('0 - Sair\n'),
+    read(Opcao),
+    menu_opcoes_motorista_opcao(Opcao).
+
+menu_opcoes_motorista_opcao(1) :-
+    menu_atualizar_cadastro,
+    menu_opcoes_motorista.
+
+menu_opcoes_motorista_opcao(2) :-
+    menu_cancelar_cadastro,
+    retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
+    menu_principal.
+
+menu_opcoes_motorista_opcao(3) :-
+    menu_visualizar_info,
+    menu_opcoes_motorista.
+    
+menu_opcoes_motorista_opcao(4) :-
+    menu_carregar_notificacoes,
+    menu_opcoes_motorista.
+
+%menu_opcoes_motorista_opcao(5) :-
+%    menu_principal_carona_motorista.
+
+menu_opcoes_motorista_opcao(0) :-
+    retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
+    menu_principal.
+
+menu_opcoes_motorista_opcao(_) :-
+    write('Opcao invalida!\n'),
+    menu_opcoes_motorista.
+
+menu_cancelar_cadastro :-
+    write('Digite a senha: '),
+    read(Senha),
+    motorista_logado(CPF, _, _, _, _, _, _, _, _),
+    cancelarCadastroMotorista(CPF,Senha, Retorno).
+
+menu_atualizar_cadastro :-
+    motorista_logado(CPF, _, _, _, _, _, _, _, _),
     write('\nAtualizar Cadastro de Motorista\n'),
     write('Digite sua senha:'),
     read(Senha),
@@ -127,33 +140,16 @@ menu_atualizar_cadastro(MotoristaRef) :-
     (   Opcao = 1 -> atualizarCadastroMotorista(CPF, Senha, 'telefone', NovoValor, Resultado)
     ;   Opcao = 2 -> atualizarCadastroMotorista(CPF, Senha, 'cep', NovoValor, Resultado)
     ;   Opcao = 3 -> atualizarCadastroMotorista(CPF, Senha, 'senha', NovoValor, Resultado)
-    ;   Resultado = 'Nothing'
     ),
-    (   Resultado = 'Just'(Motorista) ->
-        write('Cadastro de motorista atualizado com sucesso!')
-    ;   write('Erro ao atualizar cadastro de motorista.')
-    ),
-    menu_opcoes_motorista(MotoristaRef).
+    write(Resultado),
+    menu_opcoes_motorista.
 
-menu_visualizar_info(MotoristaRef) :-
-    visualizar_info_motorista(cpf, retorno).
+menu_visualizar_info:-
+    motorista_logado(CPF, _, _, _, _, _, _, _, _),
+    recuperarMotoristaPorCPF(CPF, Retorno),
+    write(Retorno).
 
-menu_realizar_login :-
-    write('\nRealizar Login de Motorista\n'),
-    write('Digite o e-mail: '),
-    read(Email),
-    write('Digite a senha: '),
-    read(Senha),
-    realizar_login_motorista(Email, Senha, Resultado),
-    processar_resultado_login(Resultado).
-
-processar_resultado_login('Just'(Motorista)) :-
-    write('Login bem-sucedido!\n'),
-    menu_opcoes_motorista("Motorista").
-
-processar_resultado_login('Nothing') :-
-    writeln('Login falhou!'),
-    menu_principal.
-
-menu_carregar_notificacoes(Motorista) :-
-    carregar_notificacoes_motorista(MotoristaRef, Resultado).
+menu_carregar_notificacoes :-
+    motorista_logado(CPF, _, _, _, _, _, _, _, _),
+    recuperarNotificao(CPF, Resultado),
+    write(Resultado).

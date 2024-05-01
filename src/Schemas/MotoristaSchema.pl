@@ -4,7 +4,9 @@
     atualiza_motorista/4,
     recupera_motoristas_por_regiao/2,
     recupera_motoristas_por_cpf/2,
-    confere_senha/2
+    recupera_motoristas_por_email/2,
+    confere_senha/2,
+    confere_senha_login/2
 ]).
 
 :- use_module("CsvModule.pl").
@@ -107,17 +109,21 @@ recupera_motoristas_por_cpf(Chave, Motorista) :-
 
 % Consulta para recuperar os motoristas por cpf
 recupera_motoristas_por_email(Chave, Motorista) :-
-    (possui_motorista(Chave) -> 
+    (possui_motorista_email(Chave) -> 
         file(Caminho),
         read_csv_row(Caminho, 3, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
         Motorista = [CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao]
     ;
-        Motorista = 'Motorista nao cadastrado.'
+        Motorista = 'Email nao cadastrado.'
     ).
-
 
 confere_senha(CPF, Senha) :-
     atom_number(CPF, Number),
     file(Caminho),
     read_csv_row(Caminho, 1, Number, [row(Number, _, _, _, SenhaCadastrada, _, _, _, _)]),
+    Senha == SenhaCadastrada.
+
+confere_senha_login(Email, Senha) :-
+    file(Caminho),
+    read_csv_row(Caminho, 3, Email, [row(_, _, _, _, SenhaCadastrada, _, _, _, _)]),
     Senha == SenhaCadastrada.

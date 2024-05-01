@@ -1,5 +1,5 @@
 :- module(controller_motorista, [  
-   % realizar_login_motorista/3,
+    realizarLoginMotorista/3,
    realizarCadastroMotorista/10,
    cancelarCadastroMotorista/3,
    atualizarCadastroMotorista/5,
@@ -11,24 +11,22 @@
 :- use_module('../Logic/MotoristaLogic.pl').
 
 realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
-    cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Resposta),
-    Retorno = Resposta.
+    cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno).
 
 cancelarCadastroMotorista(CPF, Senha,Retorno):-
-    remove_Logic(CPF,Senha, Resposta),
-    Retorno = Resposta.
+    remove_Logic(CPF,Senha, Retorno).
 
 atualizarCadastroMotorista(CPF, Senha, Campo, NovoValor, Retorno):-
-    atualiza_Logic(CPF, Campo, Resposta),
-    Retorno = Resposta.
+    atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno).
 
 recuperarMotoristasPorRegiao(Regiao, Motoristas):-
-    recupera_motoristas_por_regiao(Regiao, Resposta),
-    Motoristas = Resposta.
+    recupera_motoristas_por_regiao(Regiao, Motorista).
 
 recuperarMotoristaPorCPF(CPF, Motorista):-
-    recupera_motoristas_por_cpf(CPF, Resposta),
-    Motorista = Resposta.
+    recupera_motoristas_por_cpf(CPF, Motorista).
 
 recuperarNotificao(CPF, Notificacao):-
     recupera_notificacao_logic(CPF, Notificacao).
+
+realizarLoginMotorista(Email,Senha,Motorista):-
+    realiza_login_logic(Email,Senha,Motorista).
