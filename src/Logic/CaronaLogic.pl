@@ -67,7 +67,8 @@ mostrar_caronas_origem_destino(Origem, Destino, CorrespondingRowsStr):-
 mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     csv_file(File),
     passageiros_column(Pass_Column),
-    read_csv_row_by_list_element(File, Pass_Column, PassageiroCpf, Rows),
+    atom_string(PassageiroCpf, PassStr),
+    read_csv_row_by_list_element(File, Pass_Column, PassStr, Rows),
     findall(Str, (member(Row, Rows), caronaToStr(Row, Str)), CaronasStr).
 % mostrar_caronas_passageiro_participa("11221122112", Str).
 

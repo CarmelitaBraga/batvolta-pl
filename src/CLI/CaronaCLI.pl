@@ -86,18 +86,19 @@ handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal
 %     menu_principal_passageiro_carona(PassageiroRef).
 
 
-% menu_desembarcar_caronas(PassageiroRef):- 
-%     get_cli_cpf(PassageiroRef, PassageiroCpf),
-%     mostrar_caronas_passageiro(PassageiroCpf, Resultado),
-%     (Resultado \= [] ->
-%         write(Resultado), nl,
-%         write('Digite o ID da carona: '),
-%         read(IdCarona),
-%         desembarcar_passageiro(IdCarona, PassageiroCpf)
-%     ;
-%         write('Nenhuma carona disponível para desembarcar!\n'),
-%         menu_principal_passageiro_carona(PassageiroRef)
-%     ).
+menu_desembarcar_caronas(PassageiroRef):- 
+    get_cli_cpf(PassageiroRef, PassageiroCpf),
+    mostrar_caronas_passageiro(PassageiroCpf, Resultado),
+    (Resultado \= [] ->
+        write(Resultado), nl,
+        write('Digite o ID da carona: '),
+        read(IdCarona),
+        desembarcar_passageiro(IdCarona, PassageiroCpf, Resp),
+        write(Resp)
+    ;
+        write('Nenhuma carona disponível para desembarcar!\n'),
+        menu_principal_passageiro_carona(PassageiroRef)
+    ).
 
 menu_embarcar_caronas(PassageiroRef):-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
