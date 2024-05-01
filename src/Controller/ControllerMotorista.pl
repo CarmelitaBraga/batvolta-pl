@@ -4,7 +4,8 @@
    cancelarCadastroMotorista/3,
    atualizarCadastroMotorista/5,
    recuperarMotoristaPorCPF/2,
-   recuperarNotificao/2
+   recuperarNotificao/2,
+   recuperarMotoristasPorRegiao/2
     
 ]).
 
@@ -20,10 +21,10 @@ atualizarCadastroMotorista(CPF, Senha, Campo, NovoValor, Retorno):-
     atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno).
 
 recuperarMotoristasPorRegiao(Regiao, Motoristas):-
-    recupera_motoristas_por_regiao(Regiao, Motorista).
+    recupera_regiao_logic(Regiao, Motoristas).
 
 recuperarMotoristaPorCPF(CPF, Motorista):-
-    recupera_motoristas_por_cpf(CPF, Motorista).
+    recupera_cpf_logic(CPF, Motorista).
 
 recuperarNotificao(CPF, Notificacao):-
     recupera_notificacao_logic(CPF, Notificacao).

@@ -5,7 +5,8 @@
     validaRegiao/1,
     validarGenero/1,
     valida_senha/1,
-    list_to_string/3
+    list_to_string/3,
+    convert_list_atom/2
 ]).
 
 validarCPF(CPF) :-
@@ -63,3 +64,19 @@ list_to_string([H|T], Str, R) :-
     string_concat(Str, H, TempStr),
     string_concat(TempStr,'\n',NovaStr),
     list_to_string(T, NovaStr, R).
+
+% Predicado para converter um número em um átomo
+number_to_atom(Number, Atom) :-
+    number_codes(Number, Codes),
+    atom_codes(Atom, Codes).
+
+% Predicado para converter uma lista de números em uma lista de átomos
+convert_list_atom([], []).
+convert_list_atom([H|T], [Atom|Result]) :-
+    number(H),  % check if H is a number
+    number_to_atom(H, Atom),  % convert H to an atom
+    convert_list_atom(T, Result).
+convert_list_atom([H|T], [H|Result]) :-
+    \+ number(H),  % H is not a number, leave it unchanged
+    convert_list_atom(T, Result).
+

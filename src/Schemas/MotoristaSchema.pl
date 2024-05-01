@@ -11,6 +11,7 @@
 
 :- use_module("CsvModule.pl").
 
+
 % motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)
 
 %Helpers
@@ -28,7 +29,7 @@ possui_cnh(Chave):-
     read_csv_row(Caminho, 6, Chave, [row(_, _, _, _, _, _, _, _, _)]).
 
 motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(_), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str) :-
-    atomic_list_concat(['Motorista:', 'Cpf =', CPF, '|', 'Nome =', Nome, '|', 'Email =', Email,'|', 'Telefone =', Telefone, '|', 'CNH =', CNH, '|', 'CEP =', CEP, '|', 'Genero =', Genero, '|', 'Regiao =', Regiao , '|'], ' ', Str).
+    atomic_list_concat(['Motorista:', 'Cpf =', CPF, ',', 'Nome =', Nome, ',', 'Email =', Email,',', 'Telefone =', Telefone, ',', 'CNH =', CNH, ',', 'CEP =', CEP, ',', 'Genero =', Genero, ',', 'Regiao =', Regiao], ' ', Str).
 
 converte_para_motorista_str(row(CPF, Nome, Email, Senha, Telefone, CNH, CEP, Genero, Regiao), Str) :-
     motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str).

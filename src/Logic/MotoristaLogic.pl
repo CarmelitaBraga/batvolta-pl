@@ -4,12 +4,13 @@
         remove_Logic/3,
         recupera_cpf_logic/2,
         recupera_notificacao_logic/2,
-        realiza_login_logic/3
+        realiza_login_logic/3,
+        recupera_regiao_logic/2
 ]).
 
 :- use_module("../Schemas/MotoristaSchema.pl").
 :- use_module("../Util/Util.pl").
-:- use_module("../Schemas/NotificacaoM.pl").
+:- use_module("../Schemas/NotificacaoMotorista.pl").
 
 cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
 ( validarCPF(CPF) ->
@@ -84,11 +85,16 @@ recupera_regiao_logic(Regiao,Retorno):-
 
 recupera_notificacao_logic(CPF,Retorno):-
     recupera_notificacao_motoristas(CPF, Lista),
-    list_to_string(Lista,'',Retorno).
+    (Lista == 'Motorista nao tem nenhuma notificacaoo.' ->
+        Retorno = Lista
+    ;    
+        list_to_string(Lista,'',Retorno)
+    ).
 
 realiza_login_logic(Email,Senha,Retorno):-
     (confere_senha_login(Email, Senha) ->
-        recupera_motoristas_por_email(Email,Retorno)
+        recupera_motoristas_por_email(Email,Motorista),
+        convert_list_atom(Motorista,Retorno)
     ;
-        Retorno = 'Login incorreto.'
+    Retorno = 'Login incorreto.'
     ).

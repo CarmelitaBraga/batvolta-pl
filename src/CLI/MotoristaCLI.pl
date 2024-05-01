@@ -62,9 +62,9 @@ menu_cadastrar_motorista :-
 
 menu_realizar_login :-
     write('\nRealizar Login de Motorista\n'),
-    write('Digite o e-mail: '),
+    write('Digite o e-mail:\n'),
     read(Email),
-    write('Digite a senha: '),
+    write('Digite a senha:\n'),
     read(Senha),
     realizarLoginMotorista(Email, Senha, Resultado),
     processar_resultado_login(Resultado).
@@ -102,10 +102,9 @@ menu_opcoes_motorista_opcao(2) :-
 menu_opcoes_motorista_opcao(3) :-
     menu_visualizar_info,
     menu_opcoes_motorista.
-    
+
 menu_opcoes_motorista_opcao(4) :-
-    menu_carregar_notificacoes,
-    menu_opcoes_motorista.
+    menu_carregar_notificacoes.
 
 %menu_opcoes_motorista_opcao(5) :-
 %    menu_principal_carona_motorista.
@@ -152,4 +151,5 @@ menu_visualizar_info:-
 menu_carregar_notificacoes :-
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
     recuperarNotificao(CPF, Resultado),
-    write(Resultado).
+    write(Resultado),
+    menu_opcoes_motorista.
