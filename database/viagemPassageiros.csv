@@ -1,5 +1,8 @@
-0,2,False,Ottawa;Quebec,0,000000
-7,1,False,Patos;Cancun,5,121212
-5,2,False,Paris;Gramado,1,121212
-2,7,True,Fagundes;Minas;Gramado,0,09876543210
-1,3,True,Ottawa;Quebec,4,000000
+0,1,False,Ottawa;Quebec,0,000000
+1,1,True,Ottawa;Quebec,,000000
+3,3,False,Fagundes;Minas;Gramado,0,11122233344
+4,3,True,Fagundes;Minas;Gramado,0,09876543210
+5,2,True,Patos;Rio,0,121212
+7,0,False,Parana;Sao Paulo,0,121212
+8,1,True,Ottawa;Quebec,4,11122233344
+9,3,True,Minas;Gramado,0,11122233344
