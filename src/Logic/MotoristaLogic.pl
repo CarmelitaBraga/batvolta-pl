@@ -2,11 +2,13 @@
         cadastra_Logic/10,
         atualiza_Logic/5,
         remove_Logic/3,
-        recupera_cpf_logic/2
+        recupera_cpf_logic/2,
+        recupera_notificacao_logic/2
 ]).
 
 :- use_module("../Schemas/MotoristaSchema.pl").
 :- use_module("../Util/Util.pl").
+:- use_module("../Schemas/NotificacaoM.pl").
 
 cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
 ( validarCPF(CPF) ->
@@ -74,3 +76,11 @@ remove_Logic(CPF,Senha,Retorno):-
 recupera_cpf_logic(CPF,Retorno):-
     recupera_motoristas_por_cpf(CPF, Resposta),
     Retorno = Resposta.
+
+recupera_regiao_logic(Regiao,Retorno):-
+    recupera_motoristas_por_regiao(Regiao, MotoristasStr),
+    list_to_string(MotoristasStr,'',Retorno).
+
+recupera_notificacao_logic(CPF,Retorno):-
+    recupera_notificacao_motoristas(CPF, Lista),
+    list_to_string(Lista,'',Retorno).

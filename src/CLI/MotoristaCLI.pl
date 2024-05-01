@@ -10,7 +10,7 @@
 
 % Motorista Logado
 :- dynamic motorista_ref/1.
-
+%12345678910,Ian,ian@email.com,123456789,a123,123456,77777-777,m,sudeste
 % Implementação dos menus
 menu_principal :-
     write('\nSelecione uma opcao:\n'),
@@ -89,8 +89,6 @@ menu_cadastrar_motorista :-
     write('\nCadastrar Motorista\n'),
     write('Digite o CPF do motorista: \n'),
     read(CPF),
-    write('Digite o CEP: \n'),
-    read(CEP),
     write('Digite o nome: \n'),
     read(Nome),
     write('Digite o e-mail: \n'),
@@ -101,11 +99,14 @@ menu_cadastrar_motorista :-
     read(Senha),
     write('Digite a CNH: \n'),
     read(CNH),
+    write('Digite o CEP: \n'),
+    read(CEP),
     write('Digite a regiao: \n'),
     read(Regiao),
     write('Digite o genero(F/M/NB): \n'),
     read(Genero),
-    realizar_cadastro_motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao).
+    realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao,Resposta),
+    write(Resposta).
 
 menu_cancelar_cadastro :-
     motorista_ref(MotoristaRef),
@@ -123,9 +124,9 @@ menu_atualizar_cadastro(MotoristaRef) :-
     read(Opcao),
     write('Digite o novo valor: '),
     read(NovoValor),
-    (   Opcao = 1 -> atualizar_cadastro_motorista(CPF, Senha, 'telefone', NovoValor, Resultado)
-    ;   Opcao = 2 -> atualizar_cadastro_motorista(CPF, Senha, 'cep', NovoValor, Resultado)
-    ;   Opcao = 3 -> atualizar_cadastro_motorista(CPF, Senha, 'senha', NovoValor, Resultado)
+    (   Opcao = 1 -> atualizarCadastroMotorista(CPF, Senha, 'telefone', NovoValor, Resultado)
+    ;   Opcao = 2 -> atualizarCadastroMotorista(CPF, Senha, 'cep', NovoValor, Resultado)
+    ;   Opcao = 3 -> atualizarCadastroMotorista(CPF, Senha, 'senha', NovoValor, Resultado)
     ;   Resultado = 'Nothing'
     ),
     (   Resultado = 'Just'(Motorista) ->

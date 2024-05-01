@@ -1,6 +1,13 @@
-:- module(_, [read_csv_row/4, read_csv_row_by_list_element/4,delete_csv_row/3,update_csv_row/4, write_csv_row/2]).
+:- module(_, [read_csv_row/4, 
+    read_csv_row_by_list_element/4,
+    delete_csv_row/3,
+    update_csv_row/4, 
+    write_csv_row/2,
+    getAllRows/2
+]).
 
 :- use_module(library(csv)).
+:- use_module(library(lists)).
 
 select_row([], _, _, []).
 select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
@@ -72,3 +79,6 @@ select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
 read_csv_row_by_list_element(File, Column, Element, Row) :-
     csv_read_file(File, Data),
     select_row_by_list_element(Data, Column, Element, Row).
+
+getAllRows(File, Rows) :-
+    csv_read_file(File, Rows).

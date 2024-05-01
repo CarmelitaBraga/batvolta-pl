@@ -4,7 +4,8 @@
     validarEmail/1,
     validaRegiao/1,
     validarGenero/1,
-    valida_senha/1
+    valida_senha/1,
+    list_to_string/3
 ]).
 
 validarCPF(CPF) :-
@@ -56,3 +57,9 @@ conta_letras(Senha, Letras) :-
 % Predicado para verificar se um caractere é alfabético
 alpha(Char) :-
     char_type(Char, alpha).
+
+list_to_string([], Str, Str).
+list_to_string([H|T], Str, R) :-
+    string_concat(Str, H, TempStr),
+    string_concat(TempStr,'\n',NovaStr),
+    list_to_string(T, NovaStr, R).

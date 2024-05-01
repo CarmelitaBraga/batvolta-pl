@@ -8,7 +8,6 @@
 ]).
 
 :- use_module("CsvModule.pl").
-:- use_module("../Model/MotoristaModel.pl").
 
 % motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)
 
@@ -25,6 +24,9 @@ possui_motorista_email(Chave):-
 possui_cnh(Chave):-
     file(Caminho),
     read_csv_row(Caminho, 6, Chave, [row(_, _, _, _, _, _, _, _, _)]).
+
+motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(_), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str) :-
+    atomic_list_concat(['Motorista:', 'Cpf =', CPF, '|', 'Nome =', Nome, '|', 'Email =', Email,'|', 'Telefone =', Telefone, '|', 'CNH =', CNH, '|', 'CEP =', CEP, '|', 'Genero =', Genero, '|', 'Regiao =', Regiao , '|'], ' ', Str).
 
 converte_para_motorista_str(row(CPF, Nome, Email, Senha, Telefone, CNH, CEP, Genero, Regiao), Str) :-
     motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str).
@@ -85,7 +87,11 @@ atualiza_motorista(Chave, Campo, NovoValor, Retorno) :-
 recupera_motoristas_por_regiao(Regiao, MotoristasStr) :-
     file(Caminho),
     read_csv_row(Caminho, 9, Regiao, MotoristasData),
-    maplist(converte_para_motorista_str, MotoristasData, MotoristasStr).
+    (MotoristasData == [] -> 
+        MotoristasStr = 'Nenhum motorista nessa regiao.'   
+    ;
+        maplist(converte_para_motorista_str, MotoristasData, MotoristasStr)
+    ).
 
 % Consulta para recuperar os motoristas por cpf
 recupera_motoristas_por_cpf(Chave, Motorista) :-
