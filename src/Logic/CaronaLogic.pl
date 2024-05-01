@@ -2,13 +2,14 @@
     possui_carona_origem_destino/2,
     mostrar_caronas_origem_destino/3, 
     mostrar_caronas_passageiro_participa/2,
-    remover_passageiro/2,
+    adicionar_passageiro_carona/3,
+    remover_passageiro_carona/3,
     criar_carona_motorista/6,
-    % embarcar_passageiro_carona/2
     iniciar_carona_status/1,
     finalizar_carona_status/1,
     cancelar_carona/1,
-    carona_possui_origem_destino/3
+    carona_possui_origem_destino/3,
+    solicitar_participar_carona/5
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
@@ -70,61 +71,49 @@ mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     findall(Str, (member(Row, Rows), caronaToStr(Row, Str)), CaronasStr).
 % mostrar_caronas_passageiro_participa("11221122112", Str).
 
-% embarcar_passageiro_carona(IdCarona, PassageiroCpf):-
-%     csv_file(File),
-%     carona_column(Carona_Column),
-%     passageiros_column(Pass_Column),
-    % verificar se carona existe
-    % verificar se carona tem espaço
-    % verificar se passageiro existe
-% .
-
-% adicionarPassageiro :: Int -> String -> IO String
-% adicionarPassageiro caronaId passageiro = do
-%     maybeCarona <- getCaronaById [caronaId]
-%     case maybeCarona of
-%         [] -> return "Essa carona não existe!"
-%         [carona] -> do
-%             teste <- infoTrechoByCaronaPassageiro caronaId passageiro
-%             if teste /= "Trecho de carona inexistente para o passageiro informado!" then do
-%                 if status carona == read "EmAndamento" then do
-%                     viagem <- getViagemByCaronaPassageiro caronaId passageiro
-%                     if aceita (head viagem) then do
-%                         bool <- lugaresDisponiveis carona
-%                         if bool then do
-%                             caronaAtualizada <- addPassageiro carona passageiro
-%                             return "Passageiro adicionado com sucesso!"
-
-%                         else if numPassageirosMaximos carona == 1
-%                             then return "Carona sem vagas!"
-%                             else return "Carona já está cheia!"
-%                     else do
-%                         return "Você não foi aceito nesta carona!"
-%                 else do
-%                     return "Carona nao iniciada ou ja finalizada!"
-%             else do 
-%                 return "Passageiro não está nessa carona."
-
-
-remover_passageiro(IdCarona, PassageiroCpf):-
+adicionar_passageiro_carona(IdCarona, PassageiroCpf, Resp):-
     csv_file(File),
     carona_column(Carona_Column),
-    passageiros_column(Pass_Column),
-    read_csv_row_by_list_element(File, Pass_Column, PassageiroCpf, Caronas),
-    (member(row(IdCarona, _, _, _, _, _, _, _, _, _), Caronas) ->
-        member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
+    read_csv_row(File, Carona_Column, IdCarona, Caronas),
+    (member(row(IdCarona, Hora, Data, Destino, Motorista, Passageiros, Valor, 'EmAndamento', Limite_Vagas, Aval), Caronas),
+    passageiro_aceito_carona(IdCarona, PassageiroCpf) ->
         atom_string(Passageiros, PassageirosString),
         split_string(PassageirosString, ";", "", PassageirosList),
-        delete(PassageirosList, PassageiroCpf, UpdatedPassageirosList),
+        length(PassageirosList, QtdPass),
+        atom_string(PassageiroCpf, PassStr),
+        ((QtdPass >= Limite_Vagas ; member(PassStr, PassageirosList)) ->
+            Resp = 'Carona com capacidade máxima de passageiros!'
+        ;
+            (   PassageirosString == "" -> Nova_Lista_Passageiros_Str = PassStr
+                ;   atomic_list_concat([PassStr, PassageirosString], ";", Nova_Lista_Passageiros_Str)
+            ),
+            UpdatedRow = row(IdCarona, Hora, Data, Destino, Motorista, Nova_Lista_Passageiros_Str, Valor, 'EmAndamento', Limite_Vagas, Aval),
+            update_csv_row(File, Carona_Column, IdCarona, UpdatedRow),
+            Resp = 'Passageiro adicionado com sucesso!'
+        )
+    ;
+        Resp = 'Carona indisponível!'
+    ).
+% adicionar_passageiro_carona(2,121212,R).    
+
+remover_passageiro_carona(IdCarona, PassageiroCpf, Resp):-
+    csv_file(File),
+    carona_column(Carona_Column),
+    atom_string(PassageiroCpf, PassStr),
+    read_csv_row(File, Carona_Column, IdCarona, Caronas),
+    (member(row(IdCarona, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
+    atom_string(Passageiros, PassageirosString),
+    split_string(PassageirosString, ";", "", PassageirosList),
+    member(PassStr, PassageirosList) ->
+        delete(PassageirosList, PassStr, UpdatedPassageirosList),
         atomics_to_string(UpdatedPassageirosList, ";", UpdatedPassageiros),
         UpdatedRow = row(IdCarona, Hora, Data, Rota, MotoristaCpf, UpdatedPassageiros, Valor, Status, Vagas, Avaliacao),
         update_csv_row(File, Carona_Column, IdCarona, UpdatedRow),
-        write('Passageiro removido com sucesso!')
+        Resp = 'Passageiro removido com sucesso!'
     ;
-        write('Nenhuma carona correspondente a passageiro encontrada!'),
-        _ = row(_, _, _, _, _, _, _, _, _, _)
+        Resp = 'Nenhuma carona correspondente a passageiro encontrada!'
     ).
-% remover_passageiro(2,"11221122112", R).
+% remover_passageiro_carona(2,11221122112, R).
 
 solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
     csv_file(File),
@@ -154,6 +143,7 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
     ;
         Resp = 'Rota não encontrada!'
     ).
+% solicitar_participar_carona(2,121212,"Patos","Rio",R).
 
 criar_carona_motorista(Hora, Data, Destinos, MotoristaCpf, Valor, NumPassageirosMaximos) :-
     csv_file(CsvFile),

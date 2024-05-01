@@ -4,11 +4,11 @@
     mostrar_caronas_passageiro/2,
     cancelar_carona_passageiro/3,
     mostrar_viagem_passageiro/2,
-    desembarcar_passageiro/2,
     get_viagem_sem_avaliacao/2,
-    avaliar_motorista/4
-    % solicitar_carona_passageiro/5,
-    % embarcar_passageiro/2
+    avaliar_motorista/4,
+    embarcar_passageiro/3,
+    desembarcar_passageiro/3,
+    solicitar_carona_passageiro/5
     ]).
 
 :- use_module('src/Logic/CaronaLogic.pl').
@@ -30,11 +30,9 @@ mostrar_caronas_passageiro(PassageiroCpf, Resultado):-
 % mostrar_caronas_passageiro_participa("11221122112", Str).
 
 % Recebe PassageiroCpf como String.
-desembarcar_passageiro(IdCarona, PassageiroCpf):- 
-    remover_passageiro(IdCarona, PassageiroCpf).
-% desembarcar_passageiro(0,"11221122112").
-% desembarcar_passageiro(1,"11221122112").
-% desembarcar_passageiro(1,"11111111111").
+desembarcar_passageiro(IdCarona, PassageiroCpf, Result):- 
+    remover_passageiro_carona(IdCarona, PassageiroCpf, Result).
+% desembarcar_passageiro(0,486464646410,R).
 
 mostrar_viagem_passageiro(PassageiroCpf, Viagens):-
     mostrar_all_viagens_passageiro(PassageiroCpf, Viagens).
@@ -51,9 +49,13 @@ get_viagem_sem_avaliacao(PassageiroCpf, Caronas):-
 % get_viagem_sem_avaliacao(000000, R).
 % get_viagem_sem_avaliacao(479798, R).
 
-% solicitar_carona_passageiro(CId, PassageiroRef, Origem, Destino, MaybeCaronaEscolhida).
+solicitar_carona_passageiro(IdCarona, PassageiroCpf, Origem, Destino, Result):-
+    solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Result).
+% solicitar_carona_passageiro(0, 951159, "Sao Paulo", "Rio", R).
 
-% embarcar_passageiro(IdCarona, PassageiroCpf).
+embarcar_passageiro(IdCarona, PassageiroCpf, Result):-
+    adicionar_passageiro_carona(IdCarona, PassageiroCpf, Result).
+% embarcar_passageiro(0, 951159,R).
 
 avaliar_motorista(IdCarona, PassageiroCpf, Avaliacao, Resultado):-
     carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resultado).

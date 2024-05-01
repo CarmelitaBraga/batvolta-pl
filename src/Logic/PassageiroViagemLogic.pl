@@ -6,7 +6,8 @@
     cancelar_viagem_passageiro/3,
     carona_avalia_motorista/4,
     criar_viagem_passageiro/5,
-    passageiro_tem_registro_carona/2
+    passageiro_tem_registro_carona/2,
+    passageiro_aceito_carona/2
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -33,6 +34,12 @@ passageiro_tem_registro_carona(IdCarona, PassageiroCpf):-
     ;
         true
     ).
+
+passageiro_aceito_carona(IdCarona, PassageiroCpf):- 
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, IdCarona, Viagens),
+    member(row(_, IdCarona, 'True', _, _, PassageiroCpf), Viagens).
 
 
 get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):- 
