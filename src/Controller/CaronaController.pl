@@ -8,7 +8,10 @@
     avaliar_motorista/4,
     embarcar_passageiro/3,
     desembarcar_passageiro/3,
-    solicitar_carona_passageiro/5
+    solicitar_carona_passageiro/5,
+    criar_carona/6,
+    inicializar_carona_status/1,
+    possui_carona_nao_iniciada_controller/1
     ]).
 
 :- use_module('src/Logic/CaronaLogic.pl').
@@ -62,3 +65,13 @@ avaliar_motorista(IdCarona, PassageiroCpf, Avaliacao, Resultado):-
 % avaliar_motorista(7,09876543210,5,R).
 
 % Carona & motorista
+criar_carona(Hora, Data, Rota, MotoristaCpf, Valor, NumPassageirosMaximos) :-
+    criar_carona_motorista(Hora, Data, Rota, MotoristaCpf, Valor, NumPassageirosMaximos).
+
+inicializar_carona_status(Cid) :-
+    iniciar_carona_status(Cid).
+
+possui_carona_nao_iniciada_controller(MotoristaCpf) :- 
+    mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, Caronas),
+    list_to_string(Caronas, '', CaronasStr),
+    CaronasStr = "".
