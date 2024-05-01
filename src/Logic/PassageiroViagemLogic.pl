@@ -58,7 +58,7 @@ get_viagens_passageiro_sem_avaliacao(PassageiroCpf, ViagensStr):-
     nota_sem_avaliacao(Sem_Nota),
     avaliacao_column(Aval_Column),
     read_csv_row(File, Aval_Column, Sem_Nota, Viagens),
-    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, Sem_Nota, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, 'True', _, Sem_Nota, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 % get_viagens_passageiro_sem_avaliacao(09876543210,R).
 % get_viagens_passageiro_sem_avaliacao(121212,R).
 % get_viagens_passageiro_sem_avaliacao(000000,R).
@@ -127,7 +127,8 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
         get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
         (member(row(IdViagem,IdCarona,Aceito,Rota,Sem_Nota,PassageiroCpf), Viagem) ->
             Updated_Row = row(IdViagem,IdCarona,Aceito,Rota,Avaliacao,PassageiroCpf),
-            update_csv_row(File, Viagem_Column, IdViagem, Updated_Row)
+            update_csv_row(File, Viagem_Column, IdViagem, Updated_Row),
+            Resp = 'Carona avaliada com sucesso!'
         ;
             Resp = 'Nenhuma carona não avaliada encontrada com este id.'
     )).
