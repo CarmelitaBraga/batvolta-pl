@@ -5,7 +5,8 @@
     mostrar_all_viagens_passageiro/2,
     cancelar_viagem_passageiro/3,
     carona_avalia_motorista/4,
-    criar_viagem_passageiro/5
+    criar_viagem_passageiro/5,
+    passageiro_tem_registro_carona/2
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -24,6 +25,15 @@ rota_column(4).
 avaliacao_column(5).
 passageiro_column(6).
 nota_sem_avaliacao(0).
+
+passageiro_tem_registro_carona(IdCarona, PassageiroCpf):-
+    get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
+    (Viagem == []-> 
+        false
+    ;
+        true
+    ).
+
 
 get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):- 
     csv_file(File),

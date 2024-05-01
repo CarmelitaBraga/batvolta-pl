@@ -7,11 +7,13 @@
     % embarcar_passageiro_carona/2
     iniciar_carona_status/1,
     finalizar_carona_status/1,
-    cancelar_carona/1
+    cancelar_carona/1,
+    carona_possui_origem_destino/3
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/Carona.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
 csv_file('database/caronas.csv').
@@ -41,6 +43,14 @@ possui_carona_origem_destino(Origem, Destino):-
     split_string(Trajeto, ";", "", ListaTrajeto),
     ordered_pair_in_list([Origem, Destino], ListaTrajeto).
 
+carona_possui_origem_destino(IdCarona, Origem, Destino):-
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, IdCarona, Rows),
+    member(row(IdCarona, _, _, Trajeto, _, _, _, _, _, _), Rows),
+    split_string(Trajeto, ";", "", ListaTrajeto),
+    ordered_pair_in_list([Origem, Destino], ListaTrajeto).
+
 % Helper predicate to check if two elements exist in a list in the given order
 ordered_pair_in_list([X,Y], [X|T]) :-
     member(Y, T).
@@ -52,13 +62,13 @@ mostrar_caronas_origem_destino(Origem, Destino, CorrespondingRowsStr):-
     destinos_column(Dest_column),
     read_csv_row_by_list_element(File, Dest_column, Origem, Rows),
     findall(Str, (member(Row, Rows), row(_, _, _, Trajeto, _, _, _, _, _, _) = Row, split_string(Trajeto, ";", "", ListaTrajeto), ordered_pair_in_list([Origem, Destino], ListaTrajeto), caronaToStr(Row, Str)), CorrespondingRowsStr).
-% mostrar_caronas_passageiro_participa("11221122112", Str).
 
 mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     csv_file(File),
     passageiros_column(Pass_Column),
     read_csv_row_by_list_element(File, Pass_Column, PassageiroCpf, Rows),
     findall(Str, (member(Row, Rows), caronaToStr(Row, Str)), CaronasStr).
+% mostrar_caronas_passageiro_participa("11221122112", Str).
 
 % embarcar_passageiro_carona(IdCarona, PassageiroCpf):-
 %     csv_file(File),
@@ -116,14 +126,17 @@ remover_passageiro(IdCarona, PassageiroCpf):-
     ).
 % remover_passageiro(2,"11221122112", R).
 
-% TODO: debbugar
 solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
     csv_file(File),
     carona_column(Carona_Column),
-    (possui_carona_origem_destino(Origem, Destino) ->
-        read_csv_row_by_list_element(File, Carona_Column, IdCarona, Caronas),
-        (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas) ->
-            split_string(Passageiros, ";", "", ListaPassageiros),
+    (carona_possui_origem_destino(IdCarona, Origem, Destino) ->
+        read_csv_row(File, Carona_Column, IdCarona, Caronas),
+        (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas),
+        Status \= 'Finalizada' ->
+            (   integer(Passageiros) -> number_string(Passageiros, PassageirosStr)
+            ;   PassageirosStr = Passageiros
+            ),
+            split_string(PassageirosStr, ";", "", ListaPassageiros),
             length(ListaPassageiros, QtdPass),
             number_string(PassageiroCpf, PassageiroStr),  % Convert PassageiroCpf to a string
             (QtdPass == Limite_Vagas, \+ member(PassageiroStr, ListaPassageiros) ->
@@ -136,36 +149,11 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
                 Resp = 'Registro de passageiro em carona criado com sucesso!'
             )
         ;
-            Resp = 'Carona inexistente!'
+            Resp = 'Carona indisponível!'
         )
     ;
         Resp = 'Rota não encontrada!'
     ).
-
-% solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
-%     csv_file(File),
-%     carona_column(Carona_Column),
-%     (possui_carona_origem_destino(Origem, Destino) ->
-%         read_csv_row_by_list_element(File, Carona_Column, IdCarona, Caronas),
-%         (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas) ->
-%             split_string(Passageiros, ";", "", ListaPassageiros),
-%             length(ListaPassageiros, QtdPass),
-%             (QtdPass == Limite_Vagas, \+ member(ListaPassageiros, PassageiroCpf) ->
-%                 Resp = 'Carona com capacidade máxima de passageiros!'
-%             ;
-%                 format((Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id:" [PassageiroCpf, IdCarona]),
-%                 % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
-%                 criar_viagem_passageiro(IdCarona, "False", "~w;~w"[Origem,Destino], 0, PassageiroCpf),
-%               Resp = 'Registro de passageiro em carona criado com sucesso!'
-%             )
-%         ;
-%             Resp = 'Carona inexistente!'
-%         )
-%     ;
-%         Resp = 'Rota não encontrada!'
-%     )
-% .
-
 
 criar_carona_motorista(Hora, Data, Destinos, MotoristaCpf, Valor, NumPassageirosMaximos) :-
     csv_file(CsvFile),
