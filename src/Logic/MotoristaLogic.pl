@@ -1,3 +1,10 @@
+:- module(_, [
+        cadastra_Logic/10,
+        atualiza_Logic/5,
+        remove_Logic/3,
+        recupera_cpf_logic/2
+]).
+
 :- use_module("../Schemas/MotoristaSchema.pl").
 :- use_module("../Util/Util.pl").
 
@@ -8,29 +15,35 @@ cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Reto
     ;
         (validarEmail(Email) ->
             (nullOrEmpty(Telefone) ->
-                Retorno = 'Telefone não pode ser vazio.'
+                Retorno = 'Telefone nao pode ser vazio.'
             ;
-                (nullOrEmpty(Senha) ->
-                    Retorno = 'Senha não pode ser vazio.'
-                ;
+                (valida_senha(Senha) ->
+                
                     (nullOrEmpty(CEP) ->
-                        Retorno = 'CEP não pode ser vazio.'
-                    ;
+                        Retorno = 'CEP nao pode ser vazio.'
+                        ;
                         (nullOrEmpty(CNH) ->
-                            Retorno = 'CNH não pode ser vazio.'
+                            Retorno = 'CNH nao pode ser vazio.'
                         ;
                             (validarGenero(Genero) ->
                                 Retorno = 'Digite um genero valido. Exemplo: M, F, NB.'
                             ;
-                                (validarRegiao(Regiao) ->
+                                (validaRegiao(Regiao) ->
                                     Retorno = 'Digite uma regiao valida. Exemplo: norte, nordeste, centro-oeste, sudeste, sul'
                                 ;
-                                    cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Resposta),
+                                    downcase_atom(Genero, G),
+                                    downcase_atom(Regiao, R),
+                                    atom_number(CNH, C),
+                                    cadastra_motorista(CPF, Nome, Email, Telefone, Senha, C, CEP, G, R, Resposta),
                                     Retorno = Resposta
                                 )
                             )
                         )
                     )
+                
+                ;
+                
+                    Retorno = 'Senha deve ser no minimo tamanho 4, e conter pelo menos uma letra.'
                 )
             )
         ;

@@ -123,9 +123,9 @@ menu_atualizar_cadastro(MotoristaRef) :-
     read(Opcao),
     write('Digite o novo valor: '),
     read(NovoValor),
-    (   Opcao = 1 -> atualizar_cadastro_motorista(CPF, Senha, 'Telefone', NovoValor, Resultado)
-    ;   Opcao = 2 -> atualizar_cadastro_motorista(CPF, Senha, 'Cep', NovoValor, Resultado)
-    ;   Opcao = 3 -> atualizar_cadastro_motorista(CPF, Senha, 'Senha', NovoValor, Resultado)
+    (   Opcao = 1 -> atualizar_cadastro_motorista(CPF, Senha, 'telefone', NovoValor, Resultado)
+    ;   Opcao = 2 -> atualizar_cadastro_motorista(CPF, Senha, 'cep', NovoValor, Resultado)
+    ;   Opcao = 3 -> atualizar_cadastro_motorista(CPF, Senha, 'senha', NovoValor, Resultado)
     ;   Resultado = 'Nothing'
     ),
     (   Resultado = 'Just'(Motorista) ->

@@ -25,6 +25,7 @@ read_csv_row(File, Column, Value, Row) :-
     csv_read_file(File, Data),
     select_row_read(Data, Column, Value, Row).
 
+
 select_row_read([], _, _, []).
 select_row_read([Row|Rest], Column, Value, [Row|NewRest]) :-
     arg(Column, Row, ArgValue),

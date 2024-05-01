@@ -8,20 +8,24 @@
     
 ]).
 
+:- use_module('../Logic/MotoristaLogic.pl').
 
 realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
-    cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno).
+    cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Resposta),
+    Retorno = Resposta.
 
-cancelarCadastroMotorista(CPF, Retorno):-
-    remove_motorista(CPF, Retorno).
+cancelarCadastroMotorista(CPF, Senha,Retorno):-
+    remove_Logic(CPF,Senha, Resposta),
+    Retorno = Resposta.
 
-atualizarCadastroMotorista(CPF, Campo, NovoValor):-
-    atualiza_motorista(CPF, Campo, NovoValor).
+atualizarCadastroMotorista(CPF, Senha, Campo, NovoValor, Retorno):-
+    atualiza_Logic(CPF, Campo, Resposta),
+    Retorno = Resposta.
 
 recuperarMotoristasPorRegiao(Regiao, Motoristas):-
-    recupera_motoristas_por_regiao(Regiao, Motoristas).
+    recupera_motoristas_por_regiao(Regiao, Resposta),
+    Motoristas = Resposta.
 
 recuperarMotoristaPorCPF(CPF, Motorista):-
-    recupera_motoristas_por_cpf(CPF, Motorista).
-    
-
+    recupera_motoristas_por_cpf(CPF, Resposta),
+    Motorista = Resposta.

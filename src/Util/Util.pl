@@ -3,7 +3,8 @@
     validarCPF/1,
     validarEmail/1,
     validaRegiao/1,
-    validarGenero/1
+    validarGenero/1,
+    valida_senha/1
 ]).
 
 validarCPF(CPF) :-
@@ -38,3 +39,20 @@ validaRegiao(Regiao) :-
     regioes_brasil(Regioes),
     downcase_atom(Regiao, Minusculo),
     \+ member(Minusculo, Regioes).
+
+% Predicado para validar senha
+valida_senha(Senha) :-
+    string_length(Senha, Tamanho),
+    Tamanho >= 4,  % Senha deve ter pelo menos tamanho 4
+    conta_letras(Senha, Letras),
+    Letras >= 1.   % Senha deve conter pelo menos uma letra
+
+% Predicado auxiliar para contar letras na senha
+conta_letras(Senha, Letras) :-
+    string_chars(Senha, Chars),
+    include(alpha, Chars, LetrasChars),
+    length(LetrasChars, Letras).
+
+% Predicado para verificar se um caractere é alfabético
+alpha(Char) :-
+    char_type(Char, alpha).

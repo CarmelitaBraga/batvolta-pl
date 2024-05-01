@@ -3,7 +3,8 @@
     remove_motorista/2,
     atualiza_motorista/4,
     recupera_motoristas_por_regiao/2,
-    recupera_motoristas_por_cpf/2
+    recupera_motoristas_por_cpf/2,
+    confere_senha/2
 ]).
 
 :- use_module("CsvModule.pl").
@@ -14,7 +15,8 @@
 %Helpers
 possui_motorista(Chave):-
     file(Caminho),
-    read_csv_row(Caminho, 1, Chave, [row(_, _, _, _, _, _, _, _, _)]).
+    atom_number(Chave, Number),
+    read_csv_row(Caminho, 1, Number, [row(_, _, _, _, _, _, _, _, _)]).
 
 possui_motorista_email(Chave):-
     file(Caminho),
@@ -36,7 +38,7 @@ cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, 
     ( possui_motorista(CPF) ->
         Retorno ='CPF ja cadastrado.'
     ;   
-        (possui_motorista_email(email) ->
+        (possui_motorista_email(Email) ->
             Retorno = 'Email ja cadastrado.'
         ;
             (possui_cnh(CNH) ->
@@ -52,9 +54,10 @@ cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, 
 
 % Predicado para remoção de motorista
 remove_motorista(CPF, Retorno) :-
+    atom_number(CPF, Number),
     ( possui_motorista(CPF) ->
         file(Caminho),
-        delete_csv_row(Caminho, 1, CPF),
+        delete_csv_row(Caminho, 1, Number),
         Retorno = 'Motorista removido com sucesso.'
     ;
         Retorno = 'Motorista nao cadastrado.'
@@ -64,12 +67,13 @@ remove_motorista(CPF, Retorno) :-
 atualiza_motorista(Chave, Campo, NovoValor, Retorno) :-
     (possui_motorista(Chave) ->
         file(Caminho),
-        read_csv_row(Caminho, 1, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
-        delete_csv_row(Caminho,1,Chave),
-        (   Campo == 'telefone' -> cadastra_motorista(CPF, Nome, Email, NovoValor, Senha, CNH, CEP, Genero, Regiao,_)
-        ;   Campo == 'senha' -> cadastra_motorista(CPF, Nome, Email, Telefone, NovoValor, CNH, CEP, Genero, Regiao,_)
-        ;   Campo == 'cep' -> cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, NovoValor, Genero, Regiao,_)
-        ;   Campo == 'regiao' -> cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, NovoValor,_)
+        atom_number(Chave, Number),
+        read_csv_row(Caminho, 1, Number, [row(_, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
+        delete_csv_row(Caminho,1,Number),
+        (   Campo == 'telefone' -> cadastra_motorista(Chave, Nome, Email, NovoValor, Senha, CNH, CEP, Genero, Regiao,_)
+        ;   Campo == 'senha' -> cadastra_motorista(Chave, Nome, Email, Telefone, NovoValor, CNH, CEP, Genero, Regiao,_)
+        ;   Campo == 'cep' -> cadastra_motorista(Chave, Nome, Email, Telefone, Senha, CNH, NovoValor, Genero, Regiao,_)
+        ;   Campo == 'regiao' -> cadastra_motorista(Chave, Nome, Email, Telefone, Senha, CNH, CEP, Genero, NovoValor,_)
         ;   true
         ),
         Retorno = 'Motorista atualizado com sucesso.'
@@ -87,7 +91,8 @@ recupera_motoristas_por_regiao(Regiao, MotoristasStr) :-
 recupera_motoristas_por_cpf(Chave, Motorista) :-
     (possui_motorista(Chave) -> 
         file(Caminho),
-        read_csv_row(Caminho, 1, Chave, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
+        atom_number(Chave, Number),
+        read_csv_row(Caminho, 1, Number, [row(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao)]),
         motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str),
         Motorista = Str
     ;
@@ -106,6 +111,7 @@ recupera_motoristas_por_email(Chave, Motorista) :-
 
 
 confere_senha(CPF, Senha) :-
+    atom_number(CPF, Number),
     file(Caminho),
-    read_csv_row(Caminho, 5, Senha, [row(CPF, _, _, _, SenhaCadastrada, _, _, _, _)]),
+    read_csv_row(Caminho, 1, Number, [row(Number, _, _, _, SenhaCadastrada, _, _, _, _)]),
     Senha == SenhaCadastrada.
