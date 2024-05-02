@@ -9,7 +9,9 @@
     finalizar_carona_status/1,
     cancelar_carona/1,
     carona_possui_origem_destino/3,
-    solicitar_participar_carona/5
+    solicitar_participar_carona/5,
+    recuperar_caronas_por_motorista/2,
+    mostrar_caronas_nao_iniciadas_por_motorista/2
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
@@ -30,10 +32,31 @@ status_column(8).
 lim_pass_column(9).
 avaliacao_column(10).
 
-% Fato dinâmico para gerar o id das caronas
-id(0).
-incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
+
 :- dynamic id/1.
+
+% Fato estático para inicializar o ID ao carregar o módulo
+:- initialization(loadId).
+loadId :-
+    csv_file(File),
+    getAllRows(File, Rows),
+    
+    (Rows = [] ->
+    assertz(id(0))
+    ;
+    encontrar_maior_id(Rows, 0, Id),
+    NovoId is Id + 1,
+    assertz(id(NovoId))
+    ).
+
+encontrar_maior_id([], MaiorId, MaiorId).
+encontrar_maior_id([row(Id, _, _, _, _, _, _, _, _, _)|Rest], MaiorId, R) :-
+    MaiorId < Id,
+    encontrar_maior_id(Rest, Id, R).
+encontrar_maior_id([_|Rest], MaiorId, R) :-
+    encontrar_maior_id(Rest, MaiorId, R).
+
+incrementa_id :- retract(id(X)), Y is X + 1, assertz(id(Y)).
 
 % Predicate to check if a route exists from Origem to Destino
 possui_carona_origem_destino(Origem, Destino):-
@@ -146,14 +169,12 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
     ).
 % solicitar_participar_carona(2,121212,"Patos","Rio",R).
 
-criar_carona_motorista(Hora, Data, Destinos, MotoristaCpf, Valor, NumPassageirosMaximos) :-
+criar_carona_motorista(Hora, Data, Rota, MotoristaCpf, Valor, NumPassageirosMaximos) :-
     csv_file(CsvFile),
     id(ID),
-    Carona = carona(ID, Hora, Data, Destinos, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, -1),
+    Carona = carona(ID, Hora, Data, Rota, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, -1),
     incrementa_id,
-    % Converte a instância de Carona em uma lista
     carona_to_list(Carona, ListaCarona),
-    % Escreve a linha no arquivo CSV
     write_csv_row_all_steps(CsvFile, ListaCarona).
     
 iniciar_carona_status(Cid) :-
@@ -203,3 +224,12 @@ cancelar_carona(Cid) :-
             write('Carona deletada com sucesso!')
         )
     ).
+
+recuperar_caronas_por_motorista(MotoristaCpf, Rows) :-
+    csv_file(File),
+    motorista_column(MotoristaColumn),
+    read_csv_row(File, MotoristaColumn, MotoristaCpf, Rows).
+
+mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, CorrespondingRowsStr) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(_, _, _, _, _, _, _, naoIniciada, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr).

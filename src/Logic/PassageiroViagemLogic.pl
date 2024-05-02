@@ -14,9 +14,30 @@
 :- use_module('src/Model/PassageiroViagem.pl').
 
 % Fato dinâmico para gerar o id das caronas
-id(0).
-incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
 :- dynamic id/1.
+% Fato estático para inicializar o ID ao carregar o módulo
+:- initialization(loadId).
+loadId :-
+    csv_file(File),
+    getAllRows(File, Rows),
+    
+    (Rows = [] ->
+    assertz(id(0))
+    ;
+    encontrar_maior_id(Rows, 0, Id),
+    NovoId is Id + 1,
+assertz(id(NovoId))
+).
+
+encontrar_maior_id([], MaiorId, MaiorId).
+encontrar_maior_id([row(Id, _, _, _, _, _)|Rest], MaiorId, R) :-
+    MaiorId < Id,
+    encontrar_maior_id(Rest, Id, R).
+encontrar_maior_id([_|Rest], MaiorId, R) :-
+    encontrar_maior_id(Rest, MaiorId, R).
+
+incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
+
 
 csv_file('database/viagemPassageiros.csv').
 viagem_pass_column(1).
