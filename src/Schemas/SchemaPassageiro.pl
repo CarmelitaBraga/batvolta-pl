@@ -6,7 +6,8 @@
     atualiza_passageiro/4,
     get_passageiro_by_cpf/2,
     get_passageiro_by_email/2,
-    confere_senha/2
+    confere_senha/2,
+    passageiro_to_string/2
 ]).
 
 :- dynamic passageiro/7.
@@ -35,10 +36,10 @@ existe_passageiro_by_email(Email) :-
 cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno) :-
     filePath(File),
     (   existe_passageiro_by_cpf(CPF) ->
-        Retorno = 'CPF ja cadastrado.' 
+        Retorno = "CPF já cadastrado." 
     ;    
         existe_passageiro_by_email(Email) ->
-        Retorno = 'Email ja cadastrado.'
+        Retorno = "Email já cadastrado."
     ;
         write_csv_row(File,[row(Nome, CPF, Genero, Email, Telefone, CEP, Senha)]),
         Retorno = 'Passageiro cadastrado com sucesso.'
@@ -84,6 +85,9 @@ get_passageiro_by_email(Email, Retorno) :-
     ;   
         Retorno = 'Passageiro nao encontrado'
     ).
+
+passageiro_to_string([Nome,CPF,Genero,Email,Telefone,CEP,Senha], Retorno) :-
+    atomic_list_concat(['Passageiro:\n', 'Nome =', Nome, '\n', 'CPF =', CPF, '\n', 'Genero =', Genero, '\n', 'Email =', Email,'\n', 'Telefone =', Telefone, '\n',  'CEP =', CEP,'\n', 'Senha =', Senha, '\n'], ' ', Retorno).
 
 confere_senha(SenhaPassada, SenhaPassageiro):-
     SenhaPassada == SenhaPassageiro.
