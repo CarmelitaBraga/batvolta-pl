@@ -99,19 +99,19 @@ adicionar_passageiro_carona(IdCarona, PassageiroCpf, Resp):-
     csv_file(File),
     carona_column(Carona_Column),
     read_csv_row(File, Carona_Column, IdCarona, Caronas),
-    (member(row(IdCarona, Hora, Data, Destino, Motorista, Passageiros, Valor, 'EmAndamento', Limite_Vagas, Aval), Caronas),
+    (member(row(IdCarona, Hora, Data, Destino, Motorista, Passageiros, Valor, emAndamento, Limite_Vagas, Aval), Caronas),
     passageiro_aceito_carona(IdCarona, PassageiroCpf) ->
         atom_string(Passageiros, PassageirosString),
         split_string(PassageirosString, ";", "", PassageirosList),
         length(PassageirosList, QtdPass),
         atom_string(PassageiroCpf, PassStr),
-        ((QtdPass >= Limite_Vagas ; member(PassStr, PassageirosList)) ->
+        (((QtdPass >= Limite_Vagas, \+ PassageirosList = [""]) ; member(PassStr, PassageirosList)) ->
             Resp = 'Carona com capacidade máxima de passageiros!'
         ;
             (   PassageirosString == "" -> Nova_Lista_Passageiros_Str = PassStr
                 ;   atomic_list_concat([PassStr, PassageirosString], ";", Nova_Lista_Passageiros_Str)
             ),
-            UpdatedRow = row(IdCarona, Hora, Data, Destino, Motorista, Nova_Lista_Passageiros_Str, Valor, 'EmAndamento', Limite_Vagas, Aval),
+            UpdatedRow = row(IdCarona, Hora, Data, Destino, Motorista, Nova_Lista_Passageiros_Str, Valor, emAndamento, Limite_Vagas, Aval),
             update_csv_row(File, Carona_Column, IdCarona, UpdatedRow),
             Resp = 'Passageiro adicionado com sucesso!'
         )
