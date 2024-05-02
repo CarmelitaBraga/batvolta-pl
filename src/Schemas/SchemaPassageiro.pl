@@ -49,7 +49,7 @@ remove_passageiro(CPF, Retorno) :-
     (delete_csv_row_bool(File, 2, CPF) ->
         Retorno = 'Passageiro removido com sucesso'
     ;
-        Retorno = 'Passageiro não encontrado'
+        Retorno = 'Passageiro nao encontrado'
     ). 
 % Campo = 1 para telefone
 % Campo = 2 para CEP
@@ -73,7 +73,7 @@ get_passageiro_by_cpf(CPF, Retorno) :-
         read_csv_row(File, 2, CPF, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
         Retorno = [Nome,CPF,Genero,Email,Telefone,CEP,Senha]
     ;   
-        Retorno = 'Passageiro não encontrado'
+        Retorno = 'Passageiro nao encontrado'
     ).
 
 get_passageiro_by_email(Email, Retorno) :-
@@ -82,11 +82,9 @@ get_passageiro_by_email(Email, Retorno) :-
         read_csv_row(File, 4, Email, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
         Retorno = [Nome,CPF,Genero,Email,Telefone,CEP,Senha]
     ;   
-        Retorno = 'Passageiro não encontrado'
+        Retorno = 'Passageiro nao encontrado'
     ).
 
-confere_senha(CPF,Senha):-
-    filePath(File),
-    read_csv_row(File, 2, CPF, [row(_,CPF,_,_,_,_,SenhaCadastrada)]),
-    Senha == SenhaCadastrada.
+confere_senha(SenhaPassada, SenhaPassageiro):-
+    SenhaPassada == SenhaPassageiro.
     
