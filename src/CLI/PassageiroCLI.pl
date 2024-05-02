@@ -1,19 +1,19 @@
-:- module(passageiro_cli, [
-    menu_principal/0
+:- module(_, [
+    menu_principal/0,
+    menu_principal_opcao/1,
+    menu_cadastrar_passageiro/0
 ]).
 
 /* Import do controller */
-:- use_module("../Controller/ControllerPassageiro.pl").
-
-:- dynamic motorista/9
-:- dynamic motorista/7
+:- use_module('../Controller/PassageiroController.pl').
 
 /* Referencia do passageiro para login */
-:- dynamic passageiro_ref/1
+:- dynamic passageiro_ref/1.
 
 /* Menu de acesso do passageiro */
-menu_principal:-
-    write('\nSelecione uma opcao:\n'),
+
+menu_principal():-
+    write("\nSelecione uma opção:\n"),
     write('1 - Cadastro de Passageiro\n'),
     write('2 - Login\n'),
     write('0 - Sair\n'),
@@ -25,10 +25,10 @@ menu_principal_opcao(1):-
     menu_principal.
 
 menu_principal_opcao(2):-
-    retractall(passageiro_ref(_)),
-    assert(passageiro_ref(none)),
-    menu_realizar_login,
-    passageiro_ref(Passageiro),
+    %retractall(passageiro_ref(_)),
+    %assert(passageiro_ref(none)),
+    menu_realizar_login(Passageiro),
+    %passageiro_ref(Passageiro),
     menu_opcoes_passageiro(Passageiro).
 
 menu_principal_opcao(0) :-
@@ -39,7 +39,7 @@ menu_principal_opcao(_):-
     menu_principal.
 
 menu_opcoes_passageiro(none):-
-    write('\nNenhum motorista logado!\n'),
+    write('\nNenhum passageiro logado!\n'),
     menu_principal.
 
 menu_opcoes_passageiro(Passageiro):-
@@ -66,7 +66,7 @@ menu_opcoes_passageiro_opcao(3, Passageiro):-
     menu_opcoes_passageiro(Passageiro).
 
 menu_opcoes_passageiro_opcao(4, Passageiro):-
-    menu_carregar_notificacoes(Passageiro),
+    %menu_carregar_notificacoes(Passageiro),
     menu_opcoes_passageiro(Passageiro).
 
 menu_opcoes_passageiro_opcao(5, Passageiro):-
@@ -79,7 +79,7 @@ menu_opcoes_passageiro_opcao(_, Passageiro):-
     write('Opcao invalida"\n'),
     menu_opcoes_passageiro(Passageiro).
 
-menu_cadastrar_passageiro:-
+menu_cadastrar_passageiro():-
     write('\nCadastrar Passageiro\n'),
     write('Digite o Nome: \n'),
     read(Nome),
@@ -95,7 +95,8 @@ menu_cadastrar_passageiro:-
     read(CEP),
     write('Digite a Senha: \n'),
     read(Senha),
-    realizar_cadastro_passageiro(Nome, CPF, Genero, email, Telefone, CEP, Senha).
+    realizar_cadastro_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno),
+    write(Retorno).
 
 menu_cancelar_cadastro:-
     passageiro_ref(Passageiro_ref),
@@ -118,7 +119,7 @@ menu_atualizar_cadastro(Passageiro_ref):-
     ;   Opcao = 3 -> atualizar_cadastro_passageiro(CPF, Senha, 'Senha', NovoValor, Resultado)
     ;   Resultado = 'Opcao invalida'
     ),
-    (   Resultado = 'Just' (Passageiro) ->
+    (   Resultado = 'Just' ->
         write('Cadastro atualizado com sucesso!\n')
     ;   write('Erro ao atualizar cadastro!\n')
     ),
@@ -127,8 +128,8 @@ menu_atualizar_cadastro(Passageiro_ref):-
 menu_visualizar_info(Passageiro_ref):-
     visualizar_info_passageiro(cpf, retorno).
 
-menu_realizar_login:-
-    write('\nRealizar Login de Passageiro\n'),
+menu_realizar_login():-
+    write("\nRealizar Login de Passageiro\n"),
     write('Digite o e-mail: '),
     read(Email),
     write('Digite a senha: '),
@@ -143,8 +144,4 @@ processar_resultado_login('Just'(Passageiro)):-
 processar_resultado_login('Nothing'):-
     write('Login falhou!\n'),
     menu_principal.
-
-menu_carregar_notificacoes(Passageiro):-
-    carregar_notificacoes_passageiro(Passageiro_ref, Notificacoes).
-    
 
