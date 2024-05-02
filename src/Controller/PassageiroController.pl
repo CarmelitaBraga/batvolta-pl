@@ -1,29 +1,27 @@
 :- module(_, [
     realizar_cadastro_passageiro/8,
     remove_passageiro/3,
-    atualizar_cadastro_passageiro,
-    visualizar_info_passageiro,
-    realizar_login_passageiro/3,
-    carregar_notificacoes_passageiro
-])
+    atualizar_cadastro_passageiro/5,
+    visualizar_info_passageiro/1,
+    realizar_login_passageiro/3
+]).
 
+:- use_module('../Logic/PassageiroLogic.pl').
 
-:- use_module('../src/Logic/PassageiroLogic.pl').
+realizar_cadastro_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Passageiro):-
+    cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Passageiro).
 
-realizar_cadastro_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
-    cadastro_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno).
+remove_passageiro(CPF, Senha, Passageiro):-
+    remove_passageiro_logic(CPF, Senha, Passageiro).
 
-remove_passageiro(CPF, Senha, Retorno):-
-    remove_passageiro_logic(CPF, Senha, Retorno).
+atualizar_cadastro_passageiro(CPF,SenhaPassada,Coluna,NovoValor,Retorno):-
+    atualiza_cadastro_logic(CPF,SenhaPassada,Coluna,NovoValor,Retorno).
 
-atualizar_cadastro_passageiro():-
-    atualiza_cadastro_logic().
+visualizar_info_passageiro(CPF):-
+    visualiza_info_logic(CPF).
 
-visualizar_info_passageiro():-
-    visualiza_info_logic_logic().
+realizar_login_passageiro(Email, Senha, Passageiro):-
+    login_passageiro_logic(Email, Senha, Passageiro).
 
-realizar_login_passageiro(CPF, Senha, Retorno):-
-    login_passageiro_logic(CPF, Senha, Retorno).
-
-carregar_notificacoes_passageiro():-
-    carregar_notificacoes_logic().
+%carregar_notificacoes_passageiro():-
+%    carregar_notificacoes_logic().
