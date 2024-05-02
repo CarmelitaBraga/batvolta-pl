@@ -70,7 +70,7 @@ mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     atom_string(PassageiroCpf, PassStr),
     read_csv_row_by_list_element(File, Pass_Column, PassStr, Rows),
     findall(Str, (member(Row, Rows), caronaToStr(Row, Str)), CaronasStr).
-% mostrar_caronas_passageiro_participa("11221122112", Str).
+% mostrar_caronas_passageiro_participa(11221122112, Str).
 
 adicionar_passageiro_carona(IdCarona, PassageiroCpf, Resp):-
     csv_file(File),

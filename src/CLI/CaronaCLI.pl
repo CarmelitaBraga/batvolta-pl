@@ -65,26 +65,25 @@ handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal
 %     ).
 
 
-% menu_cancelar_carona(PassageiroRef):-
-%     get_cli_cpf(PassageiroRef, PassageiroCpf),
-%     mostrar_viagem_passageiro(PassageiroCpf, Caronas),
-%     write('Caronas: \n'), write(Caronas), nl,
-%     write('Digite o Id da carona que deseja cancelar (-1 para não escolher alguma): '),
-%     read(CId),
-%     (CId == -1 -> 
-%         menu_principal_passageiro_carona(PassageiroRef)
-%     ;
-%         cancelar_carona_passageiro(CId, PassageiroCpf),
-%         menu_principal_passageiro_carona(PassageiroRef)
-%     ).
+menu_cancelar_carona(PassageiroRef):-
+    get_cli_cpf(PassageiroRef, PassageiroCpf),
+    mostrar_viagem_passageiro(PassageiroCpf, Caronas),
+    write('Caronas: \n'), write(Caronas), nl,
+    write('Digite o Id da carona que deseja cancelar (-1 para nenhuma): '),
+    read(CId),
+    (CId = -1 -> 
+        menu_principal_passageiro_carona(PassageiroRef)
+    ;
+        cancelar_carona_passageiro(CId, PassageiroCpf, Resp),
+        write(Resp),
+        menu_principal_passageiro_carona(PassageiroRef)
+    ).
 
-
-% menu_mostrar_caronas(PassageiroRef):-
-%     get_cli_cpf(PassageiroRef, PassageiroCpf),
-%     mostrar_viagem_passageiro(PassageiroCpf, Resultado),
-%     write(Resultado), nl,
-%     menu_principal_passageiro_carona(PassageiroRef).
-
+menu_mostrar_caronas(PassageiroRef):-
+    get_cli_cpf(PassageiroRef, PassageiroCpf),
+    mostrar_viagem_passageiro(PassageiroCpf, Resultado),
+    write(Resultado), nl,
+    menu_principal_passageiro_carona(PassageiroRef).
 
 menu_desembarcar_caronas(PassageiroRef):- 
     get_cli_cpf(PassageiroRef, PassageiroCpf),
@@ -110,7 +109,6 @@ menu_embarcar_caronas(PassageiroRef):-
     embarcar_passageiro(IdCarona, PassageiroCpf, Resp),
     write(Resp), nl,
     menu_principal_passageiro_carona(PassageiroRef).
-
 
 menu_avaliar_motorista(PassageiroRef) :-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
