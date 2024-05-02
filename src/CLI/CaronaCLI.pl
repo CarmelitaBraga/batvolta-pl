@@ -21,6 +21,7 @@
 get_cli_cpf(PassageiroRef, 11122233344).
 
 :- use_module('src/Controller/CaronaController.pl').
+:- use_module('src/Util/Utils.pl').
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -52,7 +53,7 @@ menu_procurar_carona(PassageiroRef):-
     read(DestinoStr),
     (possui_caronas_origem_destino_controller(OrigemStr, DestinoStr) ->
         mostrar_caronas_disponiveis_origem_destino(OrigemStr, DestinoStr, Caronas),
-        write('Caronas disponíveis: '), write(Caronas), nl,
+        write('Caronas disponíveis: '), nl, printList(Caronas), nl,
         write('Qual carona deseja solicitar? (Digite o Id da carona ou -1 para dispensar): '),
         read(CId),
         (CId == -1 -> menu_principal_passageiro_carona(PassageiroRef)
@@ -68,7 +69,7 @@ menu_procurar_carona(PassageiroRef):-
 menu_cancelar_carona(PassageiroRef):-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
     mostrar_viagem_passageiro(PassageiroCpf, Caronas),
-    write('Caronas: \n'), write(Caronas), nl,
+    write('Caronas: \n'), nl, printList(Caronas), nl,
     write('Digite o Id da carona que deseja cancelar (-1 para nenhuma): '),
     read(CId),
     (CId = -1 -> 
@@ -81,15 +82,15 @@ menu_cancelar_carona(PassageiroRef):-
 
 menu_mostrar_caronas(PassageiroRef):-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
-    mostrar_viagem_passageiro(PassageiroCpf, Resultado),
-    write(Resultado), nl,
+    mostrar_viagem_passageiro(PassageiroCpf, Viagens),
+    printList(Viagens),
     menu_principal_passageiro_carona(PassageiroRef).
 
 menu_desembarcar_caronas(PassageiroRef):- 
     get_cli_cpf(PassageiroRef, PassageiroCpf),
-    mostrar_caronas_passageiro(PassageiroCpf, Resultado),
-    (Resultado \= [] ->
-        write(Resultado), nl,
+    mostrar_caronas_passageiro(PassageiroCpf, Caronas),
+    (Caronas \= [] ->
+        printList(Caronas), nl,
         write('Digite o ID da carona: '),
         read(IdCarona),
         desembarcar_passageiro(IdCarona, PassageiroCpf, Resp),
@@ -103,7 +104,7 @@ menu_embarcar_caronas(PassageiroRef):-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
     write('Escolha a carona para embarcar: \n'),
     mostrar_viagem_passageiro(PassageiroCpf, Viagens),
-    write(Viagens), nl,
+    printList(Viagens), nl,
     write('Digite o ID da carona: '),
     read(IdCarona),
     embarcar_passageiro(IdCarona, PassageiroCpf, Resp),
@@ -114,7 +115,7 @@ menu_avaliar_motorista(PassageiroRef) :-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
     get_viagem_sem_avaliacao(PassageiroCpf, Caronas),
     (Caronas \= "" ->
-        write(Caronas), nl,
+        printList(Caronas), nl,
         write('Digite o ID da carona que deseja avaliar: '),
         read(IdCarona),
         write('Digite a avaliação do motorista: '),

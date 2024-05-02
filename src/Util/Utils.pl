@@ -2,7 +2,8 @@
     parseElement/2,
     insertAtFirst/3,
     listToRow/2,
-    list_to_string/3
+    list_to_string/3,
+    printList/1
     ]).
 
 parseElement(Element, ParsedElement) :-
@@ -21,3 +22,8 @@ list_to_string([H|T], Str, R) :-
     string_concat(Str, H, TempStr),
     string_concat(TempStr,'\n',NovaStr),
     list_to_string(T, NovaStr, R).
+
+printList([]).
+printList([H|T]) :-
+    writeln(H),
+    printList(T).
