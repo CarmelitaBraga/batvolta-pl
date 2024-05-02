@@ -1,11 +1,9 @@
-
-module(_, [
-    cadastro_passageiro_logic/8,
+:- module(_, [
+    cadastrar_passageiro_logic/8,
     remove_passageiro_logic/3,
     atualiza_cadastro_logic/5,
-    visualiza_info_logic/0,
-    login_passageiro_logic/3,
-    carregar_notificacoes_logic/0
+    visualiza_info_logic/1,
+    login_passageiro_logic/3
 ]).
 
 :- use_module('../Util/Utils.pl').
@@ -19,7 +17,7 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
         ->  write('Nome não pode ser vazio')
     ;
         \+ validar_genero(Genero) 
-        ->  write('Genero deve ser M ou F')
+        ->  write('Genero deve ser M, F ou NB.')
     ;
         \+ validar_email(Email) 
         ->  write('Email não atende aos requisitos')
@@ -33,16 +31,12 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
         null_or_empty(Senha) 
         ->  write('Senha não pode ser vazia')
     ;
-        cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Resp),
-        Retorno = Resp
+        cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno)
     ).
 
 
 remove_passageiro_logic(CPF, Senha, Retorno):-
-    (   \+ validar_cpf(CPF) 
-        ->  Retorno = 'CPF não atende aos requisitos'
-    ;
-        get_passageiro_by_cpf(CPF, Passageiro),
+    (   get_passageiro_by_cpf(CPF, Passageiro),
         last(Passageiro, SenhaPassageiro),
         (   confere_senha(SenhaPassageiro,Senha)
         ->  (   remove_passageiro(CPF, Retorno),
@@ -53,7 +47,7 @@ remove_passageiro_logic(CPF, Senha, Retorno):-
         )
     ).
 
-% remove_passageiro_logic(12345678901,121210164, Retorno):-
+% remove_passageiro_logic(12345678901,121210164, Retorno)
 
 atualiza_cadastro_logic(CPF, SenhaPassada, Coluna, NovoValor, Retorno):-
     (   null_or_empty(NovoValor)
@@ -72,9 +66,12 @@ atualiza_cadastro_logic(CPF, SenhaPassada, Coluna, NovoValor, Retorno):-
         )
     ).
 
-visualiza_info_logic():- 
-    write("Logic do visualiza").
-
+visualiza_info_logic(CPF):- 
+    get_passageiro_by_cpf(CPF, Passageiro),
+    passageiro_to_string(Passageiro, Retorno),
+    write(Retorno),
+    halt.
+    
 login_passageiro_logic(Email, Senha, Retorno):-
     (   \+ validar_email(Email) 
         ->  write('Email não atende aos requisitos'),
@@ -96,6 +93,3 @@ login_passageiro_logic(Email, Senha, Retorno):-
         write("Passageiro não encontrado"),
         Retorno = " "
     ).
-
-carregar_notificacoes_logic():-
-    write("Logic do carrega").
