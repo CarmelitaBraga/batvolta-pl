@@ -28,7 +28,7 @@ validar_email(Email) :-
     Extensao \= "". % Verifica se a extensão do domínio não está vazia
 
 validar_genero(Genero):- 
-    Genero = "M"; Genero = "F"; Genero = "NB".
+    Genero = 'M'; Genero = 'F'; Genero = 'NB'.
 
 parseElement(Element, ParsedElement) :-
     (is_list(Element) ->
