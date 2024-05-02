@@ -43,27 +43,26 @@ handle_option(6, PassageiroRef) :- menu_avaliar_motorista(PassageiroRef), menu_p
 handle_option(0, PassageiroRef) :- menu_opcoes_passageiro(PassageiroRef).
 handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal_passageiro_carona(PassageiroRef).
 
-
-% menu_procurar_carona(PassageiroRef):-
-%     write('\nDe onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
-%     read(Origem),
-%     write('\nOnde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
-%     read(Destino),
-%     (possui_caronas_origem_destino_controller(Origem, Destino) ->
-%         mostrar_caronas_disponiveis_origem_destino(Origem, Destino, Caronas),
-%         write('Caronas disponíveis: '), write(Caronas), nl,
-%         write('Qual carona deseja solicitar? (Digite o Id da carona ou -1 para dispensar): '),
-%         read(CId),
-%         (CId == -1 -> menu_principal_passageiro_carona(PassageiroRef)
-%         ;
-%         solicitar_carona_passageiro(CId, PassageiroRef, Origem, Destino, MaybeCaronaEscolhida),
-%         write(MaybeCaronaEscolhida), nl,
-%         menu_principal_passageiro_carona(PassageiroRef))
-%     ;
-%         write('Não existem caronas para essa origem e destino!\n'),
-%         menu_principal_passageiro_carona(PassageiroRef)
-%     ).
-
+% Os valores de origem e destino devem ser passados com aspas duplas :(
+menu_procurar_carona(PassageiroRef):-
+    write('\nDe onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    read(OrigemStr),
+    write('\nOnde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    read(DestinoStr),
+    (possui_caronas_origem_destino_controller(OrigemStr, DestinoStr) ->
+        mostrar_caronas_disponiveis_origem_destino(OrigemStr, DestinoStr, Caronas),
+        write('Caronas disponíveis: '), write(Caronas), nl,
+        write('Qual carona deseja solicitar? (Digite o Id da carona ou -1 para dispensar): '),
+        read(CId),
+        (CId == -1 -> menu_principal_passageiro_carona(PassageiroRef)
+        ;
+        solicitar_carona_passageiro(CId, PassageiroRef, OrigemStr, DestinoStr, MaybeCaronaEscolhida),
+        write(MaybeCaronaEscolhida), nl,
+        menu_principal_passageiro_carona(PassageiroRef))
+    ;
+        write('Não existem caronas para essa origem e destino!\n'),
+        menu_principal_passageiro_carona(PassageiroRef)
+    ).
 
 menu_cancelar_carona(PassageiroRef):-
     get_cli_cpf(PassageiroRef, PassageiroCpf),
