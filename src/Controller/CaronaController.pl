@@ -11,11 +11,16 @@
     solicitar_carona_passageiro/5,
     criar_carona/6,
     inicializar_carona_status/1,
-    possui_carona_nao_iniciada_controller/1
+    possui_carona_nao_iniciada_controller/1,
+    mostrar_caronas_nao_iniciadas_controller/2,
+    checar_carona_nao_iniciada_de_motorista/2,
+    inicializar_carona_status/1
     ]).
 
-:- use_module('src/Logic/CaronaLogic.pl').
-:- use_module('src/Logic/PassageiroViagemLogic.pl').
+:- use_module('../Logic/CaronaLogic.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
+:- use_module('../Util/Utils.pl').
+
 
 % Carona & passageiro
 
@@ -74,4 +79,14 @@ inicializar_carona_status(Cid) :-
 possui_carona_nao_iniciada_controller(MotoristaCpf) :- 
     mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, Caronas),
     list_to_string(Caronas, '', CaronasStr),
-    CaronasStr = "".
+    \+ CaronasStr = ''.
+
+mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, CaronasStr) :-
+    mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, Caronas),
+    list_to_string(Caronas, '', CaronasStr).
+
+checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Cid) :-
+    checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Cid).
+
+inicializar_carona_status(Cid) :-
+    iniciar_carona_status(Cid).
