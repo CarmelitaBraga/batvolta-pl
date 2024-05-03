@@ -23,12 +23,11 @@ menu_principal_opcao(1) :-
     menu_cadastrar_motorista,
     menu_principal.
 
-menu_principal_opcao(2) :-
-    retractall(motorista_ref(_)),
+menu_principal_opcao(2):-
+    retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
     assert(motorista_ref(none)),
     menu_realizar_login,
-    motorista_ref(Motorista),
-    menu_opcoes_motorista(Motorista).
+    menu_opcoes_motorista.
 
 menu_principal_opcao(0) :-
     write('Saindo...\n').
@@ -106,9 +105,6 @@ menu_opcoes_motorista_opcao(3) :-
 menu_opcoes_motorista_opcao(4) :-
     menu_carregar_notificacoes.
 
-%menu_opcoes_motorista_opcao(5) :-
-%    menu_principal_carona_motorista.
-
 menu_opcoes_motorista_opcao(0) :-
     retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
     menu_principal.
@@ -121,7 +117,8 @@ menu_cancelar_cadastro :-
     write('Digite a senha: '),
     read(Senha),
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
-    cancelarCadastroMotorista(CPF,Senha, Retorno).
+    cancelarCadastroMotorista(CPF,Senha, Retorno),
+    write(Retorno). 
 
 menu_atualizar_cadastro :-
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
