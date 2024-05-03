@@ -6,7 +6,8 @@
    recuperarMotoristaPorCPF/2,
    recuperarNotificao/2,
    recuperarMotoristasPorRegiao/2,
-   mostrar_todos_motoristas/1
+   mostrar_todos_motoristas/1,
+   salvar_notificacao/5
 ]).
 
 :- use_module('../Logic/MotoristaLogic.pl').
@@ -35,3 +36,6 @@ realizarLoginMotorista(Email,Senha,Motorista):-
 
 mostrar_todos_motoristas(ListaMotoristas):-
     get_all_motoristas(ListaMotoristas).
+    
+salvar_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta):-
+    cadastra_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta).

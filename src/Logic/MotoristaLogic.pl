@@ -5,7 +5,8 @@
         recupera_cpf_logic/2,
         recupera_notificacao_logic/2,
         realiza_login_logic/3,
-        recupera_regiao_logic/2
+        recupera_regiao_logic/2,
+        cadastra_notificacao/5
 ]).
 
 :- use_module('src/Schemas/MotoristaSchema.pl').
@@ -60,12 +61,29 @@ cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Reto
 
 
 atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno):-
-        (confere_senha(CPF, Senha) ->
+    (Campo == 'senha' ->
+        (valida_senha(NovoValor) ->
+            (confere_senha(CPF, Senha) ->
             atualiza_motorista(CPF,Campo,NovoValor,Resposta),
             Retorno = Resposta
+            ;
+            Retorno = 'Senha incorreta, tente novamente.'
+            )
         ;
-            Retorno = "Senha incorreta, tente novamente."
-        ).
+            Retorno = 'Senha deve ser no minimo tamanho 4, e conter pelo menos uma letra.'
+        )
+    ;
+        (nullOrEmpty(NovoValor) ->
+            Retorno = 'Novo valor nao pode ser vazio.'
+        ;
+            (confere_senha(CPF, Senha) ->
+                atualiza_motorista(CPF,Campo,NovoValor,Resposta),
+                Retorno = Resposta
+            ;
+                Retorno = 'Senha incorreta, tente novamente.'
+            )
+        )
+    ).
 
 remove_Logic(CPF,Senha,Retorno):-
     (confere_senha(CPF, Senha) ->
@@ -98,3 +116,6 @@ realiza_login_logic(Email,Senha,Retorno):-
     ;
     Retorno = 'Login incorreto.'
     ).
+
+cadastra_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta):-
+    cadastrar_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta).
