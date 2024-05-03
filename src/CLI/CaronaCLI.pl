@@ -192,8 +192,9 @@ menu_iniciar_carona(MotoristaRef) :-
         write(Caronas),
         writeln("Digite o Id da carona: "),
         read_line_to_string(user_input, Cid),
-        (checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Cid) ->
-            inicializar_carona_status(Cid),
+        atom_number(Cid, Code),
+        (checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Code) ->
+            inicializar_carona_status(Code),
             write("Carona iniciada com sucesso!"), nl
         ;
             write("Essa carona nao pertence a esse motorista!"), nl
