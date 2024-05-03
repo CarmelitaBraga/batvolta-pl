@@ -190,7 +190,7 @@ menu_iniciar_carona(MotoristaRef) :-
         write("Qual carona voce deseja iniciar: "), nl,
         mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
         write(Caronas),
-        writeln("Digite o Id da carona: "),
+        write("Digite o Id da carona: "),
         read_line_to_string(user_input, Cid),
         atom_number(Cid, Code),
         (checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Code) ->
@@ -204,18 +204,20 @@ menu_iniciar_carona(MotoristaRef) :-
     ).
 
 menu_finalizar_carona(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,   % Retirar posteriormente
+    % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     (possui_carona_em_andamento_controller(MotoristaCpf) -> 
-        write("Qual carona você deseja Finalizar:"), nl,
-        info_caronas_em_andamento_controller(MotoristaCpf, Caronas),
+        write("Qual carona voce deseja finalizar:"), nl,
+        mostrar_caronas_em_andamento_controller(MotoristaCpf, Caronas),
         write(Caronas),
         write("Digite o Id da carona: "),
-        read(Cid), nl,
-        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
-            finalizar_carona_status(Cid),
+        read_line_to_string(user_input, Cid),
+        atom_number(Cid, Code),
+        (checar_carona_em_andamento_de_motorista(MotoristaCpf, Code) ->
+            finaliza_carona_status(Code),
             write("Carona finalizada com sucesso!"), nl
         ;
-            write("Essa carona não pertence a esse motorista!"), nl
+            write("Essa carona nao pertence a esse motorista!"), nl
         )
     ;
         write("Não existem caronas possíveis de se finalizar!"), nl
