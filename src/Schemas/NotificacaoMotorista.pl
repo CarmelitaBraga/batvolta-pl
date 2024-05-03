@@ -3,9 +3,9 @@
    recupera_notificacao_motoristas/2
 ]).
 
-file('../../database/notificacaoMotorista.csv').
+file('database/notificacaoMotorista.csv').
 
-:- use_module('CsvModule.pl').
+:- use_module('src/Schemas/CsvModule.pl').
 
 :- dynamic id/1.
 

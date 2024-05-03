@@ -7,7 +7,8 @@
     carona_avalia_motorista/4,
     criar_viagem_passageiro/5,
     passageiro_tem_registro_carona/2,
-    passageiro_aceito_carona/2
+    passageiro_aceito_carona/2,
+    get_viagens_by_carona/2
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -163,3 +164,13 @@ criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
     viagem_to_list(Viagem, ListaViagem),
     write_csv_row_all_steps(File, ListaViagem).
 % criar_viagem_passageiro(7,"True","Osasco;Disney", 0, 111555888).
+
+get_viagens_by_carona(IdCarona, Viagens):-
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, IdCarona, ViagensRows),
+    (member(row(_, IdCarona, _, _, _, _), ViagensRows) ->
+        Viagens = ViagensRows
+    ;
+        Viagens = []
+    ).

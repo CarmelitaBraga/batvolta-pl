@@ -6,10 +6,13 @@
     recupera_motoristas_por_cpf/2,
     recupera_motoristas_por_email/2,
     confere_senha/2,
-    confere_senha_login/2
+    confere_senha_login/2,
+    get_all_motoristas/1
 ]).
 
-:- use_module("CsvModule.pl").
+:- use_module('src/Schemas/CsvModule.pl').
+
+file_csv('database/motoristas.csv').
 
 
 % motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)
@@ -128,3 +131,7 @@ confere_senha_login(Email, Senha) :-
     file(Caminho),
     read_csv_row(Caminho, 3, Email, [row(_, _, _, _, SenhaCadastrada, _, _, _, _)]),
     Senha == SenhaCadastrada.
+
+get_all_motoristas(ListaMotoristas):-
+    file_csv(File),
+    getAllRows(File, ListaMotoristas).

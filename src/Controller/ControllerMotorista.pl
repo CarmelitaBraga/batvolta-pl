@@ -5,11 +5,12 @@
    atualizarCadastroMotorista/5,
    recuperarMotoristaPorCPF/2,
    recuperarNotificao/2,
-   recuperarMotoristasPorRegiao/2
-    
+   recuperarMotoristasPorRegiao/2,
+   mostrar_todos_motoristas/1
 ]).
 
 :- use_module('../Logic/MotoristaLogic.pl').
+:- use_module('src/Schemas/MotoristaSchema.pl').
 
 realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
     cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno).
@@ -31,3 +32,6 @@ recuperarNotificao(CPF, Notificacao):-
 
 realizarLoginMotorista(Email,Senha,Motorista):-
     realiza_login_logic(Email,Senha,Motorista).
+
+mostrar_todos_motoristas(ListaMotoristas):-
+    get_all_motoristas(ListaMotoristas).

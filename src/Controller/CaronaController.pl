@@ -11,7 +11,9 @@
     solicitar_carona_passageiro/5,
     criar_carona/6,
     inicializar_carona_status/1,
-    possui_carona_nao_iniciada_controller/1
+    possui_carona_nao_iniciada_controller/1,
+    mostrar_viagens_por_motorista/2,
+    mostrar_viagens_carona/2
     ]).
 
 :- use_module('src/Logic/CaronaLogic.pl').
@@ -75,3 +77,9 @@ possui_carona_nao_iniciada_controller(MotoristaCpf) :-
     mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, Caronas),
     list_to_string(Caronas, '', CaronasStr),
     CaronasStr = "".
+
+mostrar_viagens_por_motorista(MotoristaCpf, Rows):-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows).
+
+mostrar_viagens_carona(IdCarona, Viagens):-
+    get_viagens_by_carona(IdCarona, Viagens).
