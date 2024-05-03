@@ -39,7 +39,7 @@ cadastrar_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta) :-
     id(ID),
     write_csv_row(Caminho, [row(ID, Motorista, Passageiro, Carona, Conteudo)]),
     incrementa_id,
-    Resposta = 'notificacao criada com sucesso.'.
+    Resposta = 'Notificacao criada com sucesso.'.
 
 
 notificacaoToStr(notificacao(id(ID),motorista(_),passageiro(Passageiro),carona(Carona),conteudo(Conteudo), Str)) :-

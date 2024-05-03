@@ -5,7 +5,8 @@
    atualizarCadastroMotorista/5,
    recuperarMotoristaPorCPF/2,
    recuperarNotificao/2,
-   recuperarMotoristasPorRegiao/2
+   recuperarMotoristasPorRegiao/2,
+   salvar_notificacao/5
     
 ]).
 
@@ -31,3 +32,6 @@ recuperarNotificao(CPF, Notificacao):-
 
 realizarLoginMotorista(Email,Senha,Motorista):-
     realiza_login_logic(Email,Senha,Motorista).
+
+salvar_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta):-
+    cadastra_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta).

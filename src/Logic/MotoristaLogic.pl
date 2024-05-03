@@ -5,7 +5,8 @@
         recupera_cpf_logic/2,
         recupera_notificacao_logic/2,
         realiza_login_logic/3,
-        recupera_regiao_logic/2
+        recupera_regiao_logic/2,
+        cadastra_notificacao/5
 ]).
 
 :- use_module("../Schemas/MotoristaSchema.pl").
@@ -98,3 +99,6 @@ realiza_login_logic(Email,Senha,Retorno):-
     ;
     Retorno = 'Login incorreto.'
     ).
+
+cadastra_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta):-
+    cadastrar_notificacao(Motorista, Passageiro, Carona, Conteudo, Resposta).
