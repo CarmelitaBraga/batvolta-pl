@@ -12,7 +12,9 @@
     solicitar_participar_carona/5,
     recuperar_caronas_por_motorista/2,
     mostrar_caronas_nao_iniciadas_por_motorista/2,
-    checar_carona_nao_iniciada_e_motorista/2
+    checar_carona_nao_iniciada_e_motorista/2,
+    mostrar_caronas_em_andamento_por_motorista/2,
+    checar_carona_em_andamento_e_motorista/2
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
@@ -239,5 +241,14 @@ mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, CorrespondingRowsStr) 
 checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Cid) :-
     recuperar_caronas_por_motorista(MotoristaCpf, Rows),
     findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, naoIniciada, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
+    CorrespondingRowsStr \= [].
+
+mostrar_caronas_em_andamento_por_motorista(MotoristaCpf, CorrespondingRowsStr) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(_, _, _, _, _, _, _, emAndamento, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr).
+
+checar_carona_em_andamento_e_motorista(MotoristaCpf, Cid) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, emAndamento, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
     CorrespondingRowsStr \= [].
 
