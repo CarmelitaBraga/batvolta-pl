@@ -14,7 +14,11 @@
     possui_carona_nao_iniciada_controller/1,
     mostrar_caronas_nao_iniciadas_controller/2,
     checar_carona_nao_iniciada_de_motorista/2,
-    inicializar_carona_status/1
+    inicializar_carona_status/1,
+    finaliza_carona_status/1,
+    possui_carona_em_andamento_controller/1,
+    mostrar_caronas_em_andamento_controller/2,
+    checar_carona_em_andamento_de_motorista/2
     ]).
 
 :- use_module('../Logic/CaronaLogic.pl').
@@ -88,5 +92,17 @@ mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, CaronasStr) :-
 checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Cid) :-
     checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Cid).
 
-inicializar_carona_status(Cid) :-
-    iniciar_carona_status(Cid).
+finaliza_carona_status(Cid) :-
+    finalizar_carona_status(Cid).
+
+possui_carona_em_andamento_controller(MotoristaCpf) :- 
+    mostrar_caronas_em_andamento_por_motorista(MotoristaCpf, Caronas),
+    list_to_string(Caronas, '', CaronasStr),
+    \+ CaronasStr = ''.
+
+mostrar_caronas_em_andamento_controller(MotoristaCpf, CaronasStr) :-
+    mostrar_caronas_em_andamento_por_motorista(MotoristaCpf, Caronas),
+    list_to_string(Caronas, '', CaronasStr).
+
+checar_carona_em_andamento_de_motorista(MotoristaCpf, Cid) :-
+    checar_carona_em_andamento_e_motorista(MotoristaCpf, Cid).
