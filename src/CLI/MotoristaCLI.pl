@@ -24,10 +24,7 @@ menu_principal_opcao(1) :-
     menu_principal.
 
 menu_principal_opcao(2):-
-    retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
-    assert(motorista_ref(none)),
-    menu_realizar_login,
-    menu_opcoes_motorista.
+    menu_realizar_login.
 
 menu_principal_opcao(0) :-
     write('Saindo...\n').

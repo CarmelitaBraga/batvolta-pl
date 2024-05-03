@@ -61,12 +61,29 @@ cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Reto
 
 
 atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno):-
-        (confere_senha(CPF, Senha) ->
+    (Campo == 'senha' ->
+        (valida_senha(NovoValor) ->
+            (confere_senha(CPF, Senha) ->
             atualiza_motorista(CPF,Campo,NovoValor,Resposta),
             Retorno = Resposta
+            ;
+            Retorno = 'Senha incorreta, tente novamente.'
+            )
         ;
-            Retorno = "Senha incorreta, tente novamente."
-        ).
+            Retorno = 'Senha deve ser no minimo tamanho 4, e conter pelo menos uma letra.'
+        )
+    ;
+        (nullOrEmpty(NovoValor) ->
+            Retorno = 'Novo valor nao pode ser vazio.'
+        ;
+            (confere_senha(CPF, Senha) ->
+                atualiza_motorista(CPF,Campo,NovoValor,Resposta),
+                Retorno = Resposta
+            ;
+                Retorno = 'Senha incorreta, tente novamente.'
+            )
+        )
+    ).
 
 remove_Logic(CPF,Senha,Retorno):-
     (confere_senha(CPF, Senha) ->
