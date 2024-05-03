@@ -48,9 +48,9 @@ cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno) :-
 remove_passageiro(CPF, Retorno) :-
     filePath(File),
     (delete_csv_row_bool(File, 2, CPF) ->
-        Retorno = 'Passageiro removido com sucesso'
+        Retorno = 'Passageiro removido com sucesso.'
     ;
-        Retorno = 'Passageiro nao encontrado'
+        Retorno = 'Passageiro nao encontrado.'
     ). 
 % Campo = 1 para telefone
 % Campo = 2 para CEP
@@ -59,22 +59,27 @@ atualiza_passageiro(CPF, Campo, NovoValor, Retorno) :-
     filePath(File),
     (   existe_passageiro_by_cpf(CPF) ->
         read_csv_row(File, 2, CPF, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
-        delete_csv_row_bool(File, 2, CPF),
-        (   Campo == 1 -> cadastra_passageiro(Nome, CPF, Genero, Email, NovoValor, CEP, Senha, _)
-        ;   Campo == 2 -> cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, NovoValor, Senha, _)
-        ;   Campo == 3 -> cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, NovoValor, _)
-        ),
-        Retorno = 'Passageiro atualizado com sucesso'
+        (   (Campo \= 1, Campo \= 2, Campo \= 3)
+            -> Retorno = 'Campo inválido.'
+        ;
+            delete_csv_row_bool(File, 2, CPF),
+            (   Campo == 1 -> cadastra_passageiro(Nome, CPF, Genero, Email, NovoValor, CEP, Senha, _)
+            ;   Campo == 2 -> cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, NovoValor, Senha, _)
+            ;   Campo == 3 -> cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, NovoValor, _)
+            ),
+            Retorno = 'Passageiro atualizado com sucesso.'
+        )
     ;   
-        Retorno = 'Passageiro não encontrado'
+        Retorno = 'Passageiro não encontrado.'
     ).
+
 get_passageiro_by_cpf(CPF, Retorno) :-
     filePath(File),
     (   existe_passageiro_by_cpf(CPF) ->
         read_csv_row(File, 2, CPF, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
         Retorno = [Nome,CPF,Genero,Email,Telefone,CEP,Senha]
     ;   
-        Retorno = 'Passageiro nao encontrado'
+        Retorno = false
     ).
 
 get_passageiro_by_email(Email, Retorno) :-
@@ -83,7 +88,7 @@ get_passageiro_by_email(Email, Retorno) :-
         read_csv_row(File, 4, Email, [row(Nome,CPF,Genero,Email,Telefone,CEP,Senha)]),
         Retorno = [Nome,CPF,Genero,Email,Telefone,CEP,Senha]
     ;   
-        Retorno = 'Passageiro nao encontrado'
+        Retorno = false
     ).
 
 passageiro_to_string([Nome,CPF,Genero,Email,Telefone,CEP,Senha], Retorno) :-

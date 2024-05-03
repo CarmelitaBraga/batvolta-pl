@@ -2,7 +2,7 @@
     cadastrar_passageiro_logic/8,
     remove_passageiro_logic/3,
     atualiza_cadastro_logic/5,
-    visualiza_info_logic/1,
+    visualiza_info_logic/2,
     login_passageiro_logic/3,
     recupera_notificacao_logic/2,
     cadastra_notificacao/5
@@ -15,25 +15,25 @@
 
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
     (   \+ validar_cpf(CPF) 
-        ->  write('CPF não atende aos requisitos')
+        ->  write('CPF não atende aos requisitos\n')
     ; 
         null_or_empty(Nome) 
-        ->  write('Nome não pode ser vazio')
+        ->  write('Nome não pode ser vazio\n')
     ;
         \+ validar_genero(Genero) 
-        ->  write('Genero deve ser M, F ou NB.')
+        ->  write('Genero deve ser M, F ou NB.\n')
     ;
         \+ validar_email(Email) 
-        ->  write('Email não atende aos requisitos')
+        ->  write('Email não atende aos requisitos\n')
     ;
         null_or_empty(Telefone) 
-        ->  write('Telefone não pode ser vazio')
+        ->  write('Telefone não pode ser vazio\n')
     ;
         null_or_empty(CEP) 
-        ->  write('CEP não pode ser vazio')
+        ->  write('CEP não pode ser vazio\n')
     ;
         null_or_empty(Senha) 
-        ->  write('Senha não pode ser vazia')
+        ->  write('Senha não pode ser vazia\n')
     ;
         cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno)
     ).
@@ -43,11 +43,11 @@ remove_passageiro_logic(CPF, Senha, Retorno):-
     (   get_passageiro_by_cpf(CPF, Passageiro),
         last(Passageiro, SenhaPassageiro),
         (   confere_senha(SenhaPassageiro,Senha)
-        ->  (   remove_passageiro(CPF, Retorno),
-                Retorno = 'Passageiro removido com sucesso'
+        ->  (   remove_passageiro(CPF, Resposta),
+                Retorno = Resposta
             )
         ;   
-            Retorno = 'Senha incorreta'
+            Retorno = 'Senha incorreta.'
         )
     ).
 
@@ -55,8 +55,7 @@ remove_passageiro_logic(CPF, Senha, Retorno):-
 
 atualiza_cadastro_logic(CPF, SenhaPassada, Coluna, NovoValor, Retorno):-
     (   null_or_empty(NovoValor)
-        -> write('O novo valor nao pode ser vazio'),
-            Retorno = ' '
+        -> write('O novo valor nao pode ser vazio\n')
     ;
         get_passageiro_by_cpf(CPF, Passageiro),
         last(Passageiro, Senha),
@@ -65,37 +64,24 @@ atualiza_cadastro_logic(CPF, SenhaPassada, Coluna, NovoValor, Retorno):-
                     Retorno = Resposta
                 )
         ;   
-            write('Senha incorreta'),
-            Retorno = ' '
+            write('Senha incorreta.\n')
         )
     ).
 
-visualiza_info_logic(CPF):- 
+visualiza_info_logic(CPF, PassageiroStr):- 
     get_passageiro_by_cpf(CPF, Passageiro),
     passageiro_to_string(Passageiro, Retorno),
-    write(Retorno),
-    halt.
+    PassageiroStr = Retorno.
     
 login_passageiro_logic(Email, Senha, Retorno):-
-    (   \+ validar_email(Email) 
-        ->  write('Email não atende aos requisitos'),
-            Retorno = " "
-    ;
-        (   existe_passageiro_by_email(Email)
-            ->  get_passageiro_by_email(Email, Passageiro),
-                last(Passageiro,SenhaPassageiro),
-                (   confere_senha(SenhaPassageiro, Senha)
-                    ->  Retorno = Passageiro
-                ;
-                    write('Senha incorreta'),
-                    Retorno = " "
-                )
-            ;   
-                write('Passageiro não encontrado')
-        )
-        ;
-        write("Passageiro não encontrado"),
-        Retorno = " "
+    (get_passageiro_by_email(Email, Passageiro)
+        ->  last(Passageiro,SenhaPassageiro),
+            (   confere_senha(SenhaPassageiro, Senha)
+                ->  Retorno = Passageiro
+            ;
+                write('Senha incorreta\n'),
+                false
+            )
     ).
 
 recupera_notificacao_logic(CPF,Retorno):-
