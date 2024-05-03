@@ -11,19 +11,21 @@
     carona_possui_origem_destino/3,
     solicitar_participar_carona/5,
     recuperar_caronas_por_motorista/2,
-    mostrar_caronas_nao_iniciadas_por_motorista/2
+    mostrar_caronas_nao_iniciadas_por_motorista/2,
+    checar_carona_nao_iniciada_e_motorista/2
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/Carona.pl').
 :- use_module('../Logic/PassageiroViagemLogic.pl').
+:- use_module('../Util/Utils.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-csv_file('database/caronas.csv').
+% csv_file('database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
-% csv_file('../../database/caronas.csv').
+csv_file('../../database/caronas.csv').
 destinos_column(4).
 motorista_column(5).
 passageiros_column(6).
@@ -233,3 +235,9 @@ recuperar_caronas_por_motorista(MotoristaCpf, Rows) :-
 mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, CorrespondingRowsStr) :-
     recuperar_caronas_por_motorista(MotoristaCpf, Rows),
     findall(Str, (member(Row, Rows), row(_, _, _, _, _, _, _, naoIniciada, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr).
+
+checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Cid) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, naoIniciada, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
+    CorrespondingRowsStr \= [].
+
