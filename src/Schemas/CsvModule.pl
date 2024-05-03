@@ -9,6 +9,7 @@
     ]).
 
 :- use_module(library(csv)).
+:- use_module(library(lists)).
 :- use_module('../Util/Utils.pl').
 
 select_row([], _, _, []).
@@ -18,6 +19,14 @@ select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
     select_row(Rest, Column, Value, NewRest).
 select_row([_|Rest], Column, Value, NewRest) :-
     select_row(Rest, Column, Value, NewRest).
+
+% Motorista
+% select_row([], _, _, []).
+% select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
+%     arg(Column, Row, Value), !,
+%     select_row(Rest, Column, Value, NewRest).
+% select_row([_|Rest], Column, Value, NewRest) :-
+%     select_row(Rest, Column, Value, NewRest).
 
 % Create or Append
 write_csv_row(File, Data) :-
@@ -63,6 +72,44 @@ update_csv_row(File, Column, Value, UpdatedRow) :-
     open(File, write, Stream),
     csv_write_stream(Stream, UpdatedData, []),
     close(Stream).
+row_to_list(row(Row), Row).
+
+% Motorista
+% Update a specific row
+% update_csv_row(File, Column, Value, UpdatedRow) :-
+%     read_csv_row(File, Column, Value, Data),
+%     select_row(Data, Column, Value, DataWithoutOldRow),
+%     append(DataWithoutOldRow, [UpdatedRow], UpdatedData),
+%     csv_write_file(File, UpdatedData).
+
+select_row_delete([Row|Rest], Column, Value, Rest) :-
+    arg(Column, Row, Value), !.
+select_row_delete([Row|Rest], Column, Value, [Row|NewRest]) :-
+    select_row_delete(Rest, Column, Value, NewRest).
+
+% % Motorista
+% delete_csv_row(File, Column, Value) :-
+%     csv_read_file(File, Data),
+%     select_row_delete(Data, Column, Value, DataWithoutRow),
+%     csv_write_file(File, DataWithoutRow).
+
+% % Helper predicate to check if an element exists in a list
+% element_in_list(Element, List) :-
+%     split_string(List, ";", "", ListItems),
+%     member(Element, ListItems).
+
+% % Main predicate to select rows
+% select_row_by_list_element([], _, _, []).
+% select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
+%     arg(Column, Row, Value),
+%     element_in_list(Element, Value), !,
+%     select_row_by_list_element(Rest, Column, Element, NewRest).
+% select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
+%     select_row_by_list_element(Rest, Column, Element, NewRest).
+
+% read_csv_row_by_list_element(File, Column, Element, Row) :-
+%     csv_read_file(File, Data),
+%     select_row_by_list_element(Data, Column, Element, Row).
 
 % Delete a specific row
 delete_csv_row(File, Column, Value) :-
