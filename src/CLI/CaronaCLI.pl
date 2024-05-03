@@ -20,8 +20,8 @@
 % get_cli_cpf(PassageiroRef, PassageiroCpf).
 get_cli_cpf(PassageiroRef, 11122233344).
 
-:- use_module('src/Controller/CaronaController.pl').
-:- use_module('src/Util/Utils.pl').
+:- use_module('../Controller/CaronaController.pl').
+:- use_module('../Util/Utils.pl').
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -184,21 +184,22 @@ pedir_destinos(Destinos, R) :-
     ).
 
 menu_iniciar_carona(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,   % Retirar posteriormente
+    % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
-        write("Qual carona você deseja iniciar: "), nl,
-        info_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
-        write(Caronas), nl,
-        write("Digite o Id da carona: "),
-        read(Cid), nl,
-        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
+        write("Qual carona voce deseja iniciar: "), nl,
+        mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
+        write(Caronas),
+        writeln("Digite o Id da carona: "),
+        read_line_to_string(user_input, Cid),
+        (checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Cid) ->
             inicializar_carona_status(Cid),
             write("Carona iniciada com sucesso!"), nl
         ;
-            write("Essa carona não pertence a esse motorista!"), nl
+            write("Essa carona nao pertence a esse motorista!"), nl
         )
     ;
-        write("Não existem caronas possíveis de se iniciar!"), nl
+        write("Nao existem caronas possiveis de se iniciar!"), nl
     ).
 
 menu_finalizar_carona(MotoristaRef) :-
