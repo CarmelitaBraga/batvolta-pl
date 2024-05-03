@@ -3,11 +3,15 @@
     remove_passageiro_logic/3,
     atualiza_cadastro_logic/5,
     visualiza_info_logic/1,
-    login_passageiro_logic/3
+    login_passageiro_logic/3,
+    recupera_notificacao_logic/2,
+    cadastra_notificacao/5
 ]).
 
 :- use_module('../Util/Utils.pl').
 :- use_module('../Schemas/SchemaPassageiro.pl').
+:- use_module('../Schemas/NotificacaoPassageiro.pl').
+
 
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
     (   \+ validar_cpf(CPF) 
@@ -93,3 +97,14 @@ login_passageiro_logic(Email, Senha, Retorno):-
         write("Passageiro não encontrado"),
         Retorno = " "
     ).
+
+recupera_notificacao_logic(CPF,Retorno):-
+    recupera_notificacao_passageiro(CPF, Lista),
+    (Lista == 'Passageiro nao tem nenhuma notificacaoo.' ->
+        Retorno = Lista
+    ;    
+        list_to_string(Lista,'',Retorno)
+    ).
+
+cadastra_notificacao(Passageiro, Motorista, Carona, Conteudo, Resposta):-
+    cadastrar_notificacao(Passageiro, Motorista, Carona, Conteudo, Resposta).

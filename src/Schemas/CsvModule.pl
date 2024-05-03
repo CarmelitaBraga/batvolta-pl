@@ -5,7 +5,8 @@
     write_csv_row/2,
     write_csv_row_all_steps/2,
     delete_csv_row_bool/3,
-    delete_csv_row/3
+    delete_csv_row/3,
+    getAllRows/2
     ]).
 
 :- use_module(library(csv)).
@@ -100,3 +101,6 @@ select_row_by_list_element([Row|Rest], Column, Element, [Row|NewRest]) :-
     select_row_by_list_element(Rest, Column, Element, NewRest).
 select_row_by_list_element([_|Rest], Column, Element, NewRest) :-
     select_row_by_list_element(Rest, Column, Element, NewRest).
+
+getAllRows(File, Rows) :-
+    csv_read_file(File, Rows).

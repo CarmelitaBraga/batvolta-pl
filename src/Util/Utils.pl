@@ -5,7 +5,8 @@
     validar_genero/1,
     parseElement/2,
     insertAtFirst/3,
-    listToRow/2
+    listToRow/2,
+    list_to_string/3
     ]).
 
 validar_cpf(CPF):-
@@ -41,3 +42,8 @@ insertAtFirst(ID, List, [ID|List]).
 
 listToRow(Elements, Row) :- Row =.. [row|Elements].
 
+list_to_string([], Str, Str).
+list_to_string([H|T], Str, R) :-
+    string_concat(Str, H, TempStr),
+    string_concat(TempStr,'\n',NovaStr),
+    list_to_string(T, NovaStr, R).
