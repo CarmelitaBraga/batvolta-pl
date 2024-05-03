@@ -183,11 +183,11 @@ iniciar_carona_status(Cid) :-
     csv_file(File),
     carona_column(CaronaColumn),
     read_csv_row(File, CaronaColumn , Cid, Caronas),
-    (Caronas == [] ->
+    (Caronas = [] ->
         write('Nenhuma carona correspondente a esse ID foi encontrada!')
     ;
         member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
-        (Status == naoIniciada ->
+        (Status = naoIniciada ->
             UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, emAndamento, Vagas, Avaliacao),
             update_csv_row(File, CaronaColumn, Cid, UpdatedRow)
             ;
