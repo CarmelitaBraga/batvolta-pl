@@ -24,7 +24,7 @@ atualizarCadastroMotorista(CPF, Senha, Campo, NovoValor, Retorno):-
     atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno).
 
 recuperarMotoristasPorRegiao(Regiao, Motoristas):-
-    recupera_regiao_logic(Regiao, Motoristas).
+    recupera_motoristas_por_regiao(Regiao, Motoristas).
 
 recuperarMotoristaPorCPF(CPF, Motorista):-
     recupera_cpf_logic(CPF, Motorista).

@@ -1,5 +1,6 @@
 :- module(_, [
-    media_avaliacao_motorista/2
+        get_top_motoristas/1,
+        get_top_motoristas_by_regiao/2
     ]).
 
 :- use_module('src/Controller/ControllerMotorista.pl').
@@ -39,21 +40,6 @@ media_avaliacao_motorista(MotoristaCpf, MediaAvaliacao):-
     ;
         MediaAvaliacao is (TotalAvaliacoes / NumAvaliacoes)
     ).
-
-% takeAvaliationsDecrescent :: Int -> [(String, Float)] -> IO [(String, Float)]
-% takeAvaliationsDecrescent amostra avaliacoesEntidade = do
-%     let sortedAvaliacoes = sortBy (comparing snd) avaliacoesEntidade
-%         reversedAvaliacoes = reverse sortedAvaliacoes
-%         topAvaliacoes = take amostra reversedAvaliacoes
-%     return topAvaliacoes
-
-% extract_first((X,_), X).
-
-% get_top_motoristas(MelhoresMotoristas):-
-%     mostrar_todos_motoristas(ListaMotoristas),
-%     map_avaliacoes_motoristas(ListaMotoristas, TuplasMotoristasAval),
-%     take_evaluations_decrescent(5, TuplasMotoristasAval, TopTuples).
-%     maplist(extract_first, TopTuples, MelhoresMotoristas).
     
 % Predicate to extract the first element of a tuple
 extract_first((X, _), X).
@@ -62,28 +48,22 @@ extract_first((X, _), X).
 get_motorista_name(MotoristaCpf, Nome):-
     mostrar_motorista_por_cpf(MotoristaCpf, row(_, Nome, _, _, _, _, _, _, _)).
 
+% Predicate to convert a tuple of CPF and score to a string
+tuple_to_string((Cpf, Score), String):-
+    get_motorista_name(Cpf, Nome),
+    atom_number(ScoreAtom, Score),
+    atom_concat(Nome, ": ", TempString),
+    atom_concat(TempString, ScoreAtom, String).
+
 % Predicate to get the top drivers
 get_top_motoristas(MelhoresMotoristas):-
     mostrar_todos_motoristas(ListaMotoristas),
     map_avaliacoes_motoristas(ListaMotoristas, TuplasMotoristasAval),
     take_evaluations_decrescent(5, TuplasMotoristasAval, TopTuples),
-    maplist(extract_first, TopTuples, MelhoresMotoristas).
+    maplist(tuple_to_string, TopTuples, MelhoresMotoristas).
 
-get_top_motoristas_names(MelhoresMotoristas):-
-    get_top_motoristas(TopMotoristasCpfs),
-    maplist(get_motorista_name, TopMotoristasCpfs, MelhoresMotoristas).
-
-% getTopMotoristasByRegiao :: String -> IO [String]
-% getTopMotoristasByRegiao regiao = do
-%     motoristasRegiao <- getAllMotoristasByRegiao regiao
-%     motoristasAvaliacoes <- mapAvaliacoesMotoristas motoristasRegiao
-%     topMotoristasRegiao <- takeAvaliationsDecrescent 3 motoristasAvaliacoes
-%     mapM tupleToString topMotoristasRegiao
-
-% recuperarMotoristasPorRegiao(Regiao, Motoristas)
-
-
-% tupleToString :: (String, Float) -> IO String
-% tupleToString (cpf, avaliacao) = do
-%     name <- cpfToName cpf
-%     return $ name ++ ": " ++ show avaliacao
+get_top_motoristas_by_regiao(Regiao, MelhoresMotoristas):-
+    recuperarMotoristasPorRegiao(Regiao, Motoristas),
+    map_avaliacoes_motoristas(Motoristas, TuplasMotoristasAval),
+    take_evaluations_decrescent(3, TuplasMotoristasAval, TopTuples),
+    maplist(tuple_to_string, TopTuples, MelhoresMotoristas).

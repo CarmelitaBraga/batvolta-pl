@@ -5,7 +5,6 @@
         recupera_cpf_logic/2,
         recupera_notificacao_logic/2,
         realiza_login_logic/3,
-        recupera_regiao_logic/2,
         cadastra_notificacao/5
 ]).
 
@@ -96,10 +95,6 @@ remove_Logic(CPF,Senha,Retorno):-
 recupera_cpf_logic(CPF,Retorno):-
     recupera_motoristas_por_cpf(CPF, Resposta),
     Retorno = Resposta.
-
-recupera_regiao_logic(Regiao,Retorno):-
-    recupera_motoristas_por_regiao(Regiao, MotoristasStr),
-    list_to_string(MotoristasStr,'',Retorno).
 
 recupera_notificacao_logic(CPF,Retorno):-
     recupera_notificacao_motoristas(CPF, Lista),

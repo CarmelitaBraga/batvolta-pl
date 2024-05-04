@@ -87,14 +87,9 @@ atualiza_motorista(Chave, Campo, NovoValor, Retorno) :-
     ). 
 
 % Consulta para recuperar os motoristas por região
-recupera_motoristas_por_regiao(Regiao, MotoristasStr) :-
+recupera_motoristas_por_regiao(Regiao, MotoristasRegiao) :-
     file(Caminho),
-    read_csv_row(Caminho, 9, Regiao, MotoristasData),
-    (MotoristasData == [] -> 
-        MotoristasStr = 'Nenhum motorista nessa regiao.'   
-    ;
-        maplist(converte_para_motorista_str, MotoristasData, MotoristasStr)
-    ).
+    read_csv_row(Caminho, 9, Regiao, MotoristasRegiao).
 
 % Consulta para recuperar os motoristas por cpf
 recupera_motoristas_por_cpf(Chave, Motorista) :-
