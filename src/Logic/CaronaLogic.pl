@@ -7,14 +7,24 @@
     criar_carona_motorista/6,
     iniciar_carona_status/1,
     finalizar_carona_status/1,
-    cancelar_carona/1,
+    cancelar_carona/2,
     carona_possui_origem_destino/3,
     solicitar_participar_carona/5,
     recuperar_caronas_por_motorista/2,
     mostrar_caronas_nao_iniciadas_por_motorista/2,
     checar_carona_nao_iniciada_e_motorista/2,
     mostrar_caronas_em_andamento_por_motorista/2,
-    checar_carona_em_andamento_e_motorista/2
+    checar_carona_em_andamento_e_motorista/2,
+    possui_carona_motorista/1,
+    mostrar_caronas_logic/2,
+    carona_de_motorista/2,
+    possui_carona_sem_avaliacao/1,
+    caronas_para_str_lista/2,
+    mostrar_caronas_sem_avaliacao/2,
+    mostrar_carona_passageiros_viagem_false/2,
+    carona_de_motorista_avaliar/2,
+    avaliar_carona/2,
+    retornar_carona/2
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
@@ -177,7 +187,7 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
 criar_carona_motorista(Hora, Data, Rota, MotoristaCpf, Valor, NumPassageirosMaximos) :-
     csv_file(CsvFile),
     id(ID),
-    Carona = carona(ID, Hora, Data, Rota, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, -1),
+    Carona = carona(ID, Hora, Data, Rota, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, 0),
     incrementa_id,
     carona_to_list(Carona, ListaCarona),
     write_csv_row_all_steps(CsvFile, ListaCarona).
@@ -214,19 +224,19 @@ finalizar_carona_status(Cid) :-
         )
     ).
 
-cancelar_carona(Cid) :-
+cancelar_carona(Cid, Retorno) :-
     csv_file(File),
     carona_column(CaronaColumn),
     read_csv_row(File, CaronaColumn , Cid, Caronas),
     (Caronas == [] ->
-        write('Nenhuma carona correspondente a esse ID foi encontrada!')
+        Retorno = 'Nenhuma carona correspondente a esse ID foi encontrada!'
     ;
         member(row(Cid, _, _, _, _, _, _, Status, _, _), Caronas),
         (\+ Status == naoIniciada ->
-            write('Essa carona nao pode ser cancelada!')
+            Retorno = 'Essa carona nao pode ser cancelada!'
             ;
             delete_csv_row(File,CaronaColumn, Cid),
-            write('Carona deletada com sucesso!')
+            Retorno = 'Carona deletada com sucesso!'
         )
     ).
 
@@ -234,6 +244,15 @@ recuperar_caronas_por_motorista(MotoristaCpf, Rows) :-
     csv_file(File),
     motorista_column(MotoristaColumn),
     read_csv_row(File, MotoristaColumn, MotoristaCpf, Rows).
+
+mostrar_caronas_logic(MotoristaCpf, CorrespondingRowsStr) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(_, _, _, _, MotoristaCpf, _, _, _, _, _) = Row, caronaToStr(Row, Str)), Caronas),
+    (Caronas == [] ->
+        CorrespondingRowsStr = 'Motorista nao possui carona.'
+    ;
+        list_to_string(Caronas,'', CorrespondingRowsStr)
+    ).
 
 mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, CorrespondingRowsStr) :-
     recuperar_caronas_por_motorista(MotoristaCpf, Rows),
@@ -253,3 +272,53 @@ checar_carona_em_andamento_e_motorista(MotoristaCpf, Cid) :-
     findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, emAndamento, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
     CorrespondingRowsStr \= [].
 
+possui_carona_motorista(MotoristaCpf):- 
+    recuperar_caronas_por_motorista(MotoristaCpf,Rows),
+    Rows \= [].
+
+carona_de_motorista(MotoristaCpf, Cid) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, _, _, _) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
+    CorrespondingRowsStr \= [].
+
+possui_carona_sem_avaliacao(MotoristaCpf):-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(_, _, _, _, _, _, _, _, _,0) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
+    CorrespondingRowsStr \= [].
+
+mostrar_caronas_sem_avaliacao(MotoristaCpf,Caronas):-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(_, _, _, _, _, _, _, _, _,0) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
+    (CorrespondingRowsStr == [] ->
+        Caronas = 'Nao possui carona para avaliar'
+    ;
+        list_to_string(CorrespondingRowsStr,'', Caronas)
+    ).
+
+carona_de_motorista_avaliar(Cid,MotoristaCpf):-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, _, _,0) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
+    CorrespondingRowsStr \= [].
+
+avaliar_carona(Cid, Avaliacao):-
+    csv_file(File),
+    carona_column(CaronaColumn),
+    read_csv_row(File, CaronaColumn , Cid, Caronas),
+    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, _), Caronas),
+    UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao),
+    update_csv_row(File, CaronaColumn, Cid, UpdatedRow).
+
+mostrar_carona_passageiros_viagem_false(MotoristaCpf, CorrespondingRowsStr) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    retornar_caronas_passageiro_false(Rows, CaronasRows),
+    caronas_para_str_lista(CaronasRows, CorrespondingRowsStr).
+
+caronas_para_str_lista(Rows, CorrespondingRowsStr) :-
+    findall(Str, (member(Row, Rows), caronaToStr(Row, Str)), CorrespondingRowsStr).
+
+retornar_carona(Cid, Row) :-
+    csv_file(File),
+    carona_column(CaronaColumn),
+    read_csv_row(File, CaronaColumn , Cid, Caronas),
+    member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao), Caronas),
+    Row = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao).

@@ -1,3 +1,4 @@
+
 :- module(_,
         [menu_principal_passageiro_carona/1, 
         menu_procurar_carona/1, 
@@ -169,6 +170,24 @@ menu_criar_carona(MotoristaRef) :-
     criar_carona(Hora, Data, [Origem|R], MotoristaCpf, Valor, NumPassageirosMaximos),
     writeln("Carona criada com sucesso!").
 
+menu_cancelar_carona_motorista(MotoristaRef) :-
+    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
+        write("Qual carona você deseja cancelar: "), nl,
+        mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
+        write(Caronas), nl,
+        write("Digite o Id da carona: "),
+        read(Cid), nl,
+        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
+            cancelar_carona_controller(Cid, Resposta),
+            write(Resposta), nl
+        ;
+            write(Resposta), nl
+        )
+    ;
+        write("Não existem caronas possíveis de se cancelar!"), nl
+    ).
+
 pedir_destinos(Destinos, R) :-
     length(Destinos, Length),
     NumNovoDestino is Length + 1,
@@ -224,61 +243,56 @@ menu_finalizar_carona(MotoristaRef) :-
         write("Não existem caronas possíveis de se finalizar!"), nl
     ).
 
- menu_aceitar_recusar_passageiro(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+menu_aceitar_recusar_passageiro(MotoristaRef) :-
+    % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_passageiros_viagem_false_controller(MotoristaCpf) -> 
         write("Qual carona você deseja olhar os passageiros:"), nl, 
-        info_carona_passageiros_viagem_false(MotoristaCpf, Caronas),
+        mostrar_carona_passageiros_viagem_false(MotoristaCpf, Caronas),
         write(Caronas), nl,
         write("Digite o Id: "),
         read(Cid), nl,
-        (possui_passageiro_viagem_false(MotoristaCpf, Cid) -> 
+        (checar_carona_passageiro_viagem_false(MotoristaCpf, Cid) -> 
             write("Qual passageiro você deseja aceitar/recusar?"), nl, 
-            info_passageiro_viagem_false(Cid, PassageirosViagem),
+            mostrar_carona_passageiros_viagem_false_controller(Cid, PassageirosViagem),
             write(PassageirosViagem), nl,
             write("Digite o Id: "),
             read(PVid), nl,
-            (possui_passageiro_viagem(Cid, PVid) -> 
-                write("Você deseja aceitar ou recusar: "),
-                read(AceitarOuRecusar), nl,
-                aceitar_ou_recusar_passageiro(PVid, AceitarOuRecusar), nl,
+            (possui_passageiro_viagem_false_controller(Cid, PVid) -> 
+                write("Você deseja aceitar ou recusar (Digite 'aceito' ou 'recuso'): "),
+                read(PossivelAceitarOuRecusar), nl,
+                verificar_aceitar_ou_recusar(PossivelAceitarOuRecusar, AceitarOuRecusar),
+                aceitar_ou_recusar_passageiro_controller(PVid, AceitarOuRecusar), nl,
                 (AceitarOuRecusar == 'aceito' ->
-                    salvar_notificacao_passageiro(Passageiro, Motorista, Carona, 'aceitou voce', _)
+                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'aceitou voce', _)
+                    writeln("Passageiro aceito com sucesso!")
                 ;
-                    salvar_notificacao_passageiro(Passageiro, Motorista, Carona, 'recusou voce', _)
-                ),
-                write("Passageiro aceito/recusado com sucesso!"), nl
+                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'recusou voce', _)
+                    writeln("Passageiro recusado com sucesso!")
+                )             
             ;
-                write("Esse passageiro não está disponível!"), nl
+                write("Esse passageiro não está disponivel!"), nl
             )
         ;
-            write("Essa carona não está disponível!"), nl
+            write("Essa carona nao esta disponivel!"), nl
         )
     ;
-        write("Não existem caronas disponíveis para aceitar ou recusar passageiros!"), nl
+        write("Nao existem caronas disponiveis para aceitar ou recusar passageiros!"), nl
     ).
 
-menu_cancelar_carona_motorista(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
-    (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
-        write("Qual carona você deseja cancelar: "), nl,
-        info_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
-        write(Caronas), nl,
-        write("Digite o Id da carona: "),
-        read(Cid), nl,
-        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
-            cancelar_carona(Cid),
-            write("Carona cancelada com sucesso!"), nl
-        ;
-            write("Essa carona não pertence a esse motorista!"), nl
-        )
+verificar_aceitar_ou_recusar(AceitarOuRecusar, Retorno) :-
+    downcase_atom(AceitarOuRecusar, R),
+    (R == 'aceito' ; R == 'recuso' ->
+        Retorno = AceitarOuRecusar
     ;
-        write("Não existem caronas possíveis de se cancelar!"), nl
+        writeln("Entrada invalida! Escreva 'aceito' ou 'recuso':"),
+        readln(AceitoOuRecusado),
+        verificar_aceitar_ou_recusar(AceitoOuRecusado, Retorno)
     ).
 
 menu_visualizar_carona(MotoristaRef) :-
     get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
-    (possui_carona_controller(MotoristaCpf) -> 
+    (possui_carona_motorista_controller(MotoristaCpf) -> 
         write("Suas caronas disponiveis: "), nl,
         mostrar_caronas_motorista(MotoristaCpf, Caronas),
         write(Caronas), nl
@@ -293,10 +307,11 @@ menu_avaliar_carona(MotoristaRef) :-
         write(Caronas), nl,
         write("Digite o Id da carona: "),
         read(Cid), nl,
-        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
+        (checar_carona_de_motorista_avaliar(Cid, MotoristaCpf) ->
+            write("Avalie a carona de 1 a 5"),
             write("Digite a avaliação: "),
             read(Avaliacao), nl,
-            avaliar_carona(Cid, Avaliacao),
+            avaliar_carona_controller(Cid, Avaliacao),
             write("Carona avaliada com sucesso!"), nl
         ;
             write("Essa carona não pertence a esse motorista!"), nl

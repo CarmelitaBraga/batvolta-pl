@@ -18,7 +18,20 @@
     finaliza_carona_status/1,
     possui_carona_em_andamento_controller/1,
     mostrar_caronas_em_andamento_controller/2,
-    checar_carona_em_andamento_de_motorista/2
+    checar_carona_em_andamento_de_motorista/2,
+    possui_passageiros_viagem_false_controller/1,
+    possui_carona_motorista_controller/1,
+    mostrar_caronas_motorista/2,
+    cancelar_carona_controller/2,
+    checar_carona_de_motorista/2,
+    mostrar_carona_passageiros_viagem_false_controller/2,
+    mostrar_caronas_sem_avaliacao_controller/2,
+    checar_carona_de_motorista_avaliar/2,
+    avaliar_carona_controller/2,
+    checar_carona_passageiro_viagem_false/2,
+    mostrar_passageiros_viagem_false_controller/2,
+    possui_passageiro_viagem_false_controller/2,
+    aceitar_ou_recusar_passageiro_controller/2
     ]).
 
 :- use_module('../Logic/CaronaLogic.pl').
@@ -106,3 +119,54 @@ mostrar_caronas_em_andamento_controller(MotoristaCpf, CaronasStr) :-
 
 checar_carona_em_andamento_de_motorista(MotoristaCpf, Cid) :-
     checar_carona_em_andamento_e_motorista(MotoristaCpf, Cid).
+
+possui_passageiros_viagem_false_controller(MotoristaCpf) :-
+    recuperar_caronas_por_motorista(MotoristaCpf, Rows),
+    Rows \= [],
+    possui_passageiros_viagem_false(Rows).
+
+possui_carona_motorista_controller(MotoristaCpf):-
+    possui_carona_motorista(MotoristaCpf).
+
+mostrar_caronas_motorista(MotoristaCpf, Caronas):-
+    mostrar_caronas_logic(MotoristaCpf, Caronas).
+
+cancelar_carona_controller(Cid,Resposta):-
+    cancelar_carona(Cid,Resposta).
+
+checar_carona_de_motorista(Motorista,Cid):-
+    carona_de_motorista(Motorista,Cid).
+
+possui_carona_sem_avaliacao_controller(Motorista):-
+    possui_carona_sem_avaliacao(Motorista).
+
+mostrar_caronas_sem_avaliacao_controller(MotoristaCpf, Caronas):-
+    mostrar_caronas_sem_avaliacao(MotoristaCpf,Caronas).
+
+mostrar_carona_passageiros_viagem_false_controller(MotoristaCpf, CaronasStr):-
+    mostrar_carona_passageiros_viagem_false(MotoristaCpf, CaronasStrLista),
+    list_to_string(CaronasStrLista, '', CaronasStr).
+
+checar_carona_de_motorista_avaliar(Cid, MotoristaCpf):-
+    carona_de_motorista_avaliar(Cid,MotoristaCpf).
+
+avaliar_carona_controller(Cid, Avaliacao):-
+    avaliar_carona(Cid, Avaliacao).
+
+checar_carona_passageiro_viagem_false(MotoristaCpf, Cid) :- 
+    carona_de_motorista(MotoristaCpf,Cid),
+    retornar_carona(Cid, Row),
+    possui_passageiros_false(Row).
+
+mostrar_passageiros_viagem_false_controller(Cid, Passageiros) :-
+    retorna_passageiros_false_da_carona(Cid, Passageiros).
+
+possui_passageiro_viagem_false_controller(Cid, PVid) :-
+    possui_passageiro_viagem_false(Cid, PVid).
+
+aceitar_ou_recusar_passageiro_controller(PVid, AceitarOuRecusar) :-
+    (AceitarOuRecusar == 'aceito' ->
+        aceitar_passageiro(PVid)
+    ;
+        remover_viagem(PVid)
+    ).
