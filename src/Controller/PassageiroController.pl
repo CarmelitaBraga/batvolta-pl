@@ -3,7 +3,9 @@
     remove_passageiro/3,
     atualizar_cadastro_passageiro/5,
     visualizar_info_passageiro/2,
-    realizar_login_passageiro/3
+    realizar_login_passageiro/3,
+    retornar_notificacao_passageiro/2,
+    salvar_notificacao_passageiro/5
 ]).
 
 :- use_module('../Logic/PassageiroLogic.pl').
@@ -23,5 +25,8 @@ visualiza_info_logic(CPF, Retorno).
 realizar_login_passageiro(Email, Senha, Passageiro):-
     login_passageiro_logic(Email, Senha, Passageiro).
 
-%carregar_notificacoes_passageiro():-
-%    carregar_notificacoes_logic().
+retornar_notificacao_passageiro(CPF, Retorno):-
+    recupera_notificacao_logic(CPF, Retorno).
+
+salvar_notificacao_passageiro(Passageiro, Motorista, Carona, Conteudo, Resposta):-
+    cadastra_notificacao(Passageiro, Motorista, Carona, Conteudo, Resposta).
