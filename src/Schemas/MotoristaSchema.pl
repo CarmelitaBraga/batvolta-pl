@@ -11,9 +11,9 @@
     recupera_motorista_por_cpf/2
 ]).
 
-:- use_module('src/Schemas/CsvModule.pl').
+:- use_module('../Schemas/CsvModule.pl').
 
-file('database/motoristas.csv').
+file('../../database/motoristas.csv').
 
 % motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)
 

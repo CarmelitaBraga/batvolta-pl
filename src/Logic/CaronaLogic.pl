@@ -19,7 +19,7 @@
 :- use_module('../Logic/PassageiroViagemLogic.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-csv_file('database/caronas.csv').
+csv_file('../../database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).

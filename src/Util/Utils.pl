@@ -6,7 +6,8 @@
     printList/1,
     take_evaluations_decrescent/3,
     sort_tuples/2,
-    extract_names/2
+    extract_names/2,
+    take_n/3
     ]).
 
 parseElement(Element, ParsedElement) :-
@@ -57,7 +58,22 @@ take_n(N, [H|T], [H|Res]) :-
 take_evaluations_decrescent(Amostra, AvaliacoesEntidade, TopAvaliacoes) :-
     sort_tuples(AvaliacoesEntidade, SortedAvaliacoes),
     take_n(Amostra, SortedAvaliacoes, TopAvaliacoes).
+    
+
+extract_names([], []).
+extract_names([(Name, _)|T], [Name|Rest]) :-
+    
+    extract_names(T, Rest).
+
+
+
+
 
 extract_names([], []).
 extract_names([[Name, _]|T], [Name|Rest]) :-
+    extract_names(T, Rest).
+
+% Input: [("Quebec", 2),  ("Rio", 2),  ("Gramado", 2),  ("Minas", 1),  ("Sao Paulo", 1)]
+% Output: ["Quebec", "Rio", "Gramado", "Minas", "Sao Paulo"]
+extract_names([(Name, _)|T], [Name|Rest]) :-
     extract_names(T, Rest).

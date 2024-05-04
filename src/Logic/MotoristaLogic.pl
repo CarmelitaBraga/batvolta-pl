@@ -8,9 +8,9 @@
         cadastra_notificacao/5
 ]).
 
-:- use_module('src/Schemas/MotoristaSchema.pl').
-:- use_module('src/Util/Util.pl').
-:- use_module('src/Schemas/NotificacaoMotorista.pl').
+:- use_module('../Schemas/MotoristaSchema.pl').
+:- use_module('../Util/Util.pl').
+:- use_module('../Schemas/NotificacaoMotorista.pl').
 
 cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
 ( validarCPF(CPF) ->

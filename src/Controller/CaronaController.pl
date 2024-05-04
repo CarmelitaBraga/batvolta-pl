@@ -17,8 +17,8 @@
     mostrar_todas_as_viagens/1
     ]).
 
-:- use_module('src/Logic/CaronaLogic.pl').
-:- use_module('src/Logic/PassageiroViagemLogic.pl').
+:- use_module('../Logic/CaronaLogic.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
 
 % Carona & passageiro
 

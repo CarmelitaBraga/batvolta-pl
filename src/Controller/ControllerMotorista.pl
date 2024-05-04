@@ -12,7 +12,7 @@
 ]).
 
 :- use_module('../Logic/MotoristaLogic.pl').
-:- use_module('src/Schemas/MotoristaSchema.pl').
+:- use_module('../Schemas/MotoristaSchema.pl').
 
 realizarCadastroMotorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
     cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno).

@@ -8,9 +8,9 @@
 :- use_module('../Util/Utils.pl').
 :- use_module('../Logic/PassageiroViagemLogic.pl').
 
-motoristas_csv('database/motoristas.csv').
-caronas_csv('database/caronas.csv').
-viagens_csv('database/viagemPassageiros.csv').
+motoristas_csv('../../database/motoristas.csv').
+caronas_csv('../../database/caronas.csv').
+viagens_csv('../../database/viagemPassageiros.csv').
 
 cpf_motorista(row(Cpf, _, _, _, _, _, _, _, _), Cpf).
 avaliacao_motorista(row(_, _, _, _, _, _, _, _, _, Avaliacao), Avaliacao).
@@ -119,8 +119,14 @@ take(N, [H|T], [H|Taken]) :-
 
 top_5_destinos(Destinos):-
     get_destinos_finais(DestinosFinais),
+    write(1),
     get_destinos_possiveis(DestinosPossiveis),
+    write(2),
     count_elements(DestinosPossiveis, DestinosFinais, Contagem),
+    write(Contagem), nl,
     take_evaluations_decrescent(5,Contagem, Tuplas),
+    write(4),
     extract_names(Tuplas,Nomes),
-    list_to_string(Nomes,'',Destinos).
+    write(5),
+    list_to_string(Nomes,'',Destinos),
+    write(6).
