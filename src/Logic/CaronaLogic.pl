@@ -21,6 +21,7 @@
 :- use_module('../Model/Carona.pl').
 :- use_module('../Logic/PassageiroViagemLogic.pl').
 :- use_module('../Util/Utils.pl').
+:- use_module('../Logic/MotoristaLogic.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
 % csv_file('database/caronas.csv').
@@ -161,7 +162,7 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
             ;
                 format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
                 format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
-                % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
+                cadastra_notificacao(Motorista, PassageiroCpf, IdCarona, 'solicitou participar',_),
                 criar_viagem_passageiro(IdCarona, "False", Rota, 0, PassageiroCpf),
                 Resp = 'Registro de passageiro em carona criado com sucesso!'
             )

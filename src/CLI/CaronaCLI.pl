@@ -22,6 +22,7 @@ get_cli_cpf(PassageiroRef, 11122233344).
 
 :- use_module('../Controller/CaronaController.pl').
 :- use_module('../Util/Utils.pl').
+:- use_module('../Controller/PassageiroController.pl').
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -241,7 +242,11 @@ menu_finalizar_carona(MotoristaRef) :-
                 write("Você deseja aceitar ou recusar: "),
                 read(AceitarOuRecusar), nl,
                 aceitar_ou_recusar_passageiro(PVid, AceitarOuRecusar), nl,
-                insere_notificacao_passageiro_viagem(MotoristaCpf, PVid, Cid, AceitarOuRecusar),
+                (AceitarOuRecusar == 'aceito' ->
+                    salvar_notificacao_passageiro(Passageiro, Motorista, Carona, 'aceitou voce', _)
+                ;
+                    salvar_notificacao_passageiro(Passageiro, Motorista, Carona, 'recusou voce', _)
+                ),
                 write("Passageiro aceito/recusado com sucesso!"), nl
             ;
                 write("Esse passageiro não está disponível!"), nl
