@@ -4,7 +4,9 @@
     listToRow/2,
     list_to_string/3,
     printList/1,
-    take_evaluations_decrescent/3
+    take_evaluations_decrescent/3,
+    sort_tuples/2,
+    extract_names/2
     ]).
 
 parseElement(Element, ParsedElement) :-
@@ -55,3 +57,7 @@ take_n(N, [H|T], [H|Res]) :-
 take_evaluations_decrescent(Amostra, AvaliacoesEntidade, TopAvaliacoes) :-
     sort_tuples(AvaliacoesEntidade, SortedAvaliacoes),
     take_n(Amostra, SortedAvaliacoes, TopAvaliacoes).
+
+extract_names([], []).
+extract_names([[Name, _]|T], [Name|Rest]) :-
+    extract_names(T, Rest).

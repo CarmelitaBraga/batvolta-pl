@@ -3,9 +3,10 @@
         get_top_motoristas_by_regiao/2
     ]).
 
-:- use_module('src/Controller/ControllerMotorista.pl').
-:- use_module('src/Controller/CaronaController.pl').
-:- use_module('src/Util/Utils.pl').
+:- use_module('../Controller/ControllerMotorista.pl').
+:- use_module('../Controller/CaronaController.pl').
+:- use_module('../Util/Utils.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
 
 motoristas_csv('database/motoristas.csv').
 caronas_csv('database/caronas.csv').
@@ -67,3 +68,59 @@ get_top_motoristas_by_regiao(Regiao, MelhoresMotoristas):-
     map_avaliacoes_motoristas(Motoristas, TuplasMotoristasAval),
     take_evaluations_decrescent(3, TuplasMotoristasAval, TopTuples),
     maplist(tuple_to_string, TopTuples, MelhoresMotoristas).
+
+% Retorna a lista de todos os destinos finais de todas as viagens
+get_destinos_finais(DestinosFinais):-
+    get_all_viagens(Destinos),
+    get_destinos_aux(Destinos, [], DestinosFinais).
+
+get_destinos_aux([], Lista, Lista).
+get_destinos_aux([row(_,_,_,Rota,_,_)|Rest] , DestinosFinais, Retorno):-
+    split_string(Rota, ";", "", Destinos),
+    last(Destinos, UltimoDestino),
+    append(DestinosFinais, [UltimoDestino], Finais),
+    get_destinos_aux(Rest, Finais, Retorno).
+
+% Retorna a lista de todos os destinos possíveis
+get_destinos_possiveis(DestinosPossiveis):-
+    get_all_viagens(Destinos),
+    get_destinos_possiveis_aux(Destinos, [], DestinosPossiveis).
+
+get_destinos_possiveis_aux([], Lista, Lista).
+get_destinos_possiveis_aux([row(_,_,_,Rota,_,_)|Rest] , DestinosFinais, Retorno):-
+    split_string(Rota, ";", "", Destinos),
+    last(Destinos, UltimoDestino),
+    (   \+ member(UltimoDestino, DestinosFinais) ->
+        append(DestinosFinais, [UltimoDestino], Finais),
+        get_destinos_possiveis_aux(Rest, Finais, Retorno)
+    ;
+        get_destinos_possiveis_aux(Rest, DestinosFinais, Retorno)
+    ).
+
+% Conta quantas vezes um destino final aparece
+count_elements([], _, []).
+count_elements([H|T], List, [(H, Count)|Rest]) :-
+    count_occurrences(H, List, Count),
+    count_elements(T, List, Rest).
+
+count_occurrences(_, [], 0).
+count_occurrences(X, [X|T], N) :-
+    count_occurrences(X, T, N1),
+    N is N1 + 1.
+count_occurrences(X, [_|T], N) :-
+    count_occurrences(X, T, N).
+
+% Predicado para pegar os primeiros N elementos de uma lista
+take(0, _, []).
+take(N, [H|T], [H|Taken]) :-
+    N > 0,
+    N1 is N - 1,
+    take(N1, T, Taken).
+
+top_5_destinos(Destinos):-
+    get_destinos_finais(DestinosFinais),
+    get_destinos_possiveis(DestinosPossiveis),
+    count_elements(DestinosPossiveis, DestinosFinais, Contagem),
+    take_evaluations_decrescent(5,Contagem, Tuplas),
+    extract_names(Tuplas,Nomes),
+    list_to_string(Nomes,'',Destinos).
