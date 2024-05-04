@@ -1,5 +1,6 @@
-:- module(DashboardCLI, [menuPrincipalDashboard/0]).
+:- module(_, [menuPrincipalDashboard/0]).
 
+:- use_module('../Controller/DashboardController.pl').
 
 % Main menu predicate
 menuPrincipalDashboard :-
@@ -34,13 +35,13 @@ selecionar_opcao(_) :-
 
 % Predicates for each menu option
 imprimirMotoristasDirijoes :-
-    % imprimirMelhoresMotorista(Result),
+    buscar_melhores_motoristas(Result),
     write(Result).
 
 imprimirTopMotoristasPorRegiao :-
     write('Digite a região: \n'),
     read(Regiao),
-    % imprimirMotoristasPorRegiao(Regiao, Result),
+    buscar_melhores_motoristas_regiao(Regiao, Result),
     write(Result).
 
 imprimirTopPassageiros :-
@@ -49,5 +50,5 @@ imprimirTopPassageiros :-
 
 imprimirDestinosMaisVisitados :-
     write('\nTOP 5 LOCAIS MAIS USADOS COMO DESTINO: \n'),
-    % imprimirDestinosComMaisVisitas(Result),
+    buscar_destinos_mais_frequentes(Result),
     write(Result).
