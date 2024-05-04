@@ -13,7 +13,8 @@
     inicializar_carona_status/1,
     possui_carona_nao_iniciada_controller/1,
     mostrar_viagens_por_motorista/2,
-    mostrar_viagens_carona/2
+    mostrar_viagens_carona/2,
+    mostrar_todas_as_viagens/1
     ]).
 
 :- use_module('src/Logic/CaronaLogic.pl').
@@ -83,3 +84,6 @@ mostrar_viagens_por_motorista(MotoristaCpf, Rows):-
 
 mostrar_viagens_carona(IdCarona, Viagens):-
     get_viagens_by_carona(IdCarona, Viagens).
+
+mostrar_todas_as_viagens(Viagens):-
+    get_all_viagens(Viagens).

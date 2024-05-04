@@ -8,7 +8,8 @@
     criar_viagem_passageiro/5,
     passageiro_tem_registro_carona/2,
     passageiro_aceito_carona/2,
-    get_viagens_by_carona/2
+    get_viagens_by_carona/2,
+    get_all_viagens/1
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -48,6 +49,10 @@ rota_column(4).
 avaliacao_column(5).
 passageiro_column(6).
 nota_sem_avaliacao(0).
+
+get_all_viagens(Viagens):-
+    csv_file(File),
+    getAllRows(File, Viagens).
 
 passageiro_tem_registro_carona(IdCarona, PassageiroCpf):-
     get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
