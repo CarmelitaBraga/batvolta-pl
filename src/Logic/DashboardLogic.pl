@@ -1,6 +1,7 @@
 :- module(_, [
         get_top_motoristas/1,
-        get_top_motoristas_by_regiao/2
+        get_top_motoristas_by_regiao/2,
+        top_5_destinos/1
     ]).
 
 :- use_module('../Controller/ControllerMotorista.pl').
