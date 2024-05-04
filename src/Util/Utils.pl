@@ -62,18 +62,6 @@ take_evaluations_decrescent(Amostra, AvaliacoesEntidade, TopAvaliacoes) :-
 
 extract_names([], []).
 extract_names([(Name, _)|T], [Name|Rest]) :-
-    
     extract_names(T, Rest).
-
-
-
-
-
-extract_names([], []).
 extract_names([[Name, _]|T], [Name|Rest]) :-
-    extract_names(T, Rest).
-
-% Input: [("Quebec", 2),  ("Rio", 2),  ("Gramado", 2),  ("Minas", 1),  ("Sao Paulo", 1)]
-% Output: ["Quebec", "Rio", "Gramado", "Minas", "Sao Paulo"]
-extract_names([(Name, _)|T], [Name|Rest]) :-
     extract_names(T, Rest).

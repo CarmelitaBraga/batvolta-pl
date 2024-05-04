@@ -119,14 +119,9 @@ take(N, [H|T], [H|Taken]) :-
 
 top_5_destinos(Destinos):-
     get_destinos_finais(DestinosFinais),
-    write(1),
     get_destinos_possiveis(DestinosPossiveis),
-    write(2),
     count_elements(DestinosPossiveis, DestinosFinais, Contagem),
     write(Contagem), nl,
     take_evaluations_decrescent(5,Contagem, Tuplas),
-    write(4),
     extract_names(Tuplas,Nomes),
-    write(5),
-    list_to_string(Nomes,'',Destinos),
-    write(6).
+    list_to_string(Nomes,'',Destinos).
