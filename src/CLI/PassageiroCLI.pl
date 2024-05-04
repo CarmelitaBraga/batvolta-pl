@@ -95,11 +95,11 @@ menu_opcoes_passageiro_opcao(3):-
     menu_opcoes_passageiro.
 
 menu_opcoes_passageiro_opcao(4):-
-    %menu_carregar_notificacoes(Passageiro),
+    menu_carregar_notificacoes(),
     menu_opcoes_passageiro.
 
-menu_opcoes_passageiro_opcao(5):-
-    menu_principal_carona_passageiro.
+%menu_opcoes_passageiro_opcao(5):-
+    %menu_principal_carona_passageiro.
 
 menu_opcoes_passageiro_opcao(0):-
     retractall(passageiro_logado(_, _, _, _, _, _, _, _, _)),
@@ -144,3 +144,8 @@ menu_cancelar_cadastro:-
             write('Cadastro cancelado com sucesso.'), nl,
             menu_opcoes_passageiro_opcao(0)
     ).
+
+menu_carregar_notificacoes():-
+    passageiro_logado(_, CPF, _, _, _, _, _),
+    retornar_notificacao_passageiro(CPF, Retorno),
+    write(Retorno), nl.
