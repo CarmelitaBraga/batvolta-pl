@@ -7,13 +7,13 @@
     recupera_motoristas_por_email/2,
     confere_senha/2,
     confere_senha_login/2,
-    get_all_motoristas/1
+    get_all_motoristas/1,
+    recupera_motorista_por_cpf/2
 ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
 
-file_csv('database/motoristas.csv').
-
+file('database/motoristas.csv').
 
 % motorista(CPF, CEP, Nome, Email, Telefone, Senha, CNH, Genero, Regiao)
 
@@ -36,9 +36,6 @@ motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(_), telefone(
 
 converte_para_motorista_str(row(CPF, Nome, Email, Senha, Telefone, CNH, CEP, Genero, Regiao), Str) :-
     motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str).
-
-file(Retorno):-
-    Retorno = '../../database/motoristas.csv'.
 
 % Predicados para cadastro de motorista
 cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno) :-
@@ -111,6 +108,10 @@ recupera_motoristas_por_cpf(Chave, Motorista) :-
         Motorista = 'Motorista nao cadastrado.'
     ).
 
+recupera_motorista_por_cpf(MotoristaCpf, Motorista):-
+    file(File),
+    read_csv_row(File, 1, MotoristaCpf, [Motorista|_]).
+
 % Consulta para recuperar os motoristas por cpf
 recupera_motoristas_por_email(Chave, Motorista) :-
     (possui_motorista_email(Chave) -> 
@@ -133,5 +134,5 @@ confere_senha_login(Email, Senha) :-
     Senha == SenhaCadastrada.
 
 get_all_motoristas(ListaMotoristas):-
-    file_csv(File),
+    file(File),
     getAllRows(File, ListaMotoristas).
