@@ -14,11 +14,12 @@
     possui_carona_nao_iniciada_controller/1,
     mostrar_viagens_por_motorista/2,
     mostrar_viagens_carona/2,
-    mostrar_todas_as_viagens/1
+    mostrar_todas_as_viagens/1,
+    mostrar_caronas_por_passageiro/2
     ]).
 
-:- use_module('../Logic/CaronaLogic.pl').
-:- use_module('../Logic/PassageiroViagemLogic.pl').
+:- use_module('src/Logic/CaronaLogic.pl').
+:- use_module('src/Logic/PassageiroViagemLogic.pl').
 
 % Carona & passageiro
 
@@ -41,7 +42,7 @@ desembarcar_passageiro(IdCarona, PassageiroCpf, Result):-
 % desembarcar_passageiro(0,486464646410,R).
 
 mostrar_viagem_passageiro(PassageiroCpf, Viagens):-
-    mostrar_all_viagens_passageiro(PassageiroCpf, Viagens).
+    mostrar_viagens_passageiro_str(PassageiroCpf, Viagens).
 % mostrar_viagem_passageiro(121212, R).
 
 cancelar_carona_passageiro(CId, PassageiroCpf, Resp):-
@@ -87,3 +88,6 @@ mostrar_viagens_carona(IdCarona, Viagens):-
 
 mostrar_todas_as_viagens(Viagens):-
     get_all_viagens(Viagens).
+
+mostrar_caronas_por_passageiro(PassageiroCpf, Rows):-
+    mostrar_caronas_por_passageiro(PassageiroCpf, Rows).

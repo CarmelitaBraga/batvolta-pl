@@ -2,7 +2,7 @@
     [info_trecho_by_carona_passageiro/3,
     cancelar_viagem_passageiro/3,
     get_viagens_passageiro_sem_avaliacao/2,
-    mostrar_all_viagens_passageiro/2,
+    mostrar_viagens_passageiro_str/2,
     cancelar_viagem_passageiro/3,
     carona_avalia_motorista/4,
     criar_viagem_passageiro/5,
@@ -12,10 +12,11 @@
     get_all_viagens/1
     ]).
 
-:- use_module('../Schemas/CsvModule.pl').
-:- use_module('../Model/PassageiroViagem.pl').
-:- use_module('../Util/Utils.pl').
+:- use_module('src/Schemas/CsvModule.pl').
+:- use_module('src/Model/PassageiroViagem.pl').
+:- use_module('src/Util/Utils.pl').
 
+csv_file('database/viagemPassageiros.csv').
 
 % Fato dinâmico para gerar o id das caronas
 :- dynamic id/1.
@@ -42,8 +43,6 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
 
 incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
 
-
-csv_file('../../database/viagemPassageiros.csv').
 viagem_pass_column(1).
 carona_column(2).
 aceito_column(3).
@@ -139,7 +138,7 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
 % cancelar_viagem_passageiro(7,09876543210, R).
 % cancelar_viagem_passageiro(2,000000, R).
 
-mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):- 
+mostrar_viagens_passageiro_str(PassageiroCpf, ViagensStr):- 
     csv_file(File),
     number_string(PassageiroCpf, PassageiroStr),
     passageiro_column(Pass_Column),

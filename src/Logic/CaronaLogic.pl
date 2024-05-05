@@ -11,15 +11,16 @@
     carona_possui_origem_destino/3,
     solicitar_participar_carona/5,
     recuperar_caronas_por_motorista/2,
-    mostrar_caronas_nao_iniciadas_por_motorista/2
+    mostrar_caronas_nao_iniciadas_por_motorista/2,
+    mostrar_caronas_por_passageiro/2
     ]).
 
-:- use_module('../Schemas/CsvModule.pl').
-:- use_module('../Model/Carona.pl').
-:- use_module('../Logic/PassageiroViagemLogic.pl').
+:- use_module('src/Schemas/CsvModule.pl').
+:- use_module('src/Model/Carona.pl').
+:- use_module('src/Logic/PassageiroViagemLogic.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-csv_file('../../database/caronas.csv').
+csv_file('database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
@@ -32,6 +33,9 @@ status_column(8).
 lim_pass_column(9).
 avaliacao_column(10).
 
+viagens_csv('database/viagemPassageiros.csv').
+viagem_carona_column(2).
+viagem_passageiro_column(6).
 
 :- dynamic id/1.
 
@@ -57,6 +61,18 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
     encontrar_maior_id(Rest, MaiorId, R).
 
 incrementa_id :- retract(id(X)), Y is X + 1, assertz(id(Y)).
+
+mostrar_caronas_por_passageiro(PassageiroCpf, Caronas):- 
+    csv_file(File),
+    viagens_csv(ViagemFile),
+    viagem_passageiro_column(VPass_Column),
+    getAllRows(File, AllCaronas),
+    read_csv_row(ViagemFile, VPass_Column, PassageiroCpf, ViagensPassageiro),
+    findall(Carona, (member(Carona, AllCaronas), carona_in_viagens(Carona, ViagensPassageiro)), Caronas).
+
+carona_in_viagens(Carona, Viagens) :-
+    Carona = row(IdCarona,_,_,_,_,_,_,_,_,_),
+    memberchk(row(_,IdCarona,'True',_,_,_), Viagens).
 
 % Predicate to check if a route exists from Origem to Destino
 possui_carona_origem_destino(Origem, Destino):-

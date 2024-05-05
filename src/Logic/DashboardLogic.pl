@@ -4,14 +4,15 @@
         top_5_destinos/1
     ]).
 
-:- use_module('../Controller/ControllerMotorista.pl').
-:- use_module('../Controller/CaronaController.pl').
-:- use_module('../Util/Utils.pl').
-:- use_module('../Logic/PassageiroViagemLogic.pl').
+:- use_module('src/Controller/ControllerMotorista.pl').
+:- use_module('src/Controller/CaronaController.pl').
+:- use_module('src/Util/Utils.pl').
+:- use_module('src/Logic/PassageiroViagemLogic.pl').
 
-motoristas_csv('../../database/motoristas.csv').
-caronas_csv('../../database/caronas.csv').
-viagens_csv('../../database/viagemPassageiros.csv').
+motoristas_csv('database/motoristas.csv').
+caronas_csv('database/caronas.csv').
+viagens_csv('database/viagemPassageiros.csv').
+passageiros_csv('database/passageiros.csv').
 
 cpf_motorista(row(Cpf, _, _, _, _, _, _, _, _), Cpf).
 avaliacao_motorista(row(_, _, _, _, _, _, _, _, _, Avaliacao), Avaliacao).
@@ -126,3 +127,50 @@ top_5_destinos(Destinos):-
     take_evaluations_decrescent(5,Contagem, Tuplas),
     extract_names(Tuplas,Nomes),
     list_to_string(Nomes,'',Destinos).
+
+cpf_passageiro(row(_, Cpf, _, _, _, _, _), Cpf).
+avaliacao_passageiro(row(_, _, _, _, _, _, _, _, _, Avaliacao), Avaliacao).
+
+join_carona_viagem_by_passsageiro(PassageiroCpf, Viagens):-
+    mostrar_caronas_por_passageiro(PassageiroCpf, CaronasPassageiro),
+    findall(Viagem, 
+            (member(row(_, IdCarona, _, _, _, _), CaronasPassageiro), 
+            mostrar_viagens_carona(IdCarona, Viagem)), 
+        ViagensNested),
+    flatten(ViagensNested, Viagens).
+
+% map_avaliacoes_passageiros(Passageiros, Result):-
+%     findall((PassageiroCpf, MediaAvaliacao), 
+%             (member(Passageiro, Passageiros), 
+%              cpf_passageiro(Passageiro, PassageiroCpf), 
+%              media_avaliacao_passageiro(PassageiroCpf, MediaAvaliacao)), 
+%             Result).
+
+% media_avaliacao_motorista(MotoristaCpf, MediaAvaliacao):-
+%     join_carona_viagem_by_passsageiro(PassageiroCpf, Viagens),
+%     findall(Avaliacao, (member(row(_, _, _, _, Avaliacao, _), Viagens), \+ Avaliacao is 0), Avaliacoes),
+%     length(Avaliacoes, NumAvaliacoes),
+%     sum_list(Avaliacoes, TotalAvaliacoes),
+%     (NumAvaliacoes = 0 ->
+%         MediaAvaliacao = 0
+%     ;
+%         MediaAvaliacao is (TotalAvaliacoes / NumAvaliacoes)
+%     ).
+
+% % Predicate to get the name of a driver by their CPF
+% get_passageiro_name(PassageiroCpf, Nome):-
+%     mostrar_passageiro_por_cpf(PassageiroCpf, row(Nome, _, _, _, _, _, _)).
+
+% % Predicate to convert a tuple of CPF and score to a string
+% tuple_to_string((Cpf, Score), String):-
+%     get_passageiro_name(Cpf, Nome),
+%     atom_number(ScoreAtom, Score),
+%     atom_concat(Nome, ": ", TempString),
+%     atom_concat(TempString, ScoreAtom, String).
+
+% % Predicate to get the top passangers
+% get_top_motoristas(MelhoresPassageiros):-
+%     mostrar_todos_passageiros(ListaPassageiros),
+%     map_avaliacoes_passageiros(ListaPassageiros, TuplasPassageirosAval),
+%     take_evaluations_decrescent(5, TuplasPassageirosAval, TopTuples),
+%     maplist(tuple_to_string, TopTuples, MelhoresPassageiros).
