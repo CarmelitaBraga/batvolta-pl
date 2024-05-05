@@ -45,7 +45,7 @@ imprimirTopMotoristasPorRegiao :-
     write(Result).
 
 imprimirTopPassageiros :-
-    % imprimirMelhoresPassageiros(Result),
+    buscar_melhores_passageiros(Result),
     write(Result).
 
 imprimirDestinosMaisVisitados :-

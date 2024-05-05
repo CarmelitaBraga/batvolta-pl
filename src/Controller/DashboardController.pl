@@ -2,7 +2,8 @@
     [
         buscar_melhores_motoristas/1,
         buscar_melhores_motoristas_regiao/2,
-        buscar_destinos_mais_frequentes/1
+        buscar_destinos_mais_frequentes/1,
+        buscar_melhores_passageiros/1
     ]
     ).
 
@@ -16,3 +17,6 @@ buscar_melhores_motoristas_regiao(Regiao, MelhoresMotoristas):-
 
 buscar_destinos_mais_frequentes(Destinos):-
     top_5_destinos(Destinos).
+
+buscar_melhores_passageiros(MelhoresMotoristas):-
+    get_top_passageiros(MelhoresMotoristas).

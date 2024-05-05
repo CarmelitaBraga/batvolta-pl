@@ -1,19 +1,20 @@
 :- module(_, [
         get_top_motoristas/1,
         get_top_motoristas_by_regiao/2,
-        top_5_destinos/1
+        top_5_destinos/1,
+        get_top_passageiros/1
     ]).
 
-:- use_module('src/Controller/ControllerMotorista.pl').
-:- use_module('src/Controller/PassageiroController.pl').
-:- use_module('src/Controller/CaronaController.pl').
-:- use_module('src/Util/Utils.pl').
-:- use_module('src/Logic/PassageiroViagemLogic.pl').
+:- use_module('../Controller/ControllerMotorista.pl').
+:- use_module('../Controller/PassageiroController.pl').
+:- use_module('../Controller/CaronaController.pl').
+:- use_module('../Util/Utils.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
 
-motoristas_csv('database/motoristas.csv').
-caronas_csv('database/caronas.csv').
-viagens_csv('database/viagemPassageiros.csv').
-passageiros_csv('database/passageiros.csv').
+motoristas_csv('../../database/motoristas.csv').
+caronas_csv('../../database/caronas.csv').
+viagens_csv('../../database/viagemPassageiros.csv').
+passageiros_csv('../../database/passageiros.csv').
 
 cpf_motorista(row(Cpf, _, _, _, _, _, _, _, _), Cpf).
 avaliacao_motorista(row(_, _, _, _, _, _, _, _, _, Avaliacao), Avaliacao).
