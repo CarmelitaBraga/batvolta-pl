@@ -1,9 +1,10 @@
-:- module(_, 
-    [read_csv_row/4, 
-    read_csv_row_by_list_element/4, 
-    update_csv_row/4, 
-    write_csv_row/2, 
-    write_csv_row_all_steps/2, 
+:- module(_, [
+    read_csv_row/4,
+    read_csv_row_by_list_element/4,
+    update_csv_row/4,
+    write_csv_row/2,
+    write_csv_row_all_steps/2,
+    delete_csv_row_bool/3,
     delete_csv_row/3,
     getAllRows/2
     ]).
@@ -81,6 +82,12 @@ row_to_list(row(Row), Row).
 %     select_row(Data, Column, Value, DataWithoutOldRow),
 %     append(DataWithoutOldRow, [UpdatedRow], UpdatedData),
 %     csv_write_file(File, UpdatedData).
+
+% Delete a specific row
+delete_csv_row_bool(File, Column, Value) :-
+    csv_read_file(File, Data),
+    select_row_delete(Data, Column, Value, DataWithoutRow),
+    csv_write_file(File, DataWithoutRow).
 
 select_row_delete([Row|Rest], Column, Value, Rest) :-
     arg(Column, Row, Value), !.
