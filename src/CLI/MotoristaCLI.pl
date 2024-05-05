@@ -4,6 +4,7 @@
 
 % Importe Controller
 :- use_module('../Controller/ControllerMotorista.pl').
+:- use_module('CaronaCLI.pl').
 
 
 % Motorista Logado
@@ -101,6 +102,10 @@ menu_opcoes_motorista_opcao(3) :-
 
 menu_opcoes_motorista_opcao(4) :-
     menu_carregar_notificacoes.
+
+menu_opcoes_motorista_opcao(5) :-
+    chamar_menu_carona_motorista,
+    menu_opcoes_motorista. 
 
 menu_opcoes_motorista_opcao(0) :-
     retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),

@@ -16,7 +16,8 @@
         menu_visualizar_carona/1,
         menu_avaliar_carona/1,
 
-        chamarMenuCarona/0
+        chamar_menu_carona_passageiro/0,
+        chamar_menu_carona_motorista/0
         ]).
 
 % get_cli_cpf(PassageiroRef, PassageiroCpf).
@@ -25,8 +26,11 @@ get_cli_cpf(PassageiroRef, 11122233344).
 :- use_module('../Controller/CaronaController.pl').
 :- use_module('../Util/Utils.pl').
 
-chamarMenuCarona:-
+chamar_menu_carona_passageiro:-
     menu_principal_passageiro_carona(PassageiroRef).
+
+chamar_menu_carona_motorista:-
+    menu_principal_motorista_carona(MotoristaRef).
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),

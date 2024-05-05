@@ -4,6 +4,7 @@
 
 /* Import do controller */
 :- use_module('../Controller/PassageiroController.pl').
+:- use_module('CaronaCLI.pl').
  
 /* Referencia do passageiro para login */
 :- dynamic passageiro_logado/7.
@@ -98,8 +99,9 @@ menu_opcoes_passageiro_opcao(4):-
     menu_carregar_notificacoes(),
     menu_opcoes_passageiro.
 
-%menu_opcoes_passageiro_opcao(5):-
-    %menu_principal_carona_passageiro.
+menu_opcoes_passageiro_opcao(5):-
+    chamar_menu_carona_passageiro,
+    menu_opcoes_passageiro.
 
 menu_opcoes_passageiro_opcao(0):-
     retractall(passageiro_logado(_, _, _, _, _, _, _, _, _)),

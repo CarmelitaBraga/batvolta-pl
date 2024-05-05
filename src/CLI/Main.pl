@@ -19,7 +19,6 @@ menuPrincipal:-
     write('1 - Dashboard \n'),
     write('2 - Passageiro \n'),
     write('3 - Motorista \n'),
-    write('4 - Carona \n'),
     write('0 - Sair\n'),
     read(Opcao),
     selecionar_opcao(Opcao).
@@ -34,10 +33,6 @@ selecionar_opcao(2) :-
 
 selecionar_opcao(3) :-
     menu_principal_motorista,
-    menuPrincipal.
-
-selecionar_opcao(4) :-
-    chamarMenuCarona,
     menuPrincipal.
 
 selecionar_opcao(0) :-
