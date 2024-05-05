@@ -162,10 +162,11 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
     )).
 
 criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
+    rotaLowcase(Rota, RotaLow),
     id(ID),
     csv_file(File),
     (Aceito == "False" ; Aceito == "True"),
-    Viagem = passageiroViagem(ID, IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf),
+    Viagem = passageiroViagem(ID, IdCarona, Aceito, RotaLow, Avaliacao, PassageiroCpf),
     incrementa_id,
     viagem_to_list(Viagem, ListaViagem),
     write_csv_row_all_steps(File, ListaViagem).

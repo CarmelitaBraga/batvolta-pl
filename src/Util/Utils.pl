@@ -3,7 +3,8 @@
     insertAtFirst/3,
     listToRow/2,
     list_to_string/3,
-    printList/1
+    printList/1,
+    rotaLowcase/2
     ]).
 
 parseElement(Element, ParsedElement) :-
@@ -27,3 +28,7 @@ printList([]).
 printList([H|T]) :-
     writeln(H),
     printList(T).
+
+rotaLowcase(Cidade, Retorno) :-
+    downcase_atom(Cidade, LowercaseAtom),
+    atom_string(LowercaseAtom, Retorno).
