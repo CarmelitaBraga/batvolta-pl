@@ -27,8 +27,7 @@ selecionar_opcao(4) :-
     imprimirDestinosMaisVisitados,
     menuPrincipalDashboard.
 selecionar_opcao(0) :-
-    write('Fim da interação!\n'),
-    menuPrincipalDashboard.
+    write('Fim da interação!\n').
 selecionar_opcao(_) :-
     write('Opção inválida!\n'),
     menuPrincipalDashboard.

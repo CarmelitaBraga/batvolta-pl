@@ -12,11 +12,11 @@
     get_all_viagens/1
     ]).
 
-:- use_module('src/Schemas/CsvModule.pl').
-:- use_module('src/Model/PassageiroViagem.pl').
-:- use_module('src/Util/Utils.pl').
+:- use_module('../Schemas/CsvModule.pl').
+:- use_module('../Model/PassageiroViagem.pl').
+:- use_module('../Util/Utils.pl').
 
-csv_file('database/viagemPassageiros.csv').
+csv_file('../../database/viagemPassageiros.csv').
 
 % Fato dinâmico para gerar o id das caronas
 :- dynamic id/1.

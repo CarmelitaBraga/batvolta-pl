@@ -18,8 +18,8 @@
     mostrar_caronas_por_passageiro/2
     ]).
 
-:- use_module('src/Logic/CaronaLogic.pl').
-:- use_module('src/Logic/PassageiroViagemLogic.pl').
+:- use_module('../Logic/CaronaLogic.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
 
 % Carona & passageiro
 

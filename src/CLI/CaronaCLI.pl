@@ -14,14 +14,19 @@
         menu_aceitar_recusar_passageiro/1,
         menu_cancelar_carona_motorista/1,
         menu_visualizar_carona/1,
-        menu_avaliar_carona/1
+        menu_avaliar_carona/1,
+
+        chamarMenuCarona/0
         ]).
 
 % get_cli_cpf(PassageiroRef, PassageiroCpf).
 get_cli_cpf(PassageiroRef, 11122233344).
 
-:- use_module('src/Controller/CaronaController.pl').
-:- use_module('src/Util/Utils.pl').
+:- use_module('../Controller/CaronaController.pl').
+:- use_module('../Util/Utils.pl').
+
+chamarMenuCarona:-
+    menu_principal_passageiro_carona(PassageiroRef).
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -41,7 +46,7 @@ handle_option(3, PassageiroRef) :- menu_mostrar_caronas(PassageiroRef), menu_pri
 handle_option(4, PassageiroRef) :- menu_embarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
 handle_option(5, PassageiroRef) :- menu_desembarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
 handle_option(6, PassageiroRef) :- menu_avaliar_motorista(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(0, PassageiroRef) :- menu_opcoes_passageiro(PassageiroRef).
+handle_option(0, PassageiroRef) :- write('Saindo...').
 handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal_passageiro_carona(PassageiroRef).
 
 % Os valores de origem e destino devem ser passados com aspas duplas :(

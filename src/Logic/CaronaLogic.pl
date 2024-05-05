@@ -15,12 +15,12 @@
     get_caronas_by_passageiro/2
     ]).
 
-:- use_module('src/Schemas/CsvModule.pl').
-:- use_module('src/Model/Carona.pl').
-:- use_module('src/Logic/PassageiroViagemLogic.pl').
+:- use_module('../Schemas/CsvModule.pl').
+:- use_module('../Model/Carona.pl').
+:- use_module('../Logic/PassageiroViagemLogic.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-csv_file('database/caronas.csv').
+csv_file('../../database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
@@ -32,7 +32,7 @@ status_column(8).
 lim_pass_column(9).
 avaliacao_column(10).
 
-viagens_csv('database/viagemPassageiros.csv').
+viagens_csv('../../database/viagemPassageiros.csv').
 viagem_carona_column(2).
 viagem_passageiro_column(6).
 

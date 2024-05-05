@@ -10,7 +10,7 @@
     mostrar_passageiro_por_cpf/2
 ]).
 
-:- use_module('src/Logic/PassageiroLogic.pl').
+:- use_module('../Logic/PassageiroLogic.pl').
 
 realizar_cadastro_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Passageiro):-
     cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Passageiro).

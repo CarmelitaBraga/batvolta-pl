@@ -1,37 +1,37 @@
 :- module(motorista_cli, [
-    menu_principal/0
+    menu_principal_motorista/0
 ]).
 
 % Importe Controller
-:- use_module("../Controller/ControllerMotorista.pl").
+:- use_module('../Controller/ControllerMotorista.pl').
 
 
 % Motorista Logado
 :- dynamic motorista_logado/9.
 
 % Implementação dos menus
-menu_principal :-
+menu_principal_motorista :-
     write('\nSelecione uma opcao:\n'),
     write('1 - Cadastro de Motorista\n'),
     write('2 - Login\n'),
     write('0 - Sair\n'),
     read(Opcao),
-    menu_principal_opcao(Opcao).
+    menu_principal_motorista_opcao(Opcao).
 
     
-menu_principal_opcao(1) :-
+menu_principal_motorista_opcao(1) :-
     menu_cadastrar_motorista,
-    menu_principal.
+    menu_principal_motorista.
 
-menu_principal_opcao(2):-
+menu_principal_motorista_opcao(2):-
     menu_realizar_login.
 
-menu_principal_opcao(0) :-
+menu_principal_motorista_opcao(0) :-
     write('Saindo...\n').
 
-menu_principal_opcao(_) :-
+menu_principal_motorista_opcao(_) :-
     write('Opção inválida!\n'),
-    menu_principal.
+    menu_principal_motorista.
 
 menu_cadastrar_motorista :-
     write('\nCadastrar Motorista\n'),
@@ -73,7 +73,7 @@ processar_resultado_login([CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, 
 
 processar_resultado_login('Login incorreto.') :-
     writeln('Login falhou!'),
-    menu_principal.
+    menu_principal_motorista.
 
 menu_opcoes_motorista :-
     write('\nOpcoes do Motorista:\n'),
@@ -93,7 +93,7 @@ menu_opcoes_motorista_opcao(1) :-
 menu_opcoes_motorista_opcao(2) :-
     menu_cancelar_cadastro,
     retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
-    menu_principal.
+    menu_principal_motorista.
 
 menu_opcoes_motorista_opcao(3) :-
     menu_visualizar_info,
@@ -104,7 +104,7 @@ menu_opcoes_motorista_opcao(4) :-
 
 menu_opcoes_motorista_opcao(0) :-
     retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
-    menu_principal.
+    menu_principal_motorista.
 
 menu_opcoes_motorista_opcao(_) :-
     write('Opcao invalida!\n'),

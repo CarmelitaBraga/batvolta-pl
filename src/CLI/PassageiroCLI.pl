@@ -1,5 +1,5 @@
 :- module(_, [
-    menu_principal/0
+    menu_principal_passageiro/0
 ]).
 
 /* Import do controller */
@@ -10,7 +10,7 @@
 
 /* Menu de acesso do passageiro */
 
-menu_principal():-
+menu_principal_passageiro():-
     write("\nSelecione uma opção:\n"),
     write('1 - Cadastro de Passageiro\n'),
     write('2 - Login\n'),
@@ -20,7 +20,7 @@ menu_principal():-
 
 menu_principal_opcao(1):-
     menu_cadastrar_passageiro,
-    menu_principal.
+    menu_principal_passageiro.
 
 menu_principal_opcao(2):-
     menu_realizar_login.
@@ -30,7 +30,7 @@ menu_principal_opcao(0) :-
 
 menu_principal_opcao(_):-
     write('Opcao invalida!\n'),
-    menu_principal.
+    menu_principal_passageiro.
 
 menu_cadastrar_passageiro():-
     write('\nCadastrar Passageiro\n'),
@@ -68,7 +68,7 @@ processar_resultado_login([Nome, CPF, Genero, Email, Telefone, CEP, Senha]):-
 
 processar_resultado_login(_):-
     write('Login falhou!\n'),
-    menu_principal.
+    menu_principal_passageiro.
 
 menu_opcoes_passageiro:-
     write('\nOpcoes do Passageiro:\n'),
@@ -88,7 +88,7 @@ menu_opcoes_passageiro_opcao(1):-
 menu_opcoes_passageiro_opcao(2):-
     menu_cancelar_cadastro,
     retractall(passageiro_logado(_, _, _, _, _, _, _, _, _)),
-    menu_principal.
+    menu_principal_passageiro.
 
 menu_opcoes_passageiro_opcao(3):-
     menu_visualizar_info,
@@ -103,7 +103,7 @@ menu_opcoes_passageiro_opcao(4):-
 
 menu_opcoes_passageiro_opcao(0):-
     retractall(passageiro_logado(_, _, _, _, _, _, _, _, _)),
-    menu_principal.
+    menu_principal_passageiro.
 
 menu_opcoes_passageiro_opcao(_):-
     write('Opcao invalida\n'),

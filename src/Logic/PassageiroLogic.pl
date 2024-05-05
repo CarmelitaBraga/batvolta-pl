@@ -10,12 +10,12 @@
     recupera_passageiro_por_cpf/2
 ]).
 
-:- use_module('src/Util/Utils.pl').
-:- use_module('src/Schemas/CsvModule.pl').
-:- use_module('src/Schemas/SchemaPassageiro.pl').
-:- use_module('src/Schemas/NotificacaoPassageiro.pl').
+:- use_module('../Util/Utils.pl').
+:- use_module('../Schemas/CsvModule.pl').
+:- use_module('../Schemas/SchemaPassageiro.pl').
+:- use_module('../Schemas/NotificacaoPassageiro.pl').
 
-csv_file('database/passageiros.csv').
+csv_file('../../database/passageiros.csv').
 
 
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
