@@ -90,4 +90,4 @@ mostrar_todas_as_viagens(Viagens):-
     get_all_viagens(Viagens).
 
 mostrar_caronas_por_passageiro(PassageiroCpf, Rows):-
-    mostrar_caronas_por_passageiro(PassageiroCpf, Rows).
+    get_caronas_by_passageiro(PassageiroCpf, Rows).

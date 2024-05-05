@@ -5,10 +5,12 @@
     visualizar_info_passageiro/2,
     realizar_login_passageiro/3,
     retornar_notificacao_passageiro/2,
-    salvar_notificacao_passageiro/5
+    salvar_notificacao_passageiro/5,
+    mostrar_todos_passageiros/1,
+    mostrar_passageiro_por_cpf/2
 ]).
 
-:- use_module('../Logic/PassageiroLogic.pl').
+:- use_module('src/Logic/PassageiroLogic.pl').
 
 realizar_cadastro_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Passageiro):-
     cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Passageiro).
@@ -30,3 +32,9 @@ retornar_notificacao_passageiro(CPF, Retorno):-
 
 salvar_notificacao_passageiro(Passageiro, Motorista, Carona, Conteudo, Resposta):-
     cadastra_notificacao(Passageiro, Motorista, Carona, Conteudo, Resposta).
+
+mostrar_todos_passageiros(AllPassageiros):-
+    recupera_todos_passageiros(AllPassageiros).
+
+mostrar_passageiro_por_cpf(PassageiroCpf, Passageiro):-
+    recupera_passageiro_por_cpf(PassageiroCpf, Passageiro).

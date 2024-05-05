@@ -5,12 +5,17 @@
     visualiza_info_logic/2,
     login_passageiro_logic/3,
     recupera_notificacao_logic/2,
-    cadastra_notificacao/5
+    cadastra_notificacao/5,
+    recupera_todos_passageiros/1,
+    recupera_passageiro_por_cpf/2
 ]).
 
-:- use_module('../Util/Utils.pl').
-:- use_module('../Schemas/SchemaPassageiro.pl').
-:- use_module('../Schemas/NotificacaoPassageiro.pl').
+:- use_module('src/Util/Utils.pl').
+:- use_module('src/Schemas/CsvModule.pl').
+:- use_module('src/Schemas/SchemaPassageiro.pl').
+:- use_module('src/Schemas/NotificacaoPassageiro.pl').
+
+csv_file('database/passageiros.csv').
 
 
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
@@ -38,6 +43,13 @@ cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retor
         cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno)
     ).
 
+recupera_todos_passageiros(AllPassageiros):-
+    csv_file(File),
+    getAllRows(File, AllPassageiros).
+
+recupera_passageiro_por_cpf(PassageiroCpf, Passageiro):-
+    csv_file(File),
+    read_csv_row(File, 2, PassageiroCpf, [Passageiro|_]).
 
 remove_passageiro_logic(CPF, Senha, Retorno):-
     (   get_passageiro_by_cpf(CPF, Passageiro),

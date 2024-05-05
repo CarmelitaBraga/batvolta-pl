@@ -12,7 +12,7 @@
     solicitar_participar_carona/5,
     recuperar_caronas_por_motorista/2,
     mostrar_caronas_nao_iniciadas_por_motorista/2,
-    mostrar_caronas_por_passageiro/2
+    get_caronas_by_passageiro/2
     ]).
 
 :- use_module('src/Schemas/CsvModule.pl').
@@ -24,7 +24,6 @@ csv_file('database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
-% csv_file('../../database/caronas.csv').
 destinos_column(4).
 motorista_column(5).
 passageiros_column(6).
@@ -62,7 +61,7 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
 
 incrementa_id :- retract(id(X)), Y is X + 1, assertz(id(Y)).
 
-mostrar_caronas_por_passageiro(PassageiroCpf, Caronas):- 
+get_caronas_by_passageiro(PassageiroCpf, Caronas):- 
     csv_file(File),
     viagens_csv(ViagemFile),
     viagem_passageiro_column(VPass_Column),
