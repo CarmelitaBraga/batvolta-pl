@@ -223,7 +223,7 @@ aceitar_passageiro(PVid) :-
 esta_em([], _) :- fail.
 esta_em([X|Resto], Lista) :-
     member(X, Lista);
-    esta_em(Resto, Lista).
+    esta_em(Resto, Lista), !.
 
 % Helper predicate to remove the last element from a list
 sem_ultimo([], []).
@@ -249,10 +249,11 @@ filter_pertence_a_rota([Row|Rows], CaronaId, Rota, FilteredRows) :-
     ).
 
 % Predicate to check if a given trip has available space
-possui_espaco_disponivel(CaronaId, Trajeto, NumPassageirosMaximos, Rota) :-
+possui_espaco_disponivel(CaronaId, Trajeto, NumPassageirosMaximos, [R|Rota]) :-
     csv_file(File),
     getAllRows(File, ViagensRows),
-    ordered_pair_in_list(Rota, Trajeto),
-    filter_pertence_a_rota(ViagensRows, CaronaId, Rota, ViagensStr),
+    last(Rota, Last),
+    ordered_pair_in_list([R|[Last]], Trajeto),
+    filter_pertence_a_rota(ViagensRows, CaronaId, [R|Rota], ViagensStr),
     length(ViagensStr, Length),
     NumPassageirosMaximos > Length.

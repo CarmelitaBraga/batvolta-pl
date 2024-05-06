@@ -84,6 +84,6 @@ list_to_atom_list([H|T], [Atom|AtomList]) :-
 
 % Helper predicate to check if two elements exist in a list in the given order
 ordered_pair_in_list([X,Y], [X|T]) :-
-    member(Y, T).
+    member(Y, T), !.
 ordered_pair_in_list(Pair, [_|T]) :-
     ordered_pair_in_list(Pair, T).

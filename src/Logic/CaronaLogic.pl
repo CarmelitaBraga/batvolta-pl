@@ -108,7 +108,7 @@ retornar_rota(row(_, _, _, Trajeto, _, _, _, _, _, _), Origem, Destino, Rota) :-
 
 origem_ate_destino([], _, _, []).
 origem_ate_destino([Origem|Rest], Origem, Destino, Rota) :- 
-    retorna_sub_lista([Origem|Rest], Destino, Rota).
+    retorna_sub_lista([Origem|Rest], Destino, Rota), !.
 origem_ate_destino([_|Rest], Origem, Destino, Rota) :- 
     origem_ate_destino(Rest, Origem, Destino, Rota).
 
