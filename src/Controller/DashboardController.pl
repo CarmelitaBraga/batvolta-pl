@@ -1,4 +1,4 @@
-:- module('src/Controller/DashboardController', 
+:- module('../Controller/DashboardController', 
     [
         buscar_melhores_motoristas/1,
         buscar_melhores_motoristas_regiao/2,
