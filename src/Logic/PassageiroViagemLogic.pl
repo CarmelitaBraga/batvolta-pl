@@ -14,9 +14,8 @@
     retorna_passageiros_false_da_carona/2,
     possui_passageiro_viagem_false/2,
     aceitar_passageiro/1,
-    get_viagens_by_carona/2,
-    get_all_viagens/1,
-    possui_espaco_disponivel/4
+    possui_espaco_disponivel/4,
+    remover_viagem/1
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
@@ -130,8 +129,8 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
     (Viagem = [] ->
         Resp = 'Trecho de carona inexistente para o passageiro informado!'
     ;
-        Viagem = [row(IdViagem, IdCarona, _, _, _, PassageiroCpf)|_],
-        (viagem_aceita(IdViagem) ->
+        member(row(IdViagem, IdCarona, Aceito, _, _, PassageiroCpf), Viagem),
+        (Aceito = 'True' ->
             Resp = 'O passageiro ja foi aceito, não podera mais cancelar.'
         ;
             remover_viagem(IdViagem),
@@ -154,7 +153,7 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
     nota_sem_avaliacao(Sem_Nota),
     viagem_pass_column(Viagem_Column),
     (Avaliacao =< 0 ; Avaliacao > 5 ->
-        Resp = 'Valor inválido!'
+        Resp = 'Valor invalido!'
     ;
         get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
         (member(row(IdViagem,IdCarona,Aceito,Rota,Sem_Nota,PassageiroCpf), Viagem) ->
@@ -162,7 +161,7 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
             update_csv_row(File, Viagem_Column, IdViagem, Updated_Row),
             Resp = 'Carona avaliada com sucesso!'
         ;
-            Resp = 'Nenhuma carona não avaliada encontrada com este id.'
+            Resp = 'Nenhuma carona nao avaliada encontrada com este id.'
     )).
 
 criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
@@ -197,7 +196,6 @@ retorna_passageiros_false_da_carona(Cid, Retorno) :-
     csv_file(File),
     carona_column(Carona_Column),
     read_csv_row(File, Carona_Column, Cid, Viagens),
-    write(Viagens),
     findall(ViagemStr, (
         member(Viagem, Viagens),
         Viagem = row(_, _, 'False', _, _, _),

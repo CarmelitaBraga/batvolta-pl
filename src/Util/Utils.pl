@@ -9,10 +9,6 @@
     sort_tuples/2,
     extract_names/2,
     take_n/3,
-    validar_cpf/1,
-    null_or_empty/1,
-    validar_email/1,
-    validar_genero/1,
     list_to_atom_list/2,
     ordered_pair_in_list/2
     ]).

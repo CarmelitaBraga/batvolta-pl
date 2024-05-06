@@ -1,5 +1,5 @@
-0,14:20:00,2024-06-21,Parana;Sao Paulo;Rio,12345678910,486464646410;11111111111,12.00,naoIniciada,4,5
-1,23:59:00,2024-05-02,Patos;Cancun;Ottawa;Quebec,11122233345,11122233344,250.00,emAndamento,1,4
-2,01:20:05,2023-01-21,Patos;Rio,12345678910,121212,12.00,finalizada,4,5
-3,12:59:00,2024-11-15,Fagundes;Minas;Gramado,11122233345,,31.00,emAndamento,1,0
-4,13:59:00,2025-05-02,Canada;Cancun;Ottawa;Quebec;Utah,11122233345,,78.00,naoIniciada,1,0
+1,23:59:00,2024-05-02,Patos;Cancun;Ottawa;Quebec,11122233345,,250.0,emAndamento,1,4
+0,14:20:00,2024-06-21,Parana;Sao Paulo;Rio,12345678910,486464646410,12.0,naoIniciada,4,5
+2,01:20:05,2023-01-21,Patos;Rio,12345678910,121212,12.0,finalizada,4,5
+3,12:59:00,2024-11-15,Fagundes;Minas;Gramado,11122233345,,31.0,emAndamento,1,4
+4,13:59:00,2025-05-02,Canada;Cancun;Ottawa;Quebec;Utah,11122233345,,78.0,naoIniciada,1,5

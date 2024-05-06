@@ -18,6 +18,7 @@
     finaliza_carona_status/1,
     possui_carona_em_andamento_controller/1,
     mostrar_caronas_em_andamento_controller/2,
+    checar_carona_em_andamento_de_motorista/2,
     possui_passageiros_viagem_false_controller/1,
     possui_carona_motorista_controller/1,
     mostrar_caronas_motorista/2,
@@ -30,7 +31,9 @@
     checar_carona_passageiro_viagem_false/2,
     mostrar_passageiros_viagem_false_controller/2,
     possui_passageiro_viagem_false_controller/2,
-    aceitar_ou_recusar_passageiro_controller/2
+    aceitar_ou_recusar_passageiro_controller/2,
+    possui_carona_sem_avaliacao_controller/1,
+    mostrar_caronas_sem_avaliacao_controller/2
     ]).
 
 :- use_module('../Logic/CaronaLogic.pl').
@@ -102,7 +105,7 @@ mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, CaronasStr) :-
     list_to_string(Caronas, '', CaronasStr).
 
 checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Cid) :-
-    mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, Cid).
+    checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Cid).
 
 finaliza_carona_status(Cid) :-
     finalizar_carona_status(Cid).
@@ -127,8 +130,9 @@ possui_passageiros_viagem_false_controller(MotoristaCpf) :-
 possui_carona_motorista_controller(MotoristaCpf):-
     possui_carona_motorista(MotoristaCpf).
 
-mostrar_caronas_motorista(MotoristaCpf, Caronas):-
-    mostrar_caronas_logic(MotoristaCpf, Caronas).
+mostrar_caronas_motorista(MotoristaCpf, CaronasStr):-
+    mostrar_caronas_do_motorista(MotoristaCpf, Caronas),
+    list_to_string(Caronas, '', CaronasStr).
 
 cancelar_carona_controller(Cid,Resposta):-
     cancelar_carona(Cid,Resposta).
@@ -164,7 +168,7 @@ possui_passageiro_viagem_false_controller(Cid, PVid) :-
     possui_passageiro_viagem_false(Cid, PVid).
 
 aceitar_ou_recusar_passageiro_controller(PVid, AceitarOuRecusar) :-
-    (AceitarOuRecusar == 'aceito' ->
+    (AceitarOuRecusar = 'aceito' ->
         aceitar_passageiro(PVid)
     ;
         remover_viagem(PVid)
