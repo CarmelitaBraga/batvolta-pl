@@ -7,7 +7,6 @@
         menu_desembarcar_caronas/1, 
         menu_embarcar_caronas/1, 
         menu_avaliar_motorista/1,
-        
         menu_principal_motorista_carona/1,
         menu_criar_carona/1,
         menu_iniciar_carona/1,
@@ -23,7 +22,6 @@ get_cli_cpf(PassageiroRef, 11122233344).
 
 :- use_module('../Controller/CaronaController.pl').
 :- use_module('../Util/Utils.pl').
-:- use_module('../Controller/PassageiroController.pl').
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -48,10 +46,10 @@ handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal
 
 % Os valores de origem e destino devem ser passados com aspas duplas :(
 menu_procurar_carona(PassageiroRef):-
-    write('\nDe onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    write('De onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
     read(Origem),
     atom_string(Origem, OrigemStr),
-    write('\nOnde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    nl, write('Onde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
     read(DestinoStr),
     (possui_caronas_origem_destino_controller(OrigemStr, DestinoStr) ->
         mostrar_caronas_disponiveis_origem_destino(OrigemStr, DestinoStr, Caronas),
@@ -164,7 +162,7 @@ menu_criar_carona(MotoristaRef) :-
     pedir_destinos([], R),
     write("Digite o valor (use '.' para casa decimal): "),
     read_line_to_string(user_input, Valor),
-    write("Digite a quantidade maximas de passageiros: "),
+    write("Digite a quantidade limite de passageiros: "),
     read_line_to_string(user_input, NumPassageirosMaximos),
     % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     criar_carona(Hora, Data, [Origem|R], MotoristaCpf, Valor, NumPassageirosMaximos),
@@ -264,10 +262,10 @@ menu_aceitar_recusar_passageiro(MotoristaRef) :-
                 verificar_aceitar_ou_recusar(PossivelAceitarOuRecusar, AceitarOuRecusar),
                 aceitar_ou_recusar_passageiro_controller(PVid, AceitarOuRecusar), nl,
                 (AceitarOuRecusar == 'aceito' ->
-                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'aceitou voce', _)
+                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'aceitou voce', _),
                     writeln("Passageiro aceito com sucesso!")
                 ;
-                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'recusou voce', _)
+                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'recusou voce', _),
                     writeln("Passageiro recusado com sucesso!")
                 )             
             ;

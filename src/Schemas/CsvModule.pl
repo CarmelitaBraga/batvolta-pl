@@ -28,7 +28,7 @@ write_csv_row(File, Data) :-
     ;
         csv_write_file(File, Data)
     ).
-% ?- write_csv('database/caronas.csv', [row(1,233,4,'5g','gtgt','gdg','bt')]).
+% ?- write_csv('../..//caronas.csv', [row(1,233,4,'5g','gtgt','gdg','bt')]).
 
 % Create or Append
 write_csv_row_all_steps(File, Data) :-

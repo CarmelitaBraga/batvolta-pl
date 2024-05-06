@@ -20,6 +20,8 @@
 :- use_module('../Model/PassageiroViagem.pl').
 :- use_module('../Util/Utils.pl').
 
+csv_file('database/viagemPassageiros.csv').
+
 % Fato dinâmico para gerar o id das caronas
 :- dynamic id/1.
 % Fato estático para inicializar o ID ao carregar o módulo
@@ -46,7 +48,6 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
 incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
 
 
-csv_file('../../database/viagemPassageiros.csv').
 viagem_pass_column(1).
 carona_column(2).
 aceito_column(3).
