@@ -40,16 +40,16 @@ load_carona_facts(File) :-
 % Predicate to convert a row to a string
 caronaToStr(row(Cid, Hora, Date, Destinos, Motorista, Passageiros, Valor, Status, NumPassageirosMaximos, AvaliacaoPassageiros), Str) :-
     % Format each field
-    format(string(CidStr), "Carona ID: ~w", [Cid]),
-    format(string(HoraStr), "Hora: ~w", [Hora]),
-    format(string(DateStr), "Date: ~w", [Date]),
-    format(string(DestinosStr), "Destinos: ~w", [Destinos]),
-    format(string(MotoristaStr), "Motorista: ~w", [Motorista]),
-    format(string(PassageirosStr), "Passageiros: ~w", [Passageiros]),
-    format(string(ValorStr), "Valor: ~w", [Valor]),
-    format(string(StatusStr), "Status: ~w", [Status]),
-    format(string(NumPassageirosMaximosStr), "Numero Maximo de Passageiros: ~w", [NumPassageirosMaximos]),
-    format(string(AvaliacaoPassageirosStr), "Avaliacao dos Passageiros: ~w", [AvaliacaoPassageiros]),
+    format(string(CidStr), 'Carona ID: ~w', [Cid]),
+    format(string(HoraStr), 'Hora: ~w', [Hora]),
+    format(string(DateStr), 'Date: ~w', [Date]),
+    format(string(DestinosStr), 'Destinos: ~w', [Destinos]),
+    format(string(MotoristaStr), 'Motorista: ~w', [Motorista]),
+    format(string(PassageirosStr), 'Passageiros: ~w', [Passageiros]),
+    format(string(ValorStr), 'Valor: ~w', [Valor]),
+    format(string(StatusStr), 'Status: ~w', [Status]),
+    format(string(NumPassageirosMaximosStr), 'Numero Maximo de Passageiros: ~w', [NumPassageirosMaximos]),
+    format(string(AvaliacaoPassageirosStr), 'Avaliacao dos Passageiros: ~w', [AvaliacaoPassageiros]),
     % Concatenate all formatted fields into a string
     atomic_list_concat([CidStr, HoraStr, DateStr, DestinosStr, MotoristaStr, PassageirosStr, ValorStr, StatusStr, NumPassageirosMaximosStr, AvaliacaoPassageirosStr], ', ', Str).
 

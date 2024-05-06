@@ -13,14 +13,17 @@
     possui_passageiros_false/1,
     retorna_passageiros_false_da_carona/2,
     possui_passageiro_viagem_false/2,
-    aceitar_passageiro/1
+    aceitar_passageiro/1,
+    get_viagens_by_carona/2,
+    get_all_viagens/1,
+    possui_espaco_disponivel/4
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/PassageiroViagem.pl').
 :- use_module('../Util/Utils.pl').
 
-csv_file('database/viagemPassageiros.csv').
+csv_file('../../database/viagemPassageiros.csv').
 
 % Fato dinâmico para gerar o id das caronas
 :- dynamic id/1.
@@ -163,11 +166,10 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
     )).
 
 criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
-    rotaLowcase(Rota, RotaLow),
     id(ID),
     csv_file(File),
-    (Aceito == "False" ; Aceito == "True"),
-    Viagem = passageiroViagem(ID, IdCarona, Aceito, RotaLow, Avaliacao, PassageiroCpf),
+    (Aceito == 'False' ; Aceito == 'True'),
+    Viagem = passageiroViagem(ID, IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf),
     incrementa_id,
     viagem_to_list(Viagem, ListaViagem),
     write_csv_row_all_steps(File, ListaViagem).
@@ -216,3 +218,41 @@ aceitar_passageiro(PVid) :-
     member(row(PVid,IdCarona,_,Rota,Avaliacao,PassageiroCpf), Viagens),
     Updated_Row = row(PVid,IdCarona,'True',Rota,Avaliacao,PassageiroCpf),
     update_csv_row(File, ViagemIdColumn, PVid, Updated_Row).
+
+% Helper predicate to check if any element of the first list is in the second list
+esta_em([], _) :- fail.
+esta_em([X|Resto], Lista) :-
+    member(X, Lista);
+    esta_em(Resto, Lista).
+
+% Helper predicate to remove the last element from a list
+sem_ultimo([], []).
+sem_ultimo([_], []).
+sem_ultimo([X|Resto], [X|SemUltimo]) :-
+    sem_ultimo(Resto, SemUltimo), !.
+
+% Predicate to check if a row has a route
+possui_rota(row(_, CaronaId, _, Trajeto, _, _), CaronaId, Rota) :-
+    split_string(Trajeto, ";", "", ListaTrajeto),
+    list_to_atom_list(ListaTrajeto, AtomList),
+    sem_ultimo(AtomList, Destinos),
+    esta_em(Destinos, Rota).
+
+% Predicate to filter rows that belong to a route and have the same carona id
+filter_pertence_a_rota([], _, _, []).
+filter_pertence_a_rota([Row|Rows], CaronaId, Rota, FilteredRows) :-
+    (possui_rota(Row, CaronaId, Rota) -> 
+        filter_pertence_a_rota(Rows, CaronaId, Rota, Rest), 
+        FilteredRows = [Row|Rest]
+    ;
+        filter_pertence_a_rota(Rows, CaronaId, Rota, FilteredRows)
+    ).
+
+% Predicate to check if a given trip has available space
+possui_espaco_disponivel(CaronaId, Trajeto, NumPassageirosMaximos, Rota) :-
+    csv_file(File),
+    getAllRows(File, ViagensRows),
+    ordered_pair_in_list(Rota, Trajeto),
+    filter_pertence_a_rota(ViagensRows, CaronaId, Rota, ViagensStr),
+    length(ViagensStr, Length),
+    NumPassageirosMaximos > Length.

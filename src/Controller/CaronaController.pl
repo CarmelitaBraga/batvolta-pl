@@ -41,11 +41,11 @@
 % Carona & passageiro
 
 possui_caronas_origem_destino_controller(Origem, Destino):-
-    call(possui_carona_origem_destino(Origem, Destino)).
+    call(possui_carona_com_vagas_origem_destino(Origem, Destino)).
 % mostrar_caronas_disponiveis_origem_destino("Patos", "Ottawa", Str).
 
 mostrar_caronas_disponiveis_origem_destino(Origem, Destino, Caronas):-
-    mostrar_caronas_origem_destino(Origem, Destino, Caronas).
+    mostrar_caronas_com_vagas_origem_destino(Origem, Destino, Caronas).
 % mostrar_caronas_disponiveis_origem_destino("Rio","Sao Paulo", Str).
 
 mostrar_caronas_passageiro(PassageiroCpf, Resultado):-

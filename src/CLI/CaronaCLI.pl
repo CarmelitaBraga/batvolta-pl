@@ -1,4 +1,3 @@
-
 :- module(_,
         [menu_principal_passageiro_carona/1, 
         menu_procurar_carona/1, 
@@ -7,6 +6,7 @@
         menu_desembarcar_caronas/1, 
         menu_embarcar_caronas/1, 
         menu_avaliar_motorista/1,
+        
         menu_principal_motorista_carona/1,
         menu_criar_carona/1,
         menu_iniciar_carona/1,
@@ -18,13 +18,13 @@
         ]).
 
 % get_cli_cpf(PassageiroRef, PassageiroCpf).
-get_cli_cpf(PassageiroRef, 11122233344).
+%get_cli_cpf(PassageiroRef, 11122233344).
 
 :- use_module('../Controller/CaronaController.pl').
 :- use_module('../Util/Utils.pl').
 
 menu_principal_passageiro_carona(PassageiroRef) :-
-    write('\nSelecione uma opção:\n'),
+    write('\nSelecione uma opcao:\n'),
     write('1 - Procurar Carona\n'),
     write('2 - Cancelar Carona\n'),
     write('3 - Ver minhas viagens\n'),
@@ -32,38 +32,41 @@ menu_principal_passageiro_carona(PassageiroRef) :-
     write('5 - Desembarcar da Carona\n'),
     write('6 - Avaliar Motorista\n'),
     write('0 - Voltar\n'),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     handle_option(Opcao, PassageiroRef).
 
-handle_option(1, PassageiroRef) :- menu_procurar_carona(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(2, PassageiroRef) :- menu_cancelar_carona(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(3, PassageiroRef) :- menu_mostrar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(4, PassageiroRef) :- menu_embarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(5, PassageiroRef) :- menu_desembarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(6, PassageiroRef) :- menu_avaliar_motorista(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(0, PassageiroRef) :- menu_opcoes_passageiro(PassageiroRef).
-handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("1", PassageiroRef) :- menu_procurar_carona(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("2", PassageiroRef) :- menu_cancelar_carona(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("3", PassageiroRef) :- menu_mostrar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("4", PassageiroRef) :- menu_embarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("5", PassageiroRef) :- menu_desembarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("6", PassageiroRef) :- menu_avaliar_motorista(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
+handle_option("0", PassageiroRef) :- menu_opcoes_passageiro(PassageiroRef).
+handle_option(_, PassageiroRef) :- write('Opcao invalida!\n'), menu_principal_passageiro_carona(PassageiroRef).
 
 % Os valores de origem e destino devem ser passados com aspas duplas :(
 menu_procurar_carona(PassageiroRef):-
-    write('De onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
-    read(Origem),
-    atom_string(Origem, OrigemStr),
-    nl, write('Onde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
-    read(DestinoStr),
+    write('De onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ,~,...): '),
+    read_line_to_string(user_input, Origem),
+    atom_string(OrigemStr, Origem),
+    nl, write('Onde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ,~,...): '),
+    read_line_to_string(user_input, Destino),
+    atom_string(DestinoStr, Destino),
     (possui_caronas_origem_destino_controller(OrigemStr, DestinoStr) ->
         mostrar_caronas_disponiveis_origem_destino(OrigemStr, DestinoStr, Caronas),
-        write('Caronas disponíveis: '), nl, printList(Caronas), nl,
+        write('Caronas disponiveis: '), nl, write(Caronas), nl,
         write('Qual carona deseja solicitar? (Digite o Id da carona ou -1 para dispensar): \n'),
-        read(CId),
-        (CId == -1 -> menu_principal_passageiro_carona(PassageiroRef)
+        read_line_to_string(user_input, CId),
+        number_string(CidNumber, CId),
+        (CidNumber == -1 -> write('Voltando para o menu')
         ;
-        solicitar_carona_passageiro(CId, PassageiroRef, OrigemStr, DestinoStr, MaybeCaronaEscolhida),
-        write(MaybeCaronaEscolhida), nl,
-        menu_principal_passageiro_carona(PassageiroRef))
+        solicitar_carona_passageiro(CidNumber, PassageiroRef, OrigemStr, DestinoStr, MaybeCaronaEscolhida),
+        write(MaybeCaronaEscolhida), nl
+        )
+    %     menu_principal_passageiro_carona(PassageiroRef))
     ;
-        write('Não existem caronas para essa origem e destino!\n'),
-        menu_principal_passageiro_carona(PassageiroRef)
+        write('Nao existem caronas para essa origem e destino!\n')
+    %     menu_principal_passageiro_carona(PassageiroRef)
     ).
 
 menu_cancelar_carona(PassageiroRef):-
@@ -155,36 +158,18 @@ menu_criar_carona(MotoristaRef) :-
     writeln("\nCriar uma Carona"),
     write("Digite a hora (no formato HH:MM): "),
     read_line_to_string(user_input, Hora),
-    write("Digite a data (no formato AAAA-MM-DD): "),
+    write("Digite a data (no formato DD/MM/AAAA): "),
     read_line_to_string(user_input, Data),
     write("Digite a origem da viagem: "),
     read_line_to_string(user_input, Origem),
     pedir_destinos([], R),
     write("Digite o valor (use '.' para casa decimal): "),
     read_line_to_string(user_input, Valor),
-    write("Digite a quantidade limite de passageiros: "),
+    write("Digite a quantidade maximas de passageiros: "),
     read_line_to_string(user_input, NumPassageirosMaximos),
     % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     criar_carona(Hora, Data, [Origem|R], MotoristaCpf, Valor, NumPassageirosMaximos),
     writeln("Carona criada com sucesso!").
-
-menu_cancelar_carona_motorista(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
-    (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
-        write("Qual carona você deseja cancelar: "), nl,
-        mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
-        write(Caronas), nl,
-        write("Digite o Id da carona: "),
-        read(Cid), nl,
-        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
-            cancelar_carona_controller(Cid, Resposta),
-            write(Resposta), nl
-        ;
-            write(Resposta), nl
-        )
-    ;
-        write("Não existem caronas possíveis de se cancelar!"), nl
-    ).
 
 pedir_destinos(Destinos, R) :-
     length(Destinos, Length),
@@ -201,96 +186,91 @@ pedir_destinos(Destinos, R) :-
         pedir_destinos(NovosDestinos, R)
     ).
 
-menu_iniciar_carona(MotoristaRef) :-
-    MotoristaCpf = MotoristaRef,   % Retirar posteriormente
-    % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+menu_iniciar_carona(MotoristaCpf) :-
     (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
-        write("Qual carona voce deseja iniciar: "), nl,
-        mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
-        write(Caronas),
+        write("Qual carona você deseja iniciar: "), nl,
+        info_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
+        write(Caronas), nl,
         write("Digite o Id da carona: "),
-        read_line_to_string(user_input, Cid),
-        atom_number(Cid, Code),
-        (checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Code) ->
-            inicializar_carona_status(Code),
+        read(Cid), nl,
+        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
+            inicializar_carona_status(Cid),
             write("Carona iniciada com sucesso!"), nl
         ;
-            write("Essa carona nao pertence a esse motorista!"), nl
+            write("Essa carona não pertence a esse motorista!"), nl
         )
     ;
-        write("Nao existem caronas possiveis de se iniciar!"), nl
+        write("Não existem caronas possíveis de se iniciar!"), nl
     ).
 
 menu_finalizar_carona(MotoristaRef) :-
-    MotoristaCpf = MotoristaRef,   % Retirar posteriormente
-    % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     (possui_carona_em_andamento_controller(MotoristaCpf) -> 
-        write("Qual carona voce deseja finalizar:"), nl,
-        mostrar_caronas_em_andamento_controller(MotoristaCpf, Caronas),
+        write("Qual carona você deseja Finalizar:"), nl,
+        info_caronas_em_andamento_controller(MotoristaCpf, Caronas),
         write(Caronas),
         write("Digite o Id da carona: "),
-        read_line_to_string(user_input, Cid),
-        atom_number(Cid, Code),
-        (checar_carona_em_andamento_de_motorista(MotoristaCpf, Code) ->
-            finaliza_carona_status(Code),
+        read(Cid), nl,
+        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
+            finalizar_carona_status(Cid),
             write("Carona finalizada com sucesso!"), nl
         ;
-            write("Essa carona nao pertence a esse motorista!"), nl
+            write("Essa carona não pertence a esse motorista!"), nl
         )
     ;
         write("Não existem caronas possíveis de se finalizar!"), nl
     ).
 
-menu_aceitar_recusar_passageiro(MotoristaRef) :-
-    % get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
-    MotoristaCpf = MotoristaRef,
+ menu_aceitar_recusar_passageiro(MotoristaRef) :-
+    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
     (possui_passageiros_viagem_false_controller(MotoristaCpf) -> 
         write("Qual carona você deseja olhar os passageiros:"), nl, 
-        mostrar_carona_passageiros_viagem_false(MotoristaCpf, Caronas),
+        info_carona_passageiros_viagem_false(MotoristaCpf, Caronas),
         write(Caronas), nl,
         write("Digite o Id: "),
         read(Cid), nl,
-        (checar_carona_passageiro_viagem_false(MotoristaCpf, Cid) -> 
+        (possui_passageiro_viagem_false(MotoristaCpf, Cid) -> 
             write("Qual passageiro você deseja aceitar/recusar?"), nl, 
-            mostrar_carona_passageiros_viagem_false_controller(Cid, PassageirosViagem),
+            info_passageiro_viagem_false(Cid, PassageirosViagem),
             write(PassageirosViagem), nl,
             write("Digite o Id: "),
             read(PVid), nl,
-            (possui_passageiro_viagem_false_controller(Cid, PVid) -> 
-                write("Você deseja aceitar ou recusar (Digite 'aceito' ou 'recuso'): "),
-                read(PossivelAceitarOuRecusar), nl,
-                verificar_aceitar_ou_recusar(PossivelAceitarOuRecusar, AceitarOuRecusar),
-                aceitar_ou_recusar_passageiro_controller(PVid, AceitarOuRecusar), nl,
-                (AceitarOuRecusar == 'aceito' ->
-                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'aceitou voce', _),
-                    writeln("Passageiro aceito com sucesso!")
-                ;
-                    salvar_notificacao_passageiro(PVid, Motorista, Carona, 'recusou voce', _),
-                    writeln("Passageiro recusado com sucesso!")
-                )             
+            (possui_passageiro_viagem(Cid, PVid) -> 
+                write("Você deseja aceitar ou recusar: "),
+                read(AceitarOuRecusar), nl,
+                aceitar_ou_recusar_passageiro(PVid, AceitarOuRecusar), nl,
+                insere_notificacao_passageiro_viagem(MotoristaCpf, PVid, Cid, AceitarOuRecusar),
+                write("Passageiro aceito/recusado com sucesso!"), nl
             ;
-                write("Esse passageiro não está disponivel!"), nl
+                write("Esse passageiro não está disponível!"), nl
             )
         ;
-            write("Essa carona nao esta disponivel!"), nl
+            write("Essa carona não está disponível!"), nl
         )
     ;
-        write("Nao existem caronas disponiveis para aceitar ou recusar passageiros!"), nl
+        write("Não existem caronas disponíveis para aceitar ou recusar passageiros!"), nl
     ).
 
-verificar_aceitar_ou_recusar(AceitarOuRecusar, Retorno) :-
-    downcase_atom(AceitarOuRecusar, R),
-    (R == 'aceito' ; R == 'recuso' ->
-        Retorno = AceitarOuRecusar
-    ;
-        writeln("Entrada invalida! Escreva 'aceito' ou 'recuso':"),
-        readln(AceitoOuRecusado),
-        verificar_aceitar_ou_recusar(AceitoOuRecusado, Retorno)
-    ).
-
-menu_visualizar_carona(MotoristaRef) :-
+menu_cancelar_carona_motorista(MotoristaRef) :-
     get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
-    (possui_carona_motorista_controller(MotoristaCpf) -> 
+    (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
+        write("Qual carona você deseja cancelar: "), nl,
+        info_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
+        write(Caronas), nl,
+        write("Digite o Id da carona: "),
+        read(Cid), nl,
+        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
+            cancelar_carona(Cid),
+            write("Carona cancelada com sucesso!"), nl
+        ;
+            write("Essa carona não pertence a esse motorista!"), nl
+        )
+    ;
+        write("Não existem caronas possíveis de se cancelar!"), nl
+    ).
+
+menu_visualizar_carona(MotoristaCpf) :-
+    (possui_carona_controller(MotoristaCpf) -> 
         write("Suas caronas disponiveis: "), nl,
         mostrar_caronas_motorista(MotoristaCpf, Caronas),
         write(Caronas), nl
@@ -305,11 +285,10 @@ menu_avaliar_carona(MotoristaRef) :-
         write(Caronas), nl,
         write("Digite o Id da carona: "),
         read(Cid), nl,
-        (checar_carona_de_motorista_avaliar(Cid, MotoristaCpf) ->
-            write("Avalie a carona de 1 a 5"),
+        (checar_carona_de_motorista(Cid, MotoristaCpf) ->
             write("Digite a avaliação: "),
             read(Avaliacao), nl,
-            avaliar_carona_controller(Cid, Avaliacao),
+            avaliar_carona(Cid, Avaliacao),
             write("Carona avaliada com sucesso!"), nl
         ;
             write("Essa carona não pertence a esse motorista!"), nl

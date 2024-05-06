@@ -1,6 +1,6 @@
 :- module(_,[
-    possui_carona_origem_destino/2,
-    mostrar_caronas_origem_destino/3, 
+    possui_carona_com_vagas_origem_destino/2,
+    mostrar_caronas_com_vagas_origem_destino/3, 
     mostrar_caronas_passageiro_participa/2,
     adicionar_passageiro_carona/3,
     remover_passageiro_carona/3,
@@ -49,8 +49,6 @@ loadId :-
     assertz(id(NovoId))
     ).    
 
-
-
 encontrar_maior_id([], MaiorId, MaiorId).
 encontrar_maior_id([row(Id, _, _, _, _, _, _, _, _, _)|Rest], MaiorId, R) :-
     MaiorId < Id,
@@ -61,34 +59,63 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
 incrementa_id :- retract(id(X)), Y is X + 1, assertz(id(Y)).
 
 % Predicate to check if a route exists from Origem to Destino
-possui_carona_origem_destino(Origem, Destino):-
+possui_carona_com_vagas_origem_destino(Origem, Destino):-
     csv_file(File),
-    destinos_column(Dest_column),
-    read_csv_row_by_list_element(File, Dest_column, Origem, Rows),
-    member(row(_, _, _, Trajeto, _, _, _, _, _, _), Rows),
+    getAllRows(File, Rows),
+    member(row(Cid, Hora, Data, Trajeto, Motorista, Passageiros, Valor, Status, NumPassMaximos, Aval), Rows),
     split_string(Trajeto, ";", "", ListaTrajeto),
-    ordered_pair_in_list([Origem, Destino], ListaTrajeto).
+    list_to_atom_list(ListaTrajeto, AtomList),
+    ordered_pair_in_list([Origem, Destino], AtomList),
+    retornar_rota(row(Cid, Hora, Data, Trajeto, Motorista, Passageiros, Valor, Status, NumPassMaximos, Aval), Origem, Destino, Rota),
+    possui_vagas_disponiveis(row(Cid, Hora, Data, Trajeto, Motorista, Passageiros, Valor, Status, NumPassMaximos, Aval), Rota).
 
 carona_possui_origem_destino(IdCarona, Origem, Destino):-
     csv_file(File),
     carona_column(Carona_Column),
     read_csv_row(File, Carona_Column, IdCarona, Rows),
-    member(row(IdCarona, _, _, Trajeto, _, _, _, _, _, _), Rows),
+    member(row(IdCarona, _, _, Trajeto, _, _, _, _, NumPassageirosMaximos, _), Rows),
     split_string(Trajeto, ";", "", ListaTrajeto),
-    ordered_pair_in_list([Origem, Destino], ListaTrajeto).
+    list_to_atom_list(ListaTrajeto, AtomList),
+    ordered_pair_in_list([Origem, Destino], AtomList),
+    retornar_rota(row(IdCarona, _, _, Trajeto, _, _, _, _, _, _), Origem, Destino, Rota),
+    possui_vagas_disponiveis(row(IdCarona, _, _, Trajeto, _, _, _, _, NumPassageirosMaximos, _), Rota), !.
 
-% Helper predicate to check if two elements exist in a list in the given order
-ordered_pair_in_list([X,Y], [X|T]) :-
-    member(Y, T).
-ordered_pair_in_list(Pair, [_|T]) :-
-    ordered_pair_in_list(Pair, T).
-
-mostrar_caronas_origem_destino(Origem, Destino, CorrespondingRowsStr):-
+mostrar_caronas_com_vagas_origem_destino(Origem, Destino, CorrespondingRowsStr):-
     csv_file(File),
-    destinos_column(Dest_column),
-    read_csv_row_by_list_element(File, Dest_column, Origem, Rows),
-    findall(Str, (member(Row, Rows), row(_, _, _, Trajeto, _, _, _, _, _, _) = Row, split_string(Trajeto, ";", "", ListaTrajeto), ordered_pair_in_list([Origem, Destino], ListaTrajeto), caronaToStr(Row, Str)), CorrespondingRowsStr).
-    %findall(Str, (member(Row, Rows), row(_, _, _, Trajeto, _, _, _, _, _, _) = Row, split_string(Trajeto, ";", "", ListaTrajeto), ordered_pair_in_list([Origem, Destino], ListaTrajeto), caronaToStr(Row, Str)), CorrespondingRowsStr).
+    getAllRows(File, Rows),
+    findall(Str, 
+    (member(C, Rows), 
+     C = row(Cid, Hora, Data, Trajeto, Motorista, Passageiros, Valor, Status, NumPassMaximos, Aval),
+     split_string(Trajeto, ";", "", ListaTrajeto),
+     list_to_atom_list(ListaTrajeto, AtomList),
+     ordered_pair_in_list([Origem, Destino], AtomList),
+    %  writeln(AtomList),
+     retornar_rota(C, Origem, Destino, Rota),
+     possui_vagas_disponiveis(C, Rota),
+     caronaToStr(C, Str), !
+    ), CaronasStr),
+    list_to_string(CaronasStr, '', CorrespondingRowsStr).
+
+possui_vagas_disponiveis(row(Cid, _, _, Trajeto, _, _, _, _, NumPassageirosMaximos, _), Rota) :-
+    split_string(Trajeto, ";", "", ListaTrajeto),
+    list_to_atom_list(ListaTrajeto, AtomList),
+    possui_espaco_disponivel(Cid, AtomList, NumPassageirosMaximos, Rota).
+
+retornar_rota(row(_, _, _, Trajeto, _, _, _, _, _, _), Origem, Destino, Rota) :-
+    split_string(Trajeto, ";", "", ListaTrajeto),
+    list_to_atom_list(ListaTrajeto, AtomList),
+    origem_ate_destino(AtomList, Origem, Destino, Rota).
+
+origem_ate_destino([], _, _, []).
+origem_ate_destino([Origem|Rest], Origem, Destino, Rota) :- 
+    retorna_sub_lista([Origem|Rest], Destino, Rota).
+origem_ate_destino([_|Rest], Origem, Destino, Rota) :- 
+    origem_ate_destino(Rest, Origem, Destino, Rota).
+
+retorna_sub_lista([], _, []).
+retorna_sub_lista([Destino|_], Destino, [Destino]).
+retorna_sub_lista([Local|Rest], Destino, [Local|Rota]) :-
+    retorna_sub_lista(Rest, Destino, Rota).
 
 mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     csv_file(File),
@@ -168,7 +195,7 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
             Resp = 'Carona indisponível!'
         )
     ;
-        Resp = 'Rota não encontrada!'
+        Resp = 'Rota nao encontrada!'
     ).
 % solicitar_participar_carona(2,121212,"Patos","Rio",R).
 
