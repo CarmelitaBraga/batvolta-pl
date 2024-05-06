@@ -27,7 +27,7 @@
     mostrar_carona_passageiros_viagem_false_controller/2,
     mostrar_caronas_sem_avaliacao_controller/2,
     checar_carona_de_motorista_avaliar/2,
-    avaliar_carona_controller/2,
+    avaliar_carona_controller/3,
     checar_carona_passageiro_viagem_false/2,
     mostrar_passageiros_viagem_false_controller/2,
     possui_passageiro_viagem_false_controller/2,
@@ -153,8 +153,8 @@ mostrar_carona_passageiros_viagem_false_controller(MotoristaCpf, CaronasStr):-
 checar_carona_de_motorista_avaliar(Cid, MotoristaCpf):-
     carona_de_motorista_avaliar(Cid,MotoristaCpf).
 
-avaliar_carona_controller(Cid, Avaliacao):-
-    avaliar_carona(Cid, Avaliacao).
+avaliar_carona_controller(Cid, Avaliacao, R):-
+    avaliar_carona(Cid, Avaliacao, R).
 
 checar_carona_passageiro_viagem_false(MotoristaCpf, Cid) :- 
     carona_de_motorista(MotoristaCpf,Cid),

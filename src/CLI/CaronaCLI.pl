@@ -310,8 +310,8 @@ menu_avaliar_carona(MotoristaCpf) :-
             write("Digite a avaliacao: "),
             read_line_to_string(user_input, Aval),
             number_string(AvalNumber, Aval),
-            avaliar_carona_controller(CidNumber, AvalNumber),
-            write("Carona avaliada com sucesso!"), nl
+            avaliar_carona_controller(CidNumber, AvalNumber, R),
+            writeln(R)
         ;
             write("Essa carona não pertence a esse motorista!"), nl
         )

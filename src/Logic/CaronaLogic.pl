@@ -22,7 +22,7 @@
     mostrar_caronas_sem_avaliacao/2,
     mostrar_carona_passageiros_viagem_false/2,
     carona_de_motorista_avaliar/2,
-    avaliar_carona/2,
+    avaliar_carona/3,
     retornar_carona/2,
     mostrar_caronas_do_motorista/2
     ]).
@@ -324,13 +324,18 @@ carona_de_motorista_avaliar(Cid,MotoristaCpf):-
     findall(Str, (member(Row, Rows), row(Cid, _, _, _, _, _, _, _, _,0) = Row, caronaToStr(Row, Str)), CorrespondingRowsStr),
     CorrespondingRowsStr \= [].
 
-avaliar_carona(Cid, Avaliacao):-
+avaliar_carona(Cid, Avaliacao, Resp):-
     csv_file(File),
     carona_column(CaronaColumn),
+    (Avaliacao =< 0 ; Avaliacao > 5 ->
+        Resp = 'Valor invalido!'
+    ;
     read_csv_row(File, CaronaColumn , Cid, Caronas),
     member(row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, _), Caronas),
     UpdatedRow = row(Cid, Hora, Data, Rota, MotoristaCpf, Passageiros, Valor, Status, Vagas, Avaliacao),
-    update_csv_row(File, CaronaColumn, Cid, UpdatedRow).
+    update_csv_row(File, CaronaColumn, Cid, UpdatedRow),
+        Resp = 'Carona avaliada com sucesso!'
+    ).
 
 mostrar_carona_passageiros_viagem_false(MotoristaCpf, CorrespondingRowsStr) :-
     recuperar_caronas_por_motorista(MotoristaCpf, Rows),
