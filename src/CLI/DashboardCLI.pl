@@ -55,5 +55,4 @@ imprimirTopPassageiros :-
 imprimirDestinosMaisVisitados :-
     write('\nTOP 5 LOCAIS MAIS USADOS COMO DESTINO: \n'),
     buscar_destinos_mais_frequentes(Result),
-    list_to_string(Result, '', Top),
-    write(Top).
+    write(Result).
