@@ -149,7 +149,7 @@ handle_motorista_option("4", MotoristaRef) :- menu_aceitar_recusar_passageiro(Mo
 handle_motorista_option("5", MotoristaRef) :- menu_cancelar_carona_motorista(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
 handle_motorista_option("6", MotoristaRef) :- menu_visualizar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
 handle_motorista_option("7", MotoristaRef) :- menu_avaliar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("0", MotoristaRef) :- menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option("0", MotoristaRef) :- menu_opcoes_motorista.
 handle_motorista_option(_, MotoristaRef) :- writeln('Opcao invalida!'), menu_principal_motorista_carona(MotoristaRef).
 
 menu_criar_carona(PassageiroCpf) :-
