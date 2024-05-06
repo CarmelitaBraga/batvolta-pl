@@ -1,10 +1,9 @@
-module(_, [
+:- module(_, [
     menu_principal/0,
     seleciona_opcao/1,
     menu_principal_dashboard/0,
     menu_principal_passageiro/0,
-    menu_principal_motorista/0,
-    menu_principal_carona/0
+    menu_principal_motorista/0
 ]).
 
 
@@ -38,8 +37,8 @@ seleciona_opcao("3") :-
     menu_principal.
 
 seleciona_opcao("0") :-
-    write('Fim da interação!\n\n').
+    write('Fim da interacao!\n\n').
 
 seleciona_opcao(_) :-
-    write('Opção inválida!\n'),
+    write('Opcao invalida!\n'),
     menu_principal.

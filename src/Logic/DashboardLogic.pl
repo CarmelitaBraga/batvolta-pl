@@ -5,7 +5,7 @@
         get_top_passageiros/1
     ]).
 
-:- use_module('../Controller/ControllerMotorista.pl').
+:- use_module('../Controller/MotoristaController.pl').
 :- use_module('../Controller/PassageiroController.pl').
 :- use_module('../Controller/CaronaController.pl').
 :- use_module('../Util/Utils.pl').

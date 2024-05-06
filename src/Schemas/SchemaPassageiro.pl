@@ -21,12 +21,10 @@
 filePath(Retorno):-
     Retorno = '../../database/passageiros.csv'.
 
-% Verifica se um CPF já está cadastrado
 existe_passageiro_by_cpf(CPF):-
     filePath(File),
     read_csv_row(File, 2, CPF, [row(_, CPF, _, _, _, _, _)]).
 
-% Verifica se um email já está cadastrado
 existe_passageiro_by_email(Email) :-
     filePath(File),
     read_csv_row(File, 4, Email, [row(_, _, _, Email, _, _, _)]).
@@ -36,12 +34,13 @@ existe_passageiro_by_email(Email) :-
 cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno) :-
     filePath(File),
     (   existe_passageiro_by_cpf(CPF) ->
-        Retorno = "CPF já cadastrado." 
+        Retorno = "CPF ja cadastrado." 
     ;    
         existe_passageiro_by_email(Email) ->
-        Retorno = "Email já cadastrado."
+        Retorno = "Email ja cadastrado."
     ;
-        write_csv_row(File,[row(Nome, CPF, Genero, Email, Telefone, CEP, Senha)]),
+        downcase_atom(Genero, G)
+        write_csv_row(File,[row(Nome, CPF, G, Email, Telefone, CEP, Senha)]),
         Retorno = 'Passageiro cadastrado com sucesso.'
     ).
 % cadastra_passageiro('Caique',12345678901,'M','caique@gmail.com',12345678901,12345678,12345678,Retorno).

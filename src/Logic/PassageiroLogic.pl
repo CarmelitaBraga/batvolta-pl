@@ -20,25 +20,28 @@ csv_file('../../database/passageiros.csv').
 
 cadastrar_passageiro_logic(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno):-
     (   \+ validar_cpf(CPF) 
-        ->  write('CPF não atende aos requisitos\n')
+        ->  write('CPF nao atende aos requisitos\n')
     ; 
         null_or_empty(Nome) 
-        ->  write('Nome não pode ser vazio\n')
+        ->  write('Nome nao pode ser vazio\n')
     ;
-        \+ validar_genero(Genero) 
+        validar_genero(Genero) 
         ->  write('Genero deve ser M, F ou NB.\n')
     ;
         \+ validar_email(Email) 
-        ->  write('Email não atende aos requisitos\n')
+        ->  write('Email nao atende aos requisitos\n')
     ;
         null_or_empty(Telefone) 
-        ->  write('Telefone não pode ser vazio\n')
+        ->  write('Telefone nao pode ser vazio\n')
     ;
         null_or_empty(CEP) 
-        ->  write('CEP não pode ser vazio\n')
+        ->  write('CEP nao pode ser vazio\n')
+    ;
+        \+ validar_senha(Senha) 
+        ->  write('Senha nao atende aos requisitos\n')
     ;
         null_or_empty(Senha) 
-        ->  write('Senha não pode ser vazia\n')
+        ->  write('Senha nao pode ser vazia\n')
     ;
         cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno)
     ).

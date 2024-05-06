@@ -1,4 +1,4 @@
-:- module(controller_motorista, [  
+:- module(_, [  
     realizarLoginMotorista/3,
    realizarCadastroMotorista/10,
    cancelarCadastroMotorista/3,

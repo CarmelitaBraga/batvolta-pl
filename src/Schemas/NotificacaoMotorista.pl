@@ -5,7 +5,7 @@
 
 file('../../database/notificacaoMotorista.csv').
 
-:- use_module('../Schemas/CsvModule.pl').
+:- use_module('../Schemas/CsvModuleMotorista.pl').
 
 :- dynamic id/1.
 
@@ -53,7 +53,7 @@ recupera_notificacao_motoristas(Motorista, NotificacaoStr) :-
     atom_number(Motorista, Number),
     read_csv_row(Caminho, 2, Number, Rows),
     (Rows == [] -> 
-        NotificacaoStr = 'Motorista nao tem nenhuma notificacaoo.'
+        NotificacaoStr = 'Sem novas mensagens para motorista.'
     ;
         maplist(converteToStr, Rows, Notificacao),
         reverse(Notificacao, NotificacaoStr)

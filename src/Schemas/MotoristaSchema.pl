@@ -37,9 +37,7 @@ motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(_), telefone(
 converte_para_motorista_str(row(CPF, Nome, Email, Senha, Telefone, CNH, CEP, Genero, Regiao), Str) :-
     motoristaToStr(motorista(cpf(CPF), nome(Nome), email(Email), senha(Senha), telefone(Telefone), cnh(CNH), cep(CEP), genero(Genero), regiao(Regiao)), Str).
 
-% Predicados para cadastro de motorista
 cadastra_motorista(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno) :-
-    % Verificar se o CPF já está cadastrado
     ( possui_motorista(CPF) ->
         Retorno ='CPF ja cadastrado.'
     ;   

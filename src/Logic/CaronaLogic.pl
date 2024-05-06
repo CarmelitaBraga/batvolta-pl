@@ -33,6 +33,7 @@
 :- use_module('../Model/Carona.pl').
 :- use_module('../Logic/PassageiroViagemLogic.pl').
 :- use_module('../Util/Utils.pl').
+:- use_module('../Logic/MotoristaLogic.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
 csv_file('../../database/caronas.csv').
@@ -124,7 +125,6 @@ mostrar_caronas_com_vagas_origem_destino(Origem, Destino, CorrespondingRowsStr):
      split_string(Trajeto, ";", "", ListaTrajeto),
      list_to_atom_list(ListaTrajeto, AtomList),
      ordered_pair_in_list([Origem, Destino], AtomList),
-    %  writeln(AtomList),
      retornar_rota(C, Origem, Destino, Rota),
      possui_vagas_disponiveis(C, Rota),
      caronaToStr(C, Str), !
@@ -211,20 +211,32 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
         read_csv_row(File, Carona_Column, IdCarona, Caronas),
         (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas),
         Status \= 'Finalizada' ->
-            (   integer(Passageiros) -> number_string(Passageiros, PassageirosStr)
-            ;   PassageirosStr = Passageiros
-            ),
-            split_string(PassageirosStr, ";", "", ListaPassageiros),
-            length(ListaPassageiros, QtdPass),
-            number_string(PassageiroCpf, PassageiroStr),  % Convert PassageiroCpf to a string
-            (QtdPass == Limite_Vagas, \+ member(PassageiroStr, ListaPassageiros) ->
-                Resp = 'Carona com capacidade maxima de passageiros!'
+            split_string(Passageiros, ";", "", ListaPassageiros),
+            list_to_atom_list(ListaPassageiros, AtomList),
+            (memberchk(_, AtomList) ->
+                QtdPass = 0,
+                number_string(PassageiroCpf, PassageiroStr),  % Convert PassageiroCpf to a string
+                (QtdPass == Limite_Vagas ->
+                    Resp = 'Carona com capacidade maxima de passageiros!'
+                ;
+                    format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
+                    format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
+                    cadastra_notificacao(Motorista, PassageiroCpf, IdCarona, 'solicitou entrar', _),
+                    criar_viagem_passageiro(IdCarona, 'False', Rota, 0, PassageiroCpf),
+                    Resp = 'Registro de passageiro em carona criado com sucesso!'
+                )
             ;
-                format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
-                format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
-                % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
-                criar_viagem_passageiro(IdCarona, 'False', Rota, 0, PassageiroCpf),
-                Resp = 'Registro de passageiro em carona criado com sucesso!'
+                length(AtomList, QtdPass),
+                number_string(PassageiroCpf, PassageiroStr),  % Convert PassageiroCpf to a string
+                (QtdPass == Limite_Vagas, \+ member(PassageiroStr, AtomList) ->
+                    Resp = 'Carona com capacidade maxima de passageiros!'
+                ;
+                    format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
+                    format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
+                    cadastra_notificacao(Motorista, PassageiroCpf, IdCarona, 'solicitou entrar', _),
+                    criar_viagem_passageiro(IdCarona, 'False', Rota, 0, PassageiroCpf),
+                    Resp = 'Registro de passageiro em carona criado com sucesso!'
+                )
             )
         ;
             Resp = 'Carona indisponivel!'

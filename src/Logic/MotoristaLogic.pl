@@ -9,30 +9,30 @@
 ]).
 
 :- use_module('../Schemas/MotoristaSchema.pl').
-:- use_module('../Util/Util.pl').
+:- use_module('../Util/Utils.pl').
 :- use_module('../Schemas/NotificacaoMotorista.pl').
 
 cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Retorno):-
-( validarCPF(CPF) ->
-    (nullOrEmpty(Nome) ->
+( validar_cpf(CPF) ->
+    (null_or_empty(Nome) ->
         Retorno = 'Nome não pode ser vazio.'
     ;
-        (validarEmail(Email) ->
-            (nullOrEmpty(Telefone) ->
+        (validar_email(Email) ->
+            (null_or_empty(Telefone) ->
                 Retorno = 'Telefone nao pode ser vazio.'
             ;
-                (valida_senha(Senha) ->
+                (validar_senha(Senha) ->
                 
-                    (nullOrEmpty(CEP) ->
+                    (null_or_empty(CEP) ->
                         Retorno = 'CEP nao pode ser vazio.'
                         ;
-                        (nullOrEmpty(CNH) ->
+                        (null_or_empty(CNH) ->
                             Retorno = 'CNH nao pode ser vazio.'
                         ;
-                            (validarGenero(Genero) ->
+                            (validar_genero(Genero) ->
                                 Retorno = 'Digite um genero valido. Exemplo: M, F, NB.'
                             ;
-                                (validaRegiao(Regiao) ->
+                                (validar_regiao(Regiao) ->
                                     Retorno = 'Digite uma regiao valida. Exemplo: norte, nordeste, centro-oeste, sudeste, sul'
                                 ;
                                     downcase_atom(Genero, G),
@@ -61,7 +61,7 @@ cadastra_Logic(CPF, Nome, Email, Telefone, Senha, CNH, CEP, Genero, Regiao, Reto
 
 atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno):-
     (Campo == 'senha' ->
-        (valida_senha(NovoValor) ->
+        (validar_senha(NovoValor) ->
             (confere_senha(CPF, Senha) ->
             atualiza_motorista(CPF,Campo,NovoValor,Resposta),
             Retorno = Resposta
@@ -72,7 +72,7 @@ atualiza_Logic(CPF, Senha, Campo, NovoValor, Retorno):-
             Retorno = 'Senha deve ser no minimo tamanho 4, e conter pelo menos uma letra.'
         )
     ;
-        (nullOrEmpty(NovoValor) ->
+        (null_or_empty(NovoValor) ->
             Retorno = 'Novo valor nao pode ser vazio.'
         ;
             (confere_senha(CPF, Senha) ->
@@ -98,7 +98,7 @@ recupera_cpf_logic(CPF,Retorno):-
 
 recupera_notificacao_logic(CPF,Retorno):-
     recupera_notificacao_motoristas(CPF, Lista),
-    (Lista == 'Motorista nao tem nenhuma notificacaoo.' ->
+    (Lista == 'Sem novas mensagens para motorista.' ->
         Retorno = Lista
     ;    
         list_to_string(Lista,'',Retorno)

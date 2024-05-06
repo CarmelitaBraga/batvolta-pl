@@ -28,9 +28,9 @@ selecionar_opcao("4") :-
     imprimirDestinosMaisVisitados,
     menu_principal_dashboard.
 selecionar_opcao("0") :-
-    write('Fim da interaçao!\n').
+    write('Fim da interacao!\n').
 selecionar_opcao(_) :-
-    write('Opção invalida!\n'),
+    write('Opcao invalida!\n'),
     menu_principal_dashboard.
 
 % Predicates for each menu option
