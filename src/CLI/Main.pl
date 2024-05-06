@@ -1,6 +1,6 @@
 module(_, [
-   menu_principal/0,
-    selecionar_opcao/1,
+    menu_principal/0,
+    seleciona_opcao/1,
     menu_principal_dashboard/0,
     menu_principal_passageiro/0,
     menu_principal_motorista/0,
@@ -20,24 +20,24 @@ menu_principal:-
     write('2 - Passageiro \n'),
     write('3 - Motorista \n'),
     write('0 - Sair\n'),
-    read(Opcao),
-    selecionar_opcao(Opcao).
+    read_line_to_string(user_input, Opcao),
+    seleciona_opcao(Opcao).
 
-selecionar_opcao(1) :-
+seleciona_opcao("1") :-
     menu_principal_dashboard,
     menu_principal.
 
-selecionar_opcao(2) :-
+seleciona_opcao("2") :-
     menu_principal_passageiro,
     menu_principal.
 
-selecionar_opcao(3) :-
+seleciona_opcao("3") :-
     menu_principal_motorista,
     menu_principal.
 
-selecionar_opcao(0) :-
+seleciona_opcao("0") :-
     write('Fim da interação!\n').
 
-selecionar_opcao(_) :-
+seleciona_opcao(_) :-
     write('Opção inválida!\n'),
     menu_principal.
