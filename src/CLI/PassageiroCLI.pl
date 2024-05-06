@@ -156,9 +156,9 @@ menu_atualizar_cadastro:-
     write('Digite o novo valor: \n'),
     read_line_to_string(user_input, NovoValor),
     atom_string(NovoValorStr, NovoValor),
-    (   Opcao = "1" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 'telefone', NovoValorStr, Resultado)
-    ;   Opcao = "2" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 'cep', NovoValorStr, Resultado)
-    ;   Opcao = "3" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 'senha', NovoValorStr, Resultado)
+    (   Opcao = "1" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 1, NovoValorStr, Resultado)
+    ;   Opcao = "2" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 2, NovoValorStr, Resultado)
+    ;   Opcao = "3" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 3, NovoValorStr, Resultado)
     ),
     write(Resultado), nl,
     menu_opcoes_passageiro.
