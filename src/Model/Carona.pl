@@ -48,8 +48,8 @@ caronaToStr(row(Cid, Hora, Date, Destinos, Motorista, Passageiros, Valor, Status
     format(string(PassageirosStr), "Passageiros: ~w", [Passageiros]),
     format(string(ValorStr), "Valor: ~w", [Valor]),
     format(string(StatusStr), "Status: ~w", [Status]),
-    format(string(NumPassageirosMaximosStr), "Número Máximo de Passageiros: ~w", [NumPassageirosMaximos]),
-    format(string(AvaliacaoPassageirosStr), "Avaliação dos Passageiros: ~w", [AvaliacaoPassageiros]),
+    format(string(NumPassageirosMaximosStr), "Numero Maximo de Passageiros: ~w", [NumPassageirosMaximos]),
+    format(string(AvaliacaoPassageirosStr), "Avaliacao dos Passageiros: ~w", [AvaliacaoPassageiros]),
     % Concatenate all formatted fields into a string
     atomic_list_concat([CidStr, HoraStr, DateStr, DestinosStr, MotoristaStr, PassageirosStr, ValorStr, StatusStr, NumPassageirosMaximosStr, AvaliacaoPassageirosStr], ', ', Str).
 

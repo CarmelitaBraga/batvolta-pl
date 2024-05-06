@@ -2,21 +2,23 @@
     [info_trecho_by_carona_passageiro/3,
     cancelar_viagem_passageiro/3,
     get_viagens_passageiro_sem_avaliacao/2,
-    mostrar_viagens_passageiro_str/2,
+    mostrar_all_viagens_passageiro/2,
     cancelar_viagem_passageiro/3,
     carona_avalia_motorista/4,
     criar_viagem_passageiro/5,
     passageiro_tem_registro_carona/2,
     passageiro_aceito_carona/2,
-    get_viagens_by_carona/2,
-    get_all_viagens/1
+    possui_passageiros_viagem_false/1,
+    retornar_caronas_passageiro_false/2,
+    possui_passageiros_false/1,
+    retorna_passageiros_false_da_carona/2,
+    possui_passageiro_viagem_false/2,
+    aceitar_passageiro/1
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/PassageiroViagem.pl').
 :- use_module('../Util/Utils.pl').
-
-csv_file('../../database/viagemPassageiros.csv').
 
 % Fato dinâmico para gerar o id das caronas
 :- dynamic id/1.
@@ -43,6 +45,8 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
 
 incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
 
+
+csv_file('../../database/viagemPassageiros.csv').
 viagem_pass_column(1).
 carona_column(2).
 aceito_column(3).
@@ -50,10 +54,6 @@ rota_column(4).
 avaliacao_column(5).
 passageiro_column(6).
 nota_sem_avaliacao(0).
-
-get_all_viagens(Viagens):-
-    csv_file(File),
-    getAllRows(File, Viagens).
 
 passageiro_tem_registro_carona(IdCarona, PassageiroCpf):-
     get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
@@ -138,7 +138,7 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
 % cancelar_viagem_passageiro(7,09876543210, R).
 % cancelar_viagem_passageiro(2,000000, R).
 
-mostrar_viagens_passageiro_str(PassageiroCpf, ViagensStr):- 
+mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):- 
     csv_file(File),
     number_string(PassageiroCpf, PassageiroStr),
     passageiro_column(Pass_Column),
@@ -171,12 +171,46 @@ criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
     write_csv_row_all_steps(File, ListaViagem).
 % criar_viagem_passageiro(7,"True","Osasco;Disney", 0, 111555888).
 
-get_viagens_by_carona(IdCarona, Viagens):-
+possui_passageiros_false(row(IdCarona, _, _, _, _, _, _, _, _, _)) :-
     csv_file(File),
     carona_column(Carona_Column),
-    read_csv_row(File, Carona_Column, IdCarona, ViagensRows),
-    (member(row(_, IdCarona, _, _, _, _), ViagensRows) ->
-        Viagens = ViagensRows
-    ;
-        Viagens = []
-    ).
+    read_csv_row(File, Carona_Column, IdCarona, Viagens),
+    findall(_, (
+        member(Viagem, Viagens),
+        Viagem = row(_, _, 'False', _, _, _),
+    viagemToStr(Viagem, _)
+    ), ViagensStr),
+    ViagensStr \= [].
+
+possui_passageiros_viagem_false([Row|_]) :-
+    possui_passageiros_false(Row), !.
+possui_passageiros_viagem_false([_|Rest]) :- possui_passageiros_viagem_false(Rest).
+
+retornar_caronas_passageiro_false(Caronas, CaronasPassageiroFalse) :-
+    include(possui_passageiros_false, Caronas, CaronasPassageiroFalse).
+
+retorna_passageiros_false_da_carona(Cid, Retorno) :-
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, Cid, Viagens),
+    write(Viagens),
+    findall(ViagemStr, (
+        member(Viagem, Viagens),
+        Viagem = row(_, _, 'False', _, _, _),
+        viagemToStr(Viagem, ViagemStr)
+    ), ViagensStr),
+    atomic_list_concat(ViagensStr, '\n', Retorno).
+
+possui_passageiro_viagem_false(Cid, PVid) :-
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, Cid, Viagens),
+    member(row(PVid, Cid, 'False', _, _, _), Viagens),!.
+
+aceitar_passageiro(PVid) :-
+    csv_file(File),
+    viagem_pass_column(ViagemIdColumn),
+    read_csv_row(File, ViagemIdColumn, PVid, Viagens),
+    member(row(PVid,IdCarona,_,Rota,Avaliacao,PassageiroCpf), Viagens),
+    Updated_Row = row(PVid,IdCarona,'True',Rota,Avaliacao,PassageiroCpf),
+    update_csv_row(File, ViagemIdColumn, PVid, Updated_Row).

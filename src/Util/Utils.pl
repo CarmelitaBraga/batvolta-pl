@@ -11,7 +11,8 @@
     validar_cpf/1,
     null_or_empty/1,
     validar_email/1,
-    validar_genero/1
+    validar_genero/1,
+    rotaLowcase/2
     ]).
 
 validar_cpf(CPF):-
@@ -91,3 +92,7 @@ extract_names([(Name, _)|T], [Name|Rest]) :-
     extract_names(T, Rest).
 extract_names([[Name, _]|T], [Name|Rest]) :-
     extract_names(T, Rest).
+
+rotaLowcase(Cidade, Retorno) :-
+    downcase_atom(Cidade, LowercaseAtom),
+    atom_string(LowercaseAtom, Retorno).

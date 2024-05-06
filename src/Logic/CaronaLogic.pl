@@ -18,6 +18,7 @@
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/Carona.pl').
 :- use_module('../Logic/PassageiroViagemLogic.pl').
+:- use_module('../Util/Utils.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
 csv_file('../../database/caronas.csv').
@@ -50,7 +51,8 @@ loadId :-
     encontrar_maior_id(Rows, 0, Id),
     NovoId is Id + 1,
     assertz(id(NovoId))
-    ).
+    ).    % cidadeDowcase(Origem, OrigemLower),
+
 
 encontrar_maior_id([], MaiorId, MaiorId).
 encontrar_maior_id([row(Id, _, _, _, _, _, _, _, _, _)|Rest], MaiorId, R) :-
@@ -75,20 +77,26 @@ carona_in_viagens(Carona, Viagens) :-
 
 % Predicate to check if a route exists from Origem to Destino
 possui_carona_origem_destino(Origem, Destino):-
+    rotaLowcase(Origem, OrigemLower),
+    rotaLowcase(Destino, DestinoLower),
     csv_file(File),
     destinos_column(Dest_column),
-    read_csv_row_by_list_element(File, Dest_column, Origem, Rows),
+    read_csv_row_by_list_element(File, Dest_column, OrigemLower, Rows),
     member(row(_, _, _, Trajeto, _, _, _, _, _, _), Rows),
+    rotaLowcase(Trajeto, ListaTrajetoLower),
     split_string(Trajeto, ";", "", ListaTrajeto),
-    ordered_pair_in_list([Origem, Destino], ListaTrajeto).
+    ordered_pair_in_list([OrigemLower, DestinoLower], ListaTrajetoLower).
 
 carona_possui_origem_destino(IdCarona, Origem, Destino):-
+    rotaLowcase(Origem, OrigemLower),
+    rotaLowcase(Destino, DestinoLower),
     csv_file(File),
     carona_column(Carona_Column),
     read_csv_row(File, Carona_Column, IdCarona, Rows),
     member(row(IdCarona, _, _, Trajeto, _, _, _, _, _, _), Rows),
-    split_string(Trajeto, ";", "", ListaTrajeto),
-    ordered_pair_in_list([Origem, Destino], ListaTrajeto).
+    rotaLowcase(Trajeto, TrajetoLower),
+    split_string(TrajetoLower, ";", "", ListaTrajeto),
+    ordered_pair_in_list([OrigemLower, DestinoLower], ListaTrajeto).
 
 % Helper predicate to check if two elements exist in a list in the given order
 ordered_pair_in_list([X,Y], [X|T]) :-
@@ -97,10 +105,15 @@ ordered_pair_in_list(Pair, [_|T]) :-
     ordered_pair_in_list(Pair, T).
 
 mostrar_caronas_origem_destino(Origem, Destino, CorrespondingRowsStr):-
+    rotaLowcase(Origem, OrigemLower),
+    rotaLowcase(Destino, DestinoLower),
     csv_file(File),
     destinos_column(Dest_column),
     read_csv_row_by_list_element(File, Dest_column, Origem, Rows),
-    findall(Str, (member(Row, Rows), row(_, _, _, Trajeto, _, _, _, _, _, _) = Row, split_string(Trajeto, ";", "", ListaTrajeto), ordered_pair_in_list([Origem, Destino], ListaTrajeto), caronaToStr(Row, Str)), CorrespondingRowsStr).
+    findall(Str, (member(Row, Rows), row(_, _, _, Trajeto, _, _, _, _, _, _) = Row,
+    split_string(Trajeto, ";", "", ListaTrajeto),
+    ordered_pair_in_list([OrigemLower, DestinoLower],ListaTrajeto), 
+    caronaToStr(Row, Str)), CorrespondingRowsStr).
 
 mostrar_caronas_passageiro_participa(PassageiroCpf, CaronasStr):-
     csv_file(File),
@@ -156,8 +169,10 @@ remover_passageiro_carona(IdCarona, PassageiroCpf, Resp):-
 
 solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
     csv_file(File),
+    rotaLowcase(Origem, OrigemLower),
+    rotaLowcase(Destino, DestinoLower),
     carona_column(Carona_Column),
-    (carona_possui_origem_destino(IdCarona, Origem, Destino) ->
+    (carona_possui_origem_destino(IdCarona, OrigemLower, DestinoLower) ->
         read_csv_row(File, Carona_Column, IdCarona, Caronas),
         (member(row(IdCarona, _, _, _, Motorista, Passageiros, _, Status, Limite_Vagas, _), Caronas),
         Status \= 'Finalizada' ->
@@ -170,7 +185,7 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
             (QtdPass == Limite_Vagas, \+ member(PassageiroStr, ListaPassageiros) ->
                 Resp = 'Carona com capacidade máxima de passageiros!'
             ;
-                format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
+                format(string(Rota), "~w;~w", [OrigemLower, DestinoLower]),  % Corrected string formatting
                 format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
                 % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
                 criar_viagem_passageiro(IdCarona, "False", Rota, 0, PassageiroCpf),
@@ -185,9 +200,10 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
 % solicitar_participar_carona(2,121212,"Patos","Rio",R).
 
 criar_carona_motorista(Hora, Data, Rota, MotoristaCpf, Valor, NumPassageirosMaximos) :-
+    rotaLowcase(Rota, RotaLower),
     csv_file(CsvFile),
     id(ID),
-    Carona = carona(ID, Hora, Data, Rota, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, -1),
+    Carona = carona(ID, Hora, Data, RotaLower, MotoristaCpf, [], Valor, naoIniciada, NumPassageirosMaximos, -1),
     incrementa_id,
     carona_to_list(Carona, ListaCarona),
     write_csv_row_all_steps(CsvFile, ListaCarona).

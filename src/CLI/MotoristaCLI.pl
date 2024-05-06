@@ -105,7 +105,7 @@ menu_opcoes_motorista_opcao(4) :-
 
 menu_opcoes_motorista_opcao(5) :-
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
-    chamar_menu_carona_motorista(CPF),
+    menu_principal_motorista_carona(CPF),
     menu_opcoes_motorista. 
 
 menu_opcoes_motorista_opcao(0) :-
