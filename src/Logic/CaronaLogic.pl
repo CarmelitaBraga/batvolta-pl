@@ -20,7 +20,7 @@
 :- use_module('../Util/Utils.pl').
 
 % Définir le chemin du fichier CSV comme une variable globale
-csv_file('database/caronas.csv').
+csv_file('../../database/caronas.csv').
 carona_column(1).
 hora_column(2).
 data_column(3).
@@ -161,7 +161,7 @@ solicitar_participar_carona(IdCarona, PassageiroCpf, Origem, Destino, Resp):-
                 format(string(Rota), "~w;~w", [Origem, Destino]),  % Corrected string formatting
                 format(string(Mensagem), "O Passageiro: ~w solicitou entrar na corrida de id: ~w", [PassageiroCpf, IdCarona]),  % Corrected format/2 usage
                 % insere_notificacao(Motorista, PassageiroCpf, IdCarona, Mensagem),
-                criar_viagem_passageiro(IdCarona, "False", Rota, 0, PassageiroCpf),
+                criar_viagem_passageiro(IdCarona, 'False', Rota, 0, PassageiroCpf),
                 Resp = 'Registro de passageiro em carona criado com sucesso!'
             )
         ;

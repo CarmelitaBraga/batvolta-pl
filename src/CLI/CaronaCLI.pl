@@ -49,12 +49,12 @@ menu_procurar_carona(PassageiroRef):-
     write('De onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
     read(Origem),
     atom_string(Origem, OrigemStr),
-    nl, write('Onde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    nl, write('Onde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
     read(DestinoStr),
     (possui_caronas_origem_destino_controller(OrigemStr, DestinoStr) ->
         mostrar_caronas_disponiveis_origem_destino(OrigemStr, DestinoStr, Caronas),
         write('Caronas disponíveis: '), nl, printList(Caronas), nl,
-        write('Qual carona deseja solicitar? (Digite o Id da carona ou -1 para dispensar): '),
+        write('Qual carona deseja solicitar? (Digite o Id da carona ou -1 para dispensar): \n'),
         read(CId),
         (CId == -1 -> menu_principal_passageiro_carona(PassageiroRef)
         ;
@@ -155,7 +155,7 @@ menu_criar_carona(MotoristaRef) :-
     writeln("\nCriar uma Carona"),
     write("Digite a hora (no formato HH:MM): "),
     read_line_to_string(user_input, Hora),
-    write("Digite a data (no formato DD/MM/AAAA): "),
+    write("Digite a data (no formato AAAA-MM-DD): "),
     read_line_to_string(user_input, Data),
     write("Digite a origem da viagem: "),
     read_line_to_string(user_input, Origem),
@@ -211,7 +211,7 @@ menu_iniciar_carona(MotoristaRef) :-
         write("Digite o Id da carona: "),
         read_line_to_string(user_input, Cid),
         atom_number(Cid, Code),
-        (checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Code) ->
+        (checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Code) ->
             inicializar_carona_status(Code),
             write("Carona iniciada com sucesso!"), nl
         ;

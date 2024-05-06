@@ -18,7 +18,6 @@
     finaliza_carona_status/1,
     possui_carona_em_andamento_controller/1,
     mostrar_caronas_em_andamento_controller/2,
-    checar_carona_em_andamento_de_motorista/2,
     possui_passageiros_viagem_false_controller/1,
     possui_carona_motorista_controller/1,
     mostrar_caronas_motorista/2,
@@ -103,7 +102,7 @@ mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, CaronasStr) :-
     list_to_string(Caronas, '', CaronasStr).
 
 checar_carona_nao_iniciada_de_motorista(MotoristaCpf, Cid) :-
-    checar_carona_nao_iniciada_e_motorista(MotoristaCpf, Cid).
+    mostrar_caronas_nao_iniciadas_por_motorista(MotoristaCpf, Cid).
 
 finaliza_carona_status(Cid) :-
     finalizar_carona_status(Cid).
