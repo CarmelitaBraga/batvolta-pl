@@ -125,7 +125,6 @@ top_5_destinos(Destinos):-
     get_destinos_finais(DestinosFinais),
     get_destinos_possiveis(DestinosPossiveis),
     count_elements(DestinosPossiveis, DestinosFinais, Contagem),
-    write(Contagem), nl,
     take_evaluations_decrescent(5,Contagem, Tuplas),
     extract_names(Tuplas,Nomes),
     list_to_string(Nomes,'',Destinos).

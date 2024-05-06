@@ -13,7 +13,9 @@
     possui_passageiros_false/1,
     retorna_passageiros_false_da_carona/2,
     possui_passageiro_viagem_false/2,
-    aceitar_passageiro/1
+    aceitar_passageiro/1,
+    get_viagens_by_carona/2,
+    get_all_viagens/1
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
@@ -55,6 +57,20 @@ avaliacao_column(5).
 passageiro_column(6).
 nota_sem_avaliacao(0).
 
+get_all_viagens(Viagens):-
+    csv_file(File),
+    getAllRows(File, Viagens).
+
+get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):- 
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, IdCarona, Viagens),
+    (member(row(_, IdCarona, _, _, _, PassageiroCpf), Viagens) ->
+        Resp = Viagens
+    ;
+        Resp = []
+    ).
+
 passageiro_tem_registro_carona(IdCarona, PassageiroCpf):-
     get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
     (Viagem == []-> 
@@ -82,11 +98,11 @@ get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):-
 
 get_viagens_passageiro_sem_avaliacao(PassageiroCpf, ViagensStr):-
     csv_file(File),
-    number_string(PassageiroCpf, PassageiroStr),
+    % number_string(PassageiroCpf, PassageiroStr),
     nota_sem_avaliacao(Sem_Nota),
     avaliacao_column(Aval_Column),
     read_csv_row(File, Aval_Column, Sem_Nota, Viagens),
-    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, 'True', _, Sem_Nota, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, 'True', _, Sem_Nota, PassageiroCpf), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 % get_viagens_passageiro_sem_avaliacao(09876543210,R).
 % get_viagens_passageiro_sem_avaliacao(121212,R).
 % get_viagens_passageiro_sem_avaliacao(000000,R).
@@ -140,10 +156,10 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
 
 mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):- 
     csv_file(File),
-    number_string(PassageiroCpf, PassageiroStr),
+    % number_string(PassageiroCpf, PassageiroStr),
     passageiro_column(Pass_Column),
     read_csv_row(File, Pass_Column, PassageiroCpf, Viagens),
-    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroCpf), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 
 carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):- 
     csv_file(File),
@@ -214,3 +230,13 @@ aceitar_passageiro(PVid) :-
     member(row(PVid,IdCarona,_,Rota,Avaliacao,PassageiroCpf), Viagens),
     Updated_Row = row(PVid,IdCarona,'True',Rota,Avaliacao,PassageiroCpf),
     update_csv_row(File, ViagemIdColumn, PVid, Updated_Row).
+
+get_viagens_by_carona(IdCarona, Viagens):-
+    csv_file(File),
+    carona_column(Carona_Column),
+    read_csv_row(File, Carona_Column, IdCarona, ViagensRows),
+    (member(row(_, IdCarona, _, _, _, _), ViagensRows) ->
+        Viagens = ViagensRows
+    ;
+        Viagens = []
+    ).
