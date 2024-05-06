@@ -88,17 +88,6 @@ passageiro_aceito_carona(IdCarona, PassageiroCpf):-
     read_csv_row(File, Carona_Column, IdCarona, Viagens),
     member(row(_, IdCarona, 'True', _, _, PassageiroCpf), Viagens).
 
-
-get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Resp):- 
-    csv_file(File),
-    carona_column(Carona_Column),
-    read_csv_row(File, Carona_Column, IdCarona, Viagens),
-    (member(row(_, IdCarona, _, _, _, PassageiroCpf), Viagens) ->
-        Resp = Viagens
-    ;
-        Resp = []
-    ).
-
 get_viagens_passageiro_sem_avaliacao(PassageiroCpf, ViagensStr):-
     csv_file(File),
     % number_string(PassageiroCpf, PassageiroStr),
