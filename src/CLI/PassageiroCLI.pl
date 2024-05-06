@@ -6,20 +6,20 @@
 /* Import do controller */
 :- use_module('../Controller/PassageiroController.pl').
 :- use_module('CaronaCLI.pl').
- 
+
 /* Referencia do passageiro para login */
 :- dynamic passageiro_logado/7.
 
 /* Menu de acesso do passageiro */
 
-menu_principal_passageiro():-
-    write("\nSelecione uma opção:\n"),
+menu_principal_passageiro:-
+    write('\nSelecione uma opcao:\n'),
     write('1 - Cadastro de Passageiro\n'),
     write('2 - Login\n'),
     write('0 - Sair\n'),
-    read_line_to_string(user_input, Opcao),
+    read_line_to_string(user_input,Opcao),
     menu_principal_opcao(Opcao).
-
+    
 menu_principal_opcao("1"):-
     menu_cadastrar_passageiro,
     menu_principal_passageiro.
@@ -36,30 +36,38 @@ menu_principal_opcao(_):-
 
 menu_cadastrar_passageiro():-
     write('\nCadastrar Passageiro\n'),
-    write('Digite o Nome(Insira com aspas simples ''): \n'),
-    read(Nome),
-    write('Digite o CPF: \n'),
-    read(CPF),
-    write("Digite o Genero ('F'/'M'/'NB'): \n"),
-    read(Genero),
+    write('Digite o Nome: \n'),
+    read_line_to_string(user_input,Nome),
+    atom_string(NomeStr, Nome),
+    write('Digite o CPF: (somente numeros) \n'),
+    read_line_to_string(user_input,CPF),
+    write('Digite o Genero: (F|M|NB) \n'),
+    read_line_to_string(user_input,Genero),
+    atom_string(GeneroStr, Genero),
     write('Digite o E-mail: \n'),
-    read(Email),
+    read_line_to_string(user_input,Email),
+    atom_string(EmailStr, Email),
     write('Digite o Telefone: \n'),
-    read(Telefone),
+    read_line_to_string(user_input,Telefone),
+    atom_string(TelefoneStr, Telefone),
     write('Digite o CEP: \n'),
-    read(CEP),
+    read_line_to_string(user_input,CEP),
+    atom_string(CEPStr, CEP),
     write('Digite a Senha: \n'),
-    read(Senha),
-    realizar_cadastro_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno),
+    read_line_to_string(user_input,Senha),
+    atom_string(SenhaStr, Senha),
+    realizar_cadastro_passageiro(NomeStr, CPF, GeneroStr, EmailStr, TelefoneStr, CEPStr, SenhaStr, Retorno),
     write(Retorno), nl.
 
 menu_realizar_login():-
-    write("\nRealizar Login de Passageiro\n"),
+    write('\nRealizar Login de Passageiro\n'),
     write('Digite o e-mail: \n'),
-    read(Email),
+    read_line_to_string(user_input, Email),
+    atom_string(EmailStr, Email),
     write('Digite a senha: \n'),
-    read(Senha),
-    realizar_login_passageiro(Email, Senha, Passageiro),
+    read_line_to_string(user_input,Senha),
+    atom_string(SenhaStr, Senha),
+    realizar_login_passageiro(EmailStr, SenhaStr, Passageiro),
     processar_resultado_login(Passageiro).
 
 processar_resultado_login([Nome, CPF, Genero, Email, Telefone, CEP, Senha]):-
@@ -80,7 +88,7 @@ menu_opcoes_passageiro:-
     write('4 - Carregar historico de Notificacoes\n'),
     write('5 - Menu de Caronas\n'),
     write('0 - Voltar ao Menu Principal\n'),
-    read_line_to_string(user_input, Opcao),
+    read_line_to_string(user_input,Opcao),
     menu_opcoes_passageiro_opcao(Opcao).
 
 menu_opcoes_passageiro_opcao("1"):-
@@ -101,7 +109,8 @@ menu_opcoes_passageiro_opcao("4"):-
     menu_opcoes_passageiro.
 
 menu_opcoes_passageiro_opcao("5"):-
-    menu_principal_passageiro_carona(passageiro_logado(_, _, _, _, _, _, _)),
+    passageiro_logado(_, CPF, _, _, _, _, _),
+    menu_principal_passageiro_carona(CPF),
     menu_opcoes_passageiro.
 
 menu_opcoes_passageiro_opcao("0"):-
@@ -112,22 +121,48 @@ menu_opcoes_passageiro_opcao(_):-
     write('Opcao invalida\n'),
     menu_opcoes_passageiro.
 
+% menu_atualizar_cadastro:-
+%     passageiro_logado(_, CPF, _, _, _, _, _),
+%     write('\nAtualizar Cadastro de Passageiro\n'),
+%     write('Digite sua senha: \n'),
+%     read_line_to_string(user_input, Senha),
+%     atom_string(SenhaStr, Senha),
+%     write('Selecione o campo a ser atualizado:\n'),
+%     write('1 - Telefone\n'),
+%     write('2 - Cep\n'),
+%     write('3 - Senha\n'),
+%     write('Opcao: \n'),
+%     read_line_to_string(user_input,Opcao),
+%     write('Digite o novo valor: \n'),
+%     read_line_to_string(user_input,NovoValor),
+%     atom_string(NovoValorStr, NovoValor),
+%     % BIG WARNING aqui!!!!!!!!!!!!!!!!!!!!!!!!!!
+%     atualizar_cadastro_passageiro(CPF, Senha, Opcao, NovoValorStr, Resultado),
+%     write(Resultado), nl,
+%     menu_opcoes_passageiro.
+
 menu_atualizar_cadastro:-
     passageiro_logado(_, CPF, _, _, _, _, _),
     write('\nAtualizar Cadastro de Passageiro\n'),
     write('Digite sua senha: \n'),
-    read(Senha),
+    read_line_to_string(user_input, Senha),
+    atom_string(SenhaStr, Senha),
     write('Selecione o campo a ser atualizado:\n'),
     write('1 - Telefone\n'),
     write('2 - Cep\n'),
     write('3 - Senha\n'),
     write('Opcao: \n'),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     write('Digite o novo valor: \n'),
-    read(NovoValor),
-    atualizar_cadastro_passageiro(CPF, Senha, Opcao, NovoValor, Resultado),
+    read_line_to_string(user_input, NovoValor),
+    atom_string(NovoValorStr, NovoValor),
+    (   Opcao = "1" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 'telefone', NovoValorStr, Resultado)
+    ;   Opcao = "2" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 'cep', NovoValorStr, Resultado)
+    ;   Opcao = "3" -> atualizar_cadastro_passageiro(CPF, SenhaStr, 'senha', NovoValorStr, Resultado)
+    ),
     write(Resultado), nl,
     menu_opcoes_passageiro.
+
 
 menu_visualizar_info:-
     passageiro_logado(_, CPF, _, _, _, _, _),
@@ -138,8 +173,9 @@ menu_visualizar_info:-
 menu_cancelar_cadastro:-
     passageiro_logado(_, CPF, _, _, _, _, _),
     write('Digite a senha: \n'),
-    read(Senha),
-    (  remove_passageiro(CPF,Senha, Retorno),
+    read_line_to_string(user_input,Senha),
+    atom_string(SenhaStr, Senha),
+    (  remove_passageiro(CPF,SenhaStr, Retorno),
         Retorno = 'Senha incorreta.'
         ->  write(Retorno), nl,
             menu_opcoes_passageiro
