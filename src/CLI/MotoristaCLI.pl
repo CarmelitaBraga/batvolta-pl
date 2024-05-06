@@ -17,18 +17,18 @@ menu_principal_motorista :-
     write('1 - Cadastro de Motorista\n'),
     write('2 - Login\n'),
     write('0 - Sair\n'),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     menu_principal_motorista_opcao(Opcao).
 
     
-menu_principal_motorista_opcao(1) :-
+menu_principal_motorista_opcao("1") :-
     menu_cadastrar_motorista,
     menu_principal_motorista.
 
-menu_principal_motorista_opcao(2):-
+menu_principal_motorista_opcao("2"):-
     menu_realizar_login.
 
-menu_principal_motorista_opcao(0) :-
+menu_principal_motorista_opcao("0") :-
     write('Saindo...\n').
 
 menu_principal_motorista_opcao(_) :-
@@ -85,31 +85,31 @@ menu_opcoes_motorista :-
     write('4 - Carregar historico de Notificacoes\n'),
     write('5 - Menu de Caronas\n'),
     write('0 - Sair\n'),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     menu_opcoes_motorista_opcao(Opcao).
 
-menu_opcoes_motorista_opcao(1) :-
+menu_opcoes_motorista_opcao("1") :-
     menu_atualizar_cadastro,
     menu_opcoes_motorista.
 
-menu_opcoes_motorista_opcao(2) :-
+menu_opcoes_motorista_opcao("2") :-
     menu_cancelar_cadastro,
     retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
     menu_principal_motorista.
 
-menu_opcoes_motorista_opcao(3) :-
+menu_opcoes_motorista_opcao("3") :-
     menu_visualizar_info,
     menu_opcoes_motorista.
 
-menu_opcoes_motorista_opcao(4) :-
+menu_opcoes_motorista_opcao("4") :-
     menu_carregar_notificacoes.
 
-menu_opcoes_motorista_opcao(5) :-
+menu_opcoes_motorista_opcao("5") :-
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
     menu_principal_motorista_carona(CPF),
     menu_opcoes_motorista. 
 
-menu_opcoes_motorista_opcao(0) :-
+menu_opcoes_motorista_opcao("0") :-
     retractall(motorista_logado(_, _, _, _, _, _, _, _, _)),
     menu_principal_motorista.
 

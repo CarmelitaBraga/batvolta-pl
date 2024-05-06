@@ -17,17 +17,17 @@ menu_principal_passageiro():-
     write('1 - Cadastro de Passageiro\n'),
     write('2 - Login\n'),
     write('0 - Sair\n'),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     menu_principal_opcao(Opcao).
 
-menu_principal_opcao(1):-
+menu_principal_opcao("1"):-
     menu_cadastrar_passageiro,
     menu_principal_passageiro.
 
-menu_principal_opcao(2):-
+menu_principal_opcao("2"):-
     menu_realizar_login.
 
-menu_principal_opcao(0) :-
+menu_principal_opcao("0") :-
     write('Saindo...\n').
 
 menu_principal_opcao(_):-
@@ -80,31 +80,31 @@ menu_opcoes_passageiro:-
     write('4 - Carregar historico de Notificacoes\n'),
     write('5 - Menu de Caronas\n'),
     write('0 - Voltar ao Menu Principal\n'),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     menu_opcoes_passageiro_opcao(Opcao).
 
-menu_opcoes_passageiro_opcao(1):-
+menu_opcoes_passageiro_opcao("1"):-
     menu_atualizar_cadastro,
     menu_opcoes_passageiro.
 
-menu_opcoes_passageiro_opcao(2):-
+menu_opcoes_passageiro_opcao("2"):-
     menu_cancelar_cadastro,
     retractall(passageiro_logado(_, _, _, _, _, _, _, _, _)),
     menu_principal_passageiro.
 
-menu_opcoes_passageiro_opcao(3):-
+menu_opcoes_passageiro_opcao("3"):-
     menu_visualizar_info,
     menu_opcoes_passageiro.
 
-menu_opcoes_passageiro_opcao(4):-
+menu_opcoes_passageiro_opcao("4"):-
     menu_carregar_notificacoes(),
     menu_opcoes_passageiro.
 
-menu_opcoes_passageiro_opcao(5):-
+menu_opcoes_passageiro_opcao("5"):-
     menu_principal_passageiro_carona(passageiro_logado(_, _, _, _, _, _, _)),
     menu_opcoes_passageiro.
 
-menu_opcoes_passageiro_opcao(0):-
+menu_opcoes_passageiro_opcao("0"):-
     retractall(passageiro_logado(_, _, _, _, _, _, _, _, _)),
     menu_principal_passageiro.
 
