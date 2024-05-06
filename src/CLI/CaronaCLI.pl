@@ -18,12 +18,13 @@
         menu_avaliar_carona/1
         ]).
 
-% get_cli_cpf(PassageiroRef, PassageiroCpf).
-get_cli_cpf(PassageiroRef, 11122233344).
+get_cli_cpf(PassageiroRef, PassageiroCpf).
 
 :- use_module('../Controller/CaronaController.pl').
 :- use_module('../Util/Utils.pl').
 :- use_module('../Controller/PassageiroController.pl').
+:- use_module('../CLI/PassageiroCLI.pl').
+:- use_module('../CLI/MotoristaCLI.pl').
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -43,15 +44,15 @@ handle_option(3, PassageiroRef) :- menu_mostrar_caronas(PassageiroRef), menu_pri
 handle_option(4, PassageiroRef) :- menu_embarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
 handle_option(5, PassageiroRef) :- menu_desembarcar_caronas(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
 handle_option(6, PassageiroRef) :- menu_avaliar_motorista(PassageiroRef), menu_principal_passageiro_carona(PassageiroRef).
-handle_option(0, PassageiroRef) :- menu_opcoes_passageiro(PassageiroRef).
+handle_option(0, PassageiroRef) :- menu_opcoes_passageiro().
 handle_option(_, PassageiroRef) :- write('Opção inválida!\n'), menu_principal_passageiro_carona(PassageiroRef).
 
 % Os valores de origem e destino devem ser passados com aspas duplas :(
 menu_procurar_carona(PassageiroRef):-
-    write('\nDe onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    write('\nDe onde a carona deve partir?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
     read(Origem),
     atom_string(Origem, OrigemStr),
-    write('\nOnde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) '),
+    nl, write('Onde a carona deve chegar?(Digite sem caracteres especiais, exemplo: ´,~,...) \n'),
     read(DestinoStr),
     (possui_caronas_origem_destino_controller(OrigemStr, DestinoStr) ->
         mostrar_caronas_disponiveis_origem_destino(OrigemStr, DestinoStr, Caronas),
@@ -88,17 +89,17 @@ menu_mostrar_caronas(PassageiroRef):-
     printList(Viagens),
     menu_principal_passageiro_carona(PassageiroRef).
 
-menu_desembarcar_caronas(PassageiroRef):- 
-    get_cli_cpf(PassageiroRef, PassageiroCpf),
+menu_desembarcar_caronas(PassageiroCpf):- 
     mostrar_caronas_passageiro(PassageiroCpf, Caronas),
     (Caronas \= [] ->
         printList(Caronas), nl,
         write('Digite o ID da carona: '),
-        read(IdCarona),
-        desembarcar_passageiro(IdCarona, PassageiroCpf, Resp),
+        read_line_to_string(user_input, CId),
+        number_string(CidNumber, CId),
+        desembarcar_passageiro(CidNumber, PassageiroCpf, Resp),
         write(Resp)
     ;
-        write('Nenhuma carona disponível para desembarcar!\n'),
+        write('Nenhuma carona disponivel para desembarcar!\n'),
         menu_principal_passageiro_carona(PassageiroRef)
     ).
 
@@ -149,23 +150,23 @@ handle_motorista_option(4, MotoristaRef) :- menu_aceitar_recusar_passageiro(Moto
 handle_motorista_option(5, MotoristaRef) :- menu_cancelar_carona_motorista(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
 handle_motorista_option(6, MotoristaRef) :- menu_visualizar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
 handle_motorista_option(7, MotoristaRef) :- menu_avaliar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option(0, MotoristaRef) :- menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(0, MotoristaRef) :- menu_opcoes_motorista.
 handle_motorista_option(_, MotoristaRef) :- writeln('Opcao invalida!'), menu_principal_motorista_carona(MotoristaRef).
 
 menu_criar_carona(MotoristaRef) :-
     MotoristaCpf = MotoristaRef,   % Retirar posteriormente
     writeln("\nCriar uma Carona"),
-    write("Digite a hora (no formato HH:MM): "),
-    read_line_to_string(user_input, Hora),
-    write("Digite a data (no formato DD/MM/AAAA): "),
-    read_line_to_string(user_input, Data),
-    write("Digite a origem da viagem: "),
-    read_line_to_string(user_input, Origem),
+    write('Digite a hora (no formato HH:MM):\n'),
+    read(Hora),
+    write('\nDigite a data (no formato DD/MM/AAAA):\n'),
+    read(Data),
+    write('\nDigite a origem da viagem( ao menos duas cidades distintas devem ser inseridas): \n'),
+    read(Origem),
     pedir_destinos([], R),
-    write("Digite o valor (use '.' para casa decimal): "),
-    read_line_to_string(user_input, Valor),
-    write("Digite a quantidade maximas de passageiros: "),
-    read_line_to_string(user_input, NumPassageirosMaximos),
+    write('Digite o valor (use '.' para casa decimal): \n'),
+    read(Valor),
+    write('Digite a quantidade maximas de passageiros: \n'),
+    read(NumPassageirosMaximos),
     % MotoristaCpf = MotoristaRef,  
     criar_carona(Hora, Data, [Origem|R], MotoristaCpf, Valor, NumPassageirosMaximos),
     writeln("Carona criada com sucesso!").
@@ -173,7 +174,7 @@ menu_criar_carona(MotoristaRef) :-
 menu_cancelar_carona_motorista(MotoristaRef) :-
     MotoristaCpf = MotoristaRef,  
     (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
-        write("Qual carona você deseja cancelar: "), nl,
+        write("Qual carona você deseja cancelar: \n"), nl,
         mostrar_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
         write(Caronas), nl,
         write("Digite o Id da carona: "),

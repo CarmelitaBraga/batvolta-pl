@@ -1,5 +1,6 @@
 :- module(_, [
-    menu_principal_passageiro/0
+    menu_principal_passageiro/0,
+    menu_opcoes_passageiro/0
 ]).
 
 /* Import do controller */
@@ -100,7 +101,7 @@ menu_opcoes_passageiro_opcao(4):-
     menu_opcoes_passageiro.
 
 menu_opcoes_passageiro_opcao(5):-
-    chamar_menu_carona_passageiro,
+    menu_principal_passageiro_carona(passageiro_logado(_, _, _, _, _, _, _)),
     menu_opcoes_passageiro.
 
 menu_opcoes_passageiro_opcao(0):-
@@ -149,5 +150,6 @@ menu_cancelar_cadastro:-
 
 menu_carregar_notificacoes():-
     passageiro_logado(_, CPF, _, _, _, _, _),
-    retornar_notificacao_passageiro(CPF, Retorno),
+    atom_string(CPF, CPFString),
+    retornar_notificacao_passageiro(CPFString, Retorno),
     write(Retorno), nl.

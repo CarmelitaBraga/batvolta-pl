@@ -1,10 +1,10 @@
 module(_, [
-   menuPrincipal/0,
+   menu_principal/0,
     selecionar_opcao/1,
-    menuPrincipalDashboard/0,
-    menuPrincipalPassageiro/0,
-    menuPrincipalMotorista/0,
-    menuPrincipalCarona/0
+    menu_principal_dashboard/0,
+    menu_principal_passageiro/0,
+    menu_principal_motorista/0,
+    menu_principal_carona/0
 ]).
 
 
@@ -14,7 +14,7 @@ module(_, [
 :- use_module('CaronaCLI.pl').
 
 
-menuPrincipal:-
+menu_principal:-
     write('\nSelecione uma opção: \n'),
     write('1 - Dashboard \n'),
     write('2 - Passageiro \n'),
@@ -24,20 +24,20 @@ menuPrincipal:-
     selecionar_opcao(Opcao).
 
 selecionar_opcao(1) :-
-    menuPrincipalDashboard,
-    menuPrincipal.
+    menu_principal_dashboard,
+    menu_principal.
 
 selecionar_opcao(2) :-
     menu_principal_passageiro,
-    menuPrincipal.
+    menu_principal.
 
 selecionar_opcao(3) :-
     menu_principal_motorista,
-    menuPrincipal.
+    menu_principal.
 
 selecionar_opcao(0) :-
     write('Fim da interação!\n').
 
 selecionar_opcao(_) :-
     write('Opção inválida!\n'),
-    menuPrincipal.
+    menu_principal.

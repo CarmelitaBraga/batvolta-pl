@@ -1,5 +1,6 @@
 :- module(motorista_cli, [
-    menu_principal_motorista/0
+    menu_principal_motorista/0,
+    menu_opcoes_motorista/0
 ]).
 
 % Importe Controller
@@ -126,15 +127,15 @@ menu_cancelar_cadastro :-
 menu_atualizar_cadastro :-
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
     write('\nAtualizar Cadastro de Motorista\n'),
-    write('Digite sua senha:'),
+    write('Digite sua senha:\n'),
     read(Senha),
     write('Selecione o atributo a ser atualizado:\n'),
     write('1 - Telefone\n'),
     write('2 - Cep\n'),
     write('3 - Senha\n'),
-    write('Opcao: '),
+    write('Opcao: \n'),
     read(Opcao),
-    write('Digite o novo valor: '),
+    write('Digite o novo valor: \n'),
     read(NovoValor),
     (   Opcao = 1 -> atualizarCadastroMotorista(CPF, Senha, 'telefone', NovoValor, Resultado)
     ;   Opcao = 2 -> atualizarCadastroMotorista(CPF, Senha, 'cep', NovoValor, Resultado)

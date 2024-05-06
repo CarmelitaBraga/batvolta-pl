@@ -1,9 +1,9 @@
-:- module(_, [menuPrincipalDashboard/0]).
+:- module(_, [menu_principal_dashboard/0]).
 
 :- use_module('../Controller/DashboardController.pl').
 
 % Main menu predicate
-menuPrincipalDashboard :-
+menu_principal_dashboard :-
     write('\nSelecione uma opção: \n'),
     write('1 - Top-Rated Motoristas \n'),
     write('2 - Top-Rated Motoristas por Região \n'),
@@ -16,21 +16,21 @@ menuPrincipalDashboard :-
 % Predicate to select an option
 selecionar_opcao(1) :-
     imprimirMotoristasDirijoes,
-    menuPrincipalDashboard.
+    menu_principal_dashboard.
 selecionar_opcao(2) :-
     imprimirTopMotoristasPorRegiao,
-    menuPrincipalDashboard.
+    menu_principal_dashboard.
 selecionar_opcao(3) :-
     imprimirTopPassageiros,
-    menuPrincipalDashboard.
+    menu_principal_dashboard.
 selecionar_opcao(4) :-
     imprimirDestinosMaisVisitados,
-    menuPrincipalDashboard.
+    menu_principal_dashboard.
 selecionar_opcao(0) :-
     write('Fim da interação!\n').
 selecionar_opcao(_) :-
     write('Opção inválida!\n'),
-    menuPrincipalDashboard.
+    menu_principal_dashboard.
 
 % Predicates for each menu option
 imprimirMotoristasDirijoes :-
