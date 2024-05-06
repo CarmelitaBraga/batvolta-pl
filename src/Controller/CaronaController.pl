@@ -27,7 +27,7 @@
     mostrar_carona_passageiros_viagem_false_controller/2,
     mostrar_caronas_sem_avaliacao_controller/2,
     checar_carona_de_motorista_avaliar/2,
-    avaliar_carona_controller/2,
+    avaliar_carona_controller/3,
     checar_carona_passageiro_viagem_false/2,
     mostrar_passageiros_viagem_false_controller/2,
     possui_passageiro_viagem_false_controller/2,
@@ -35,7 +35,8 @@
     mostrar_viagens_por_motorista/2,
     mostrar_viagens_carona/2,
     mostrar_todas_as_viagens/1,
-    mostrar_caronas_por_passageiro/2
+    mostrar_caronas_por_passageiro/2,
+    possui_carona_sem_avaliacao_controller/1
     ]).
 
 :- use_module('../Logic/CaronaLogic.pl').
@@ -46,11 +47,11 @@
 % Carona & passageiro
 
 possui_caronas_origem_destino_controller(Origem, Destino):-
-    call(possui_carona_origem_destino(Origem, Destino)).
+    call(possui_carona_com_vagas_origem_destino(Origem, Destino)).
 % mostrar_caronas_disponiveis_origem_destino("Patos", "Ottawa", Str).
 
 mostrar_caronas_disponiveis_origem_destino(Origem, Destino, Caronas):-
-    mostrar_caronas_origem_destino(Origem, Destino, Caronas).
+    mostrar_caronas_com_vagas_origem_destino(Origem, Destino, Caronas).
 % mostrar_caronas_disponiveis_origem_destino("Rio","Sao Paulo", Str).
 
 mostrar_caronas_passageiro(PassageiroCpf, Resultado):-
@@ -64,7 +65,7 @@ desembarcar_passageiro(IdCarona, PassageiroCpf, Result):-
 % desembarcar_passageiro(0,486464646410,R).
 
 mostrar_viagem_passageiro(PassageiroCpf, Viagens):-
-    mostrar_viagens_passageiro(PassageiroCpf, Viagens).
+    mostrar_all_viagens_passageiro(PassageiroCpf, Viagens).
 % mostrar_viagem_passageiro(121212, R).
 
 cancelar_carona_passageiro(CId, PassageiroCpf, Resp):-
@@ -132,8 +133,9 @@ possui_passageiros_viagem_false_controller(MotoristaCpf) :-
 possui_carona_motorista_controller(MotoristaCpf):-
     possui_carona_motorista(MotoristaCpf).
 
-mostrar_caronas_motorista(MotoristaCpf, Caronas):-
-    mostrar_caronas_logic(MotoristaCpf, Caronas).
+mostrar_caronas_motorista(MotoristaCpf, CaronasStr):-
+    mostrar_caronas_do_motorista(MotoristaCpf, Caronas),
+    list_to_string(Caronas, '', CaronasStr).
 
 cancelar_carona_controller(Cid,Resposta):-
     cancelar_carona(Cid,Resposta).
@@ -154,8 +156,8 @@ mostrar_carona_passageiros_viagem_false_controller(MotoristaCpf, CaronasStr):-
 checar_carona_de_motorista_avaliar(Cid, MotoristaCpf):-
     carona_de_motorista_avaliar(Cid,MotoristaCpf).
 
-avaliar_carona_controller(Cid, Avaliacao):-
-    avaliar_carona(Cid, Avaliacao).
+avaliar_carona_controller(Cid, Avaliacao, R):-
+    avaliar_carona(Cid, Avaliacao, R).
 
 checar_carona_passageiro_viagem_false(MotoristaCpf, Cid) :- 
     carona_de_motorista(MotoristaCpf,Cid),
@@ -169,7 +171,7 @@ possui_passageiro_viagem_false_controller(Cid, PVid) :-
     possui_passageiro_viagem_false(Cid, PVid).
 
 aceitar_ou_recusar_passageiro_controller(PVid, AceitarOuRecusar) :-
-    (AceitarOuRecusar == 'aceito' ->
+    (AceitarOuRecusar = 'aceito' ->
         aceitar_passageiro(PVid)
     ;
         remover_viagem(PVid)
@@ -184,5 +186,7 @@ mostrar_viagens_carona(IdCarona, Viagens):-
 mostrar_todas_as_viagens(Viagens):-
     get_all_viagens(Viagens).
 
-mostrar_caronas_por_passageiro(PassageiroCpf, Rows):-
-    get_caronas_by_passageiro(PassageiroCpf, Rows).
+mostrar_caronas_por_passageiro(PassageiroCpf, CaronasStr):-
+    mostrar_caronas_by_passageiro(PassageiroCpf, Rows),
+    list_to_string(Rows, '', CaronasStr).
+

@@ -15,12 +15,16 @@
     possui_passageiro_viagem_false/2,
     aceitar_passageiro/1,
     get_viagens_by_carona/2,
-    get_all_viagens/1
+    get_all_viagens/1,
+    possui_espaco_disponivel/4,
+    remover_viagem/1
     ]).
 
 :- use_module('../Schemas/CsvModule.pl').
 :- use_module('../Model/PassageiroViagem.pl').
 :- use_module('../Util/Utils.pl').
+
+csv_file('../../database/viagemPassageiros.csv').
 
 % Fato dinâmico para gerar o id das caronas
 :- dynamic id/1.
@@ -48,7 +52,6 @@ encontrar_maior_id([_|Rest], MaiorId, R) :-
 incrementa_id :- retract(id(X)), Y is X + 1, assert(id(Y)).
 
 
-csv_file('../../database/viagemPassageiros.csv').
 viagem_pass_column(1).
 carona_column(2).
 aceito_column(3).
@@ -102,7 +105,7 @@ get_viagens_passageiro_sem_avaliacao(PassageiroCpf, ViagensStr):-
     nota_sem_avaliacao(Sem_Nota),
     avaliacao_column(Aval_Column),
     read_csv_row(File, Aval_Column, Sem_Nota, Viagens),
-    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, 'True', _, Sem_Nota, PassageiroCpf), atom_string(Passageiro, PassageiroStr), viagemToStr(Viagem, ViagemStr)), ViagensStr).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, 'True', _, Sem_Nota, PassageiroCpf), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 % get_viagens_passageiro_sem_avaliacao(09876543210,R).
 % get_viagens_passageiro_sem_avaliacao(121212,R).
 % get_viagens_passageiro_sem_avaliacao(000000,R).
@@ -142,8 +145,8 @@ cancelar_viagem_passageiro(IdCarona, PassageiroCpf, Resp):-
     (Viagem = [] ->
         Resp = 'Trecho de carona inexistente para o passageiro informado!'
     ;
-        Viagem = [row(IdViagem, IdCarona, _, _, _, PassageiroCpf)|_],
-        (viagem_aceita(IdViagem) ->
+        member(row(IdViagem, IdCarona, Aceito, _, _, PassageiroCpf), Viagem),
+        (Aceito = 'True' ->
             Resp = 'O passageiro ja foi aceito, não podera mais cancelar.'
         ;
             remover_viagem(IdViagem),
@@ -159,14 +162,14 @@ mostrar_all_viagens_passageiro(PassageiroCpf, ViagensStr):-
     % number_string(PassageiroCpf, PassageiroStr),
     passageiro_column(Pass_Column),
     read_csv_row(File, Pass_Column, PassageiroCpf, Viagens),
-    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, Passageiro), atom_string(Passageiro, PassageiroCpf), viagemToStr(Viagem, ViagemStr)), ViagensStr).
+    findall(ViagemStr, (member(Viagem, Viagens), Viagem = row(_, _, _, _, _, PassageiroCpf), viagemToStr(Viagem, ViagemStr)), ViagensStr).
 
 carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):- 
     csv_file(File),
     nota_sem_avaliacao(Sem_Nota),
     viagem_pass_column(Viagem_Column),
     (Avaliacao =< 0 ; Avaliacao > 5 ->
-        Resp = 'Valor inválido!'
+        Resp = 'Valor invalido!'
     ;
         get_viagem_by_carona_passageiro(IdCarona, PassageiroCpf, Viagem),
         (member(row(IdViagem,IdCarona,Aceito,Rota,Sem_Nota,PassageiroCpf), Viagem) ->
@@ -174,13 +177,13 @@ carona_avalia_motorista(IdCarona, PassageiroCpf, Avaliacao, Resp):-
             update_csv_row(File, Viagem_Column, IdViagem, Updated_Row),
             Resp = 'Carona avaliada com sucesso!'
         ;
-            Resp = 'Nenhuma carona não avaliada encontrada com este id.'
+            Resp = 'Nenhuma carona nao avaliada encontrada com este id.'
     )).
 
 criar_viagem_passageiro(IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf):-
     id(ID),
     csv_file(File),
-    (Aceito == "False" ; Aceito == "True"),
+    (Aceito == 'False' ; Aceito == 'True'),
     Viagem = passageiroViagem(ID, IdCarona, Aceito, Rota, Avaliacao, PassageiroCpf),
     incrementa_id,
     viagem_to_list(Viagem, ListaViagem),
@@ -209,7 +212,6 @@ retorna_passageiros_false_da_carona(Cid, Retorno) :-
     csv_file(File),
     carona_column(Carona_Column),
     read_csv_row(File, Carona_Column, Cid, Viagens),
-    write(Viagens),
     findall(ViagemStr, (
         member(Viagem, Viagens),
         Viagem = row(_, _, 'False', _, _, _),
@@ -240,3 +242,42 @@ get_viagens_by_carona(IdCarona, Viagens):-
     ;
         Viagens = []
     ).
+
+% Helper predicate to check if any element of the first list is in the second list
+esta_em([], _) :- fail.
+esta_em([X|Resto], Lista) :-
+    member(X, Lista);
+    esta_em(Resto, Lista), !.
+
+% Helper predicate to remove the last element from a list
+sem_ultimo([], []).
+sem_ultimo([_], []).
+sem_ultimo([X|Resto], [X|SemUltimo]) :-
+    sem_ultimo(Resto, SemUltimo), !.
+
+% Predicate to check if a row has a route
+possui_rota(row(_, CaronaId, _, Trajeto, _, _), CaronaId, Rota) :-
+    split_string(Trajeto, ";", "", ListaTrajeto),
+    list_to_atom_list(ListaTrajeto, AtomList),
+    sem_ultimo(AtomList, Destinos),
+    esta_em(Destinos, Rota).
+
+% Predicate to filter rows that belong to a route and have the same carona id
+filter_pertence_a_rota([], _, _, []).
+filter_pertence_a_rota([Row|Rows], CaronaId, Rota, FilteredRows) :-
+    (possui_rota(Row, CaronaId, Rota) -> 
+        filter_pertence_a_rota(Rows, CaronaId, Rota, Rest), 
+        FilteredRows = [Row|Rest]
+    ;
+        filter_pertence_a_rota(Rows, CaronaId, Rota, FilteredRows)
+    ).
+
+% Predicate to check if a given trip has available space
+possui_espaco_disponivel(CaronaId, Trajeto, NumPassageirosMaximos, [R|Rota]) :-
+    csv_file(File),
+    getAllRows(File, ViagensRows),
+    last(Rota, Last),
+    ordered_pair_in_list([R|[Last]], Trajeto),
+    filter_pertence_a_rota(ViagensRows, CaronaId, [R|Rota], ViagensStr),
+    length(ViagensStr, Length),
+    NumPassageirosMaximos > Length.
