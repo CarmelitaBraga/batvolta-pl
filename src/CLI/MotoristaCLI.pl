@@ -104,7 +104,8 @@ menu_opcoes_motorista_opcao(4) :-
     menu_carregar_notificacoes.
 
 menu_opcoes_motorista_opcao(5) :-
-    chamar_menu_carona_motorista,
+    motorista_logado(CPF, _, _, _, _, _, _, _, _),
+    chamar_menu_carona_motorista(CPF),
     menu_opcoes_motorista. 
 
 menu_opcoes_motorista_opcao(0) :-
@@ -116,7 +117,7 @@ menu_opcoes_motorista_opcao(_) :-
     menu_opcoes_motorista.
 
 menu_cancelar_cadastro :-
-    write('Digite a senha: '),
+    write('Digite a senha: \n'),
     read(Senha),
     motorista_logado(CPF, _, _, _, _, _, _, _, _),
     cancelarCadastroMotorista(CPF,Senha, Retorno),

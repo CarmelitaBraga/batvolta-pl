@@ -17,7 +17,7 @@
         menu_avaliar_carona/1,
 
         chamar_menu_carona_passageiro/0,
-        chamar_menu_carona_motorista/0
+        chamar_menu_carona_motorista/1
         ]).
 
 % get_cli_cpf(PassageiroRef, PassageiroCpf).
@@ -29,8 +29,8 @@ get_cli_cpf(PassageiroRef, 11122233344).
 chamar_menu_carona_passageiro:-
     menu_principal_passageiro_carona(PassageiroRef).
 
-chamar_menu_carona_motorista:-
-    menu_principal_motorista_carona(MotoristaRef).
+chamar_menu_carona_motorista(MotoristaLogado):-
+    menu_principal_motorista_carona(MotoristaLogado).
 
 menu_principal_passageiro_carona(PassageiroRef) :-
     write('\nSelecione uma opção:\n'),
@@ -146,17 +146,17 @@ menu_principal_motorista_carona(MotoristaRef) :-
     writeln('6 - Visualizar Caronas'),
     writeln('7 - Avaliar Carona Finalizada'),
     writeln('0 - Voltar'),
-    read_line_to_string(user_input, Opcao),
+    read(Opcao),
     handle_motorista_option(Opcao, MotoristaRef).
 
-handle_motorista_option("1", MotoristaRef) :- menu_criar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("2", MotoristaRef) :- menu_iniciar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("3", MotoristaRef) :- menu_finalizar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("4", MotoristaRef) :- menu_aceitar_recusar_passageiro(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("5", MotoristaRef) :- menu_cancelar_carona_motorista(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("6", MotoristaRef) :- menu_visualizar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("7", MotoristaRef) :- menu_avaliar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
-handle_motorista_option("0", MotoristaRef) :- menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(1, MotoristaRef) :- menu_criar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(2, MotoristaRef) :- menu_iniciar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(3, MotoristaRef) :- menu_finalizar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(4, MotoristaRef) :- menu_aceitar_recusar_passageiro(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(5, MotoristaRef) :- menu_cancelar_carona_motorista(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(6, MotoristaRef) :- menu_visualizar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(7, MotoristaRef) :- menu_avaliar_carona(MotoristaRef), menu_principal_motorista_carona(MotoristaRef).
+handle_motorista_option(0, MotoristaRef) :- menu_principal_motorista_carona(MotoristaRef).
 handle_motorista_option(_, MotoristaRef) :- writeln('Opcao invalida!'), menu_principal_motorista_carona(MotoristaRef).
 
 menu_criar_carona(MotoristaRef) :-
@@ -193,7 +193,7 @@ pedir_destinos(Destinos, R) :-
     ).
 
 menu_iniciar_carona(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
         write("Qual carona você deseja iniciar: "), nl,
         info_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
@@ -211,7 +211,7 @@ menu_iniciar_carona(MotoristaRef) :-
     ).
 
 menu_finalizar_carona(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_carona_em_andamento_controller(MotoristaCpf) -> 
         write("Qual carona você deseja Finalizar:"), nl,
         info_caronas_em_andamento_controller(MotoristaCpf, Caronas),
@@ -229,7 +229,7 @@ menu_finalizar_carona(MotoristaRef) :-
     ).
 
  menu_aceitar_recusar_passageiro(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_passageiros_viagem_false_controller(MotoristaCpf) -> 
         write("Qual carona você deseja olhar os passageiros:"), nl, 
         info_carona_passageiros_viagem_false(MotoristaCpf, Caronas),
@@ -259,7 +259,7 @@ menu_finalizar_carona(MotoristaRef) :-
     ).
 
 menu_cancelar_carona_motorista(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_carona_nao_iniciada_controller(MotoristaCpf) -> 
         write("Qual carona você deseja cancelar: "), nl,
         info_caronas_nao_iniciadas_controller(MotoristaCpf, Caronas),
@@ -277,7 +277,7 @@ menu_cancelar_carona_motorista(MotoristaRef) :-
     ).
 
 menu_visualizar_carona(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_carona_controller(MotoristaCpf) -> 
         write("Suas caronas disponiveis: "), nl,
         mostrar_caronas_motorista(MotoristaCpf, Caronas),
@@ -287,7 +287,7 @@ menu_visualizar_carona(MotoristaRef) :-
     ).
 
 menu_avaliar_carona(MotoristaRef) :-
-    get_cli_motorista_cpf(MotoristaRef, MotoristaCpf),
+    MotoristaCpf = MotoristaRef,
     (possui_carona_sem_avaliacao_controller(MotoristaCpf) -> 
         mostrar_caronas_sem_avaliacao_motorista(MotoristaCpf, Caronas),
         write(Caronas), nl,

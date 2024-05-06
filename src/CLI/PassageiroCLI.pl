@@ -35,11 +35,11 @@ menu_principal_opcao(_):-
 
 menu_cadastrar_passageiro():-
     write('\nCadastrar Passageiro\n'),
-    write('Digite o Nome: \n'),
+    write('Digite o Nome(Insira com aspas simples ''): \n'),
     read(Nome),
     write('Digite o CPF: \n'),
     read(CPF),
-    write('Digite o Genero (F/M/NB): \n'),
+    write("Digite o Genero ('F'/'M'/'NB'): \n"),
     read(Genero),
     write('Digite o E-mail: \n'),
     read(Email),

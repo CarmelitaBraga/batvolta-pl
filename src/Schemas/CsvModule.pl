@@ -1,7 +1,7 @@
 :- module(_, [
     read_csv_row/4,
     read_csv_row_by_list_element/4,
-    update_csv_row/4,
+    update_csv_row/3,
     write_csv_row/2,
     write_csv_row_all_steps/2,
     delete_csv_row_bool/3,
@@ -21,13 +21,6 @@ select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
 select_row([_|Rest], Column, Value, NewRest) :-
     select_row(Rest, Column, Value, NewRest).
 
-% Motorista
-% select_row([], _, _, []).
-% select_row([Row|Rest], Column, Value, [Row|NewRest]) :-
-%     arg(Column, Row, Value), !,
-%     select_row(Rest, Column, Value, NewRest).
-% select_row([_|Rest], Column, Value, NewRest) :-
-%     select_row(Rest, Column, Value, NewRest).
 
 % Create or Append
 write_csv_row(File, Data) :-
@@ -38,6 +31,7 @@ write_csv_row(File, Data) :-
     ;
         csv_write_file(File, Data)
     ).
+
 % ?- write_csv('database/caronas.csv', [row(1,233,4,'5g','gtgt','gdg','bt')]).
 
 % Create or Append
@@ -66,7 +60,7 @@ select_row_read([_|Rest], Column, Value, NewRest) :-
     select_row_read(Rest, Column, Value, NewRest).
 
 % Update a specific row
-update_csv_row(File, Column, Value, UpdatedRow) :-
+update_csv_row(File, Collue, UpdatedRow) :-
     csv_read_file(File, Data),
     select_row(Data, Column, Value, DataWithoutOldRow),
     append(DataWithoutOldRow, [UpdatedRow], UpdatedData),
@@ -75,13 +69,6 @@ update_csv_row(File, Column, Value, UpdatedRow) :-
     close(Stream).
 row_to_list(row(Row), Row).
 
-% Motorista
-% Update a specific row
-% update_csv_row(File, Column, Value, UpdatedRow) :-
-%     read_csv_row(File, Column, Value, Data),
-%     select_row(Data, Column, Value, DataWithoutOldRow),
-%     append(DataWithoutOldRow, [UpdatedRow], UpdatedData),
-%     csv_write_file(File, UpdatedData).
 
 % Delete a specific row
 delete_csv_row_bool(File, Column, Value) :-
@@ -94,11 +81,7 @@ select_row_delete([Row|Rest], Column, Value, Rest) :-
 select_row_delete([Row|Rest], Column, Value, [Row|NewRest]) :-
     select_row_delete(Rest, Column, Value, NewRest).
 
-% % Motorista
-% delete_csv_row(File, Column, Value) :-
-%     csv_read_file(File, Data),
-%     select_row_delete(Data, Column, Value, DataWithoutRow),
-%     csv_write_file(File, DataWithoutRow).
+
 
 % % Helper predicate to check if an element exists in a list
 % element_in_list(Element, List) :-
@@ -127,6 +110,7 @@ delete_csv_row(File, Column, Value) :-
 read_csv_row_by_list_element(File, Column, Element, Row) :-
     csv_read_file(File, Data),
     select_row_by_list_element(Data, Column, Element, Row).
+
 
 split_string_into_list(String, List) :-
     split_string(String, ";", "", List).

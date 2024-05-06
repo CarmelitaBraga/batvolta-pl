@@ -11,7 +11,7 @@
     recupera_motorista_por_cpf/2
 ]).
 
-:- use_module('../Schemas/CsvModule.pl').
+:- use_module('../Schemas/CsvModuleMotorista.pl').
 
 file('../../database/motoristas.csv').
 
