@@ -13,9 +13,11 @@ module(_, [
 :- use_module('MotoristaCLI.pl').
 :- use_module('CaronaCLI.pl').
 
+:- initialization(menu_principal).
 
 menu_principal:-
-    write('\nSelecione uma opção: \n'),
+    write('\n\n========== Bem vindo(a) ao BatVolta ==========\n\n'),
+    write('\nSelecione uma alternativa: \n'),
     write('1 - Dashboard \n'),
     write('2 - Passageiro \n'),
     write('3 - Motorista \n'),
@@ -36,7 +38,7 @@ seleciona_opcao("3") :-
     menu_principal.
 
 seleciona_opcao("0") :-
-    write('Fim da interação!\n').
+    write('Fim da interação!\n\n').
 
 seleciona_opcao(_) :-
     write('Opção inválida!\n'),
