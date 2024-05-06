@@ -39,7 +39,7 @@ cadastra_passageiro(Nome, CPF, Genero, Email, Telefone, CEP, Senha, Retorno) :-
         existe_passageiro_by_email(Email) ->
         Retorno = "Email ja cadastrado."
     ;
-        downcase_atom(Genero, G)
+        downcase_atom(Genero, G),
         write_csv_row(File,[row(Nome, CPF, G, Email, Telefone, CEP, Senha)]),
         Retorno = 'Passageiro cadastrado com sucesso.'
     ).

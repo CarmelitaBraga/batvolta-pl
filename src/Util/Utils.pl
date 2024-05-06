@@ -26,15 +26,6 @@ validar_senha(Senha) :-
     conta_letras(Senha, Letras),
     Letras >= 1.   % Senha deve conter pelo menos uma letra
 
-% Predicado auxiliar para contar letras na senha
-conta_letras(Senha, Letras) :-
-    string_chars(Senha, Chars),
-    include(alpha, Chars, LetrasChars),
-    length(LetrasChars, Letras).
-
-alpha(Char) :-
-    char_type(Char, alpha).
-
 validar_email(Email) :-
     atom_chars(Email, Chars),
     split_string(Email, "@", "", [_Usuario, Dominio]),
